@@ -1,0 +1,19 @@
+# This is a config for E2B sandbox template.
+# You can use template ID (va07da4fbpfnpm4z83aq) or template name (calcom) to create a sandbox:
+
+# Python SDK
+# from e2b import Sandbox, AsyncSandbox
+# sandbox = Sandbox("calcom") # Sync sandbox
+# sandbox = await AsyncSandbox.create("calcom") # Async sandbox
+
+# JS SDK
+# import { Sandbox } from 'e2b'
+# const sandbox = await Sandbox.create('calcom')
+
+template_id = "va07da4fbpfnpm4z83aq"
+dockerfile = "e2b.Dockerfile"
+template_name = "calcom"
+start_cmd = "/compile_page.sh"
+cpu_count = 6
+memory_mb = 8_192
+team_id = "332558e1-66dd-4985-abfd-b268b3801fb6"

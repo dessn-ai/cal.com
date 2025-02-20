@@ -117,9 +117,16 @@
     "@daily-co/daily-js": "^0.59.0",
     "@next/third-parties": "^14.2.5",
     "@vercel/functions": "^1.4.0",
+    "@vitejs/plugin-react": "^4.3.4",
     "city-timezones": "^1.2.1",
     "eslint": "^8.34.0",
-    "turbo": "^1.10.1"
+    "turbo": "^1.10.1",
+    "vite": "^6.1.1",
+    "vite-multiple-assets": "^2.2.5",
+    "vite-plugin-html": "^3.2.2",
+    "vite-plugin-ngmi-polyfill": "^0.0.2",
+    "vite-plugin-svgr": "^4.3.0",
+    "vite-tsconfig-paths": "^5.1.4"
   },
   "resolutions": {
     "types-ramda": "0.29.4",

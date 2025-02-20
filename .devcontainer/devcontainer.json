@@ -1,0 +1,6 @@
+{
+  "name": "calcom",
+  "build": {
+    "dockerfile": "./e2b.Dockerfile"
+  }
+}
