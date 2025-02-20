@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { DropdownMenuItem } from '../../../../packages/ui/components/dropdown/Dropdown';
-
+import { Dropdown, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../../../packages/ui/components/dropdown/Dropdown';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,8 +17,15 @@ export default function ComponentPreview() {
   });
 
   return (
-    <DropdownMenuItem className={state.className.value}>
-      {state.children.value}
-    </DropdownMenuItem>
+    <Dropdown>
+      <DropdownMenuTrigger>
+        Open Menu
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuItem className={state.className.value}>
+          {state.children.value}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </Dropdown>
   );
 }

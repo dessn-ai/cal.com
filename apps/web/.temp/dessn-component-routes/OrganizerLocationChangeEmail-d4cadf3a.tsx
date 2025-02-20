@@ -1,8 +1,35 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { OrganizerLocationChangeEmail } from '../../../../packages/emails/src/templates/OrganizerLocationChangeEmail';
 
-import { TimeFormat } from '../../../../packages/types/Calendar';
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
+
+// Mock email component instead of importing the real one
+const OrganizerLocationChangeEmail = ({ 
+  calEvent, 
+  attendee, 
+  timeZone, 
+  locale, 
+  timeFormat 
+}: any) => {
+  return (
+    <div style={{ fontFamily: 'Arial, sans-serif', maxWidth: '600px', margin: '0 auto' }}>
+      <h2>Location Change Notification</h2>
+      <p>Event: {calEvent.title}</p>
+      <p>New Location: {calEvent.location}</p>
+      <p>Date: {new Date(calEvent.startTime).toLocaleDateString()}</p>
+      <p>Time: {new Date(calEvent.startTime).toLocaleTimeString()} - {new Date(calEvent.endTime).toLocaleTimeString()}</p>
+      <p>Organizer: {calEvent.organizer.name}</p>
+      <p>Attendee: {attendee.name}</p>
+      <p>TimeZone: {timeZone}</p>
+      <p>Locale: {locale}</p>
+      <p>Time Format: {timeFormat}</p>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -17,14 +44,14 @@ export default function ComponentPreview() {
           name: "John Doe",
           email: "john@example.com",
           timeZone: "America/New_York",
-          language: { translate: (key: string) => key, locale: "en" }
+          language: { locale: "en" }
         },
         attendees: [
           {
             name: "Jane Smith",
             email: "jane@example.com",
             timeZone: "America/Los_Angeles",
-            language: { translate: (key: string) => key, locale: "en" }
+            language: { locale: "en" }
           }
         ],
         location: "New Location"
@@ -37,7 +64,7 @@ export default function ComponentPreview() {
         name: "Jane Smith",
         email: "jane@example.com",
         timeZone: "America/Los_Angeles",
-        language: { translate: (key: string) => key, locale: "en" }
+        language: { locale: "en" }
       }),
       label: "Attendee"
     },

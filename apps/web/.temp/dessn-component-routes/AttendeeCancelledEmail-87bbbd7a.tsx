@@ -2,8 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { AttendeeCancelledEmail } from '../../../../packages/emails/src/templates/AttendeeCancelledEmail';
 
-import { TimeFormat } from '../../../../packages/emails/src/templates/AttendeeCancelledEmail';
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     calEvent: {
@@ -57,8 +55,8 @@ export default function ComponentPreview() {
     },
     timeFormat: {
       type: 'dropdown',
-      value: TimeFormat.TWELVE_HOUR,
-      options: [TimeFormat.TWELVE_HOUR, TimeFormat.TWENTY_FOUR_HOUR],
+      value: '12h',
+      options: ['12h', '24h'],
       label: 'Time Format',
     },
     isOrganizer: {
@@ -79,7 +77,7 @@ export default function ComponentPreview() {
       includeAppsStatus={state.includeAppsStatus.value}
       t={(key: string) => key}
       locale={state.locale.value}
-      timeFormat={state.timeFormat.value as TimeFormat}
+      timeFormat={state.timeFormat.value}
       isOrganizer={state.isOrganizer.value}
     />
   );

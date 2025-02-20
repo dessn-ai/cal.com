@@ -1,8 +1,13 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../components/booking/BookingListItem';
-
+import { BookingListItem } from '../../components/booking/BookingListItem';
 import { BookingStatus } from '@calcom/prisma/enums';
+
+// Mock InsightsProvider context
+const InsightsContext = React.createContext({});
+const MockInsightsProvider = ({ children }) => {
+  return <InsightsContext.Provider value={{}}>{children}</InsightsContext.Provider>;
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -72,6 +77,13 @@ export default function ComponentPreview() {
       slug: 'sample-event',
       team: null,
       recurringEvent: null,
+      price: 100,
+      currency: 'USD',
+      metadata: null,
+      seatsPerTimeSlot: null,
+      users: [],
+      hosts: [],
+      owner: { id: 1, name: 'Host User', email: 'host@example.com' },
     },
     location: 'Zoom',
     isRecurring: state.isRecurring.value,
@@ -83,11 +95,48 @@ export default function ComponentPreview() {
         [BookingStatus.PENDING]: [],
       },
     } : undefined,
-    payment: state.paid.value ? [{ success: true, amount: 100, currency: 'USD' }] : [],
+    payment: state.paid.value ? [{
+      id: 1,
+      success: true,
+      amount: 100,
+      currency: 'USD',
+      data: {
+        id: 'mock_payment_id',
+        object: 'payment_intent',
+        status: 'succeeded'
+      },
+      externalId: 'mock_external_id',
+      paymentOption: 'ON_BOOKING',
+      fee: 0,
+      refunded: false,
+      paymentFee: 0
+    }] : [],
     seatsReferences: [],
     rescheduled: false,
     isToday: false,
     metadata: null,
+    responses: {},
+    references: [],
+    cancellation: null,
+    isCancelled: false,
+    rejectionReason: null,
+    seatsShowAttendees: true,
+    seatsShowAvailabilityCount: true,
+    attendeeSeatId: null,
+    bookingSeat: null,
+    dynamicEventSlugRef: '',
+    dynamicGroupSlugRef: '',
+    destinationCalendar: null,
+    hasHashedBookingLink: false,
+    smsReminderNumber: null,
+    customInputs: {},
+    requiresConfirmation: false,
+    location_type: 'integrations:zoom',
+    videoCallData: null,
+    appsStatus: [],
+    workflows: [],
+    userPrimaryEmail: 'host@example.com',
+    assignmentReason: [], // Add this to prevent the length error
   };
 
   const mockLoggedInUser = {
@@ -97,10 +146,17 @@ export default function ComponentPreview() {
     userEmail: 'host@example.com',
   };
 
-  return (
-    <ImportedComponent
-      {...mockBooking}
-      loggedInUser={mockLoggedInUser}
-    />
-  );
+  try {
+    return (
+      <MockInsightsProvider>
+        <BookingListItem
+          {...mockBooking}
+          loggedInUser={mockLoggedInUser}
+        />
+      </MockInsightsProvider>
+    );
+  } catch (error) {
+    console.error('Error rendering BookingListItem:', error);
+    return <div>Error rendering booking item</div>;
+  }
 }

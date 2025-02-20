@@ -2,8 +2,39 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { LowestRatedMembersTable } from '../../../../packages/features/insights/components/LowestRatedMembersTable';
 
-import { TRPCProvider } from '@calcom/trpc/react';
-import { I18nLanguageHandler } from '@calcom/features/i18n';
+// Mock context for InsightsOrgTeams
+const MockInsightsOrgTeamsContext = React.createContext(null);
+
+// Create a custom hook that will override the original useInsightsOrgTeams
+export const useInsightsOrgTeams = () => {
+  return {
+    teams: [
+      {
+        id: 1,
+        name: "Default Team",
+        slug: "default-team",
+      }
+    ],
+    loading: false,
+    error: null,
+    selectedTeam: {
+      id: 1,
+      name: "Default Team",
+      slug: "default-team",
+    },
+    setSelectedTeam: () => {},
+  };
+};
+
+const MockInsightsOrgTeamsProvider = ({ children }) => {
+  const mockValue = useInsightsOrgTeams();
+
+  return (
+    <MockInsightsOrgTeamsContext.Provider value={mockValue}>
+      {children}
+    </MockInsightsOrgTeamsContext.Provider>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -35,10 +66,14 @@ export default function ComponentPreview() {
   });
 
   return (
-    <TRPCProvider>
-      <I18nLanguageHandler>
-        <LowestRatedMembersTable />
-      </I18nLanguageHandler>
-    </TRPCProvider>
+    <MockInsightsOrgTeamsProvider>
+      <LowestRatedMembersTable 
+        teamId={state.teamId.value}
+        startDate={state.startDate.value}
+        endDate={state.endDate.value}
+        eventTypeId={state.eventTypeId.value}
+        isAll={state.isAll.value}
+      />
+    </MockInsightsOrgTeamsProvider>
   );
 }

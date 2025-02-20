@@ -2,28 +2,35 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/ee/organizations/pages/members';
 
-
-// Mock the necessary dependencies
-jest.mock('@calcom/features/ee/common/components/LicenseRequired', () => ({ children }) => <>{children}</>);
-jest.mock('@calcom/features/users/components/UserTable/UserListTable', () => () => <div>UserListTable</div>);
-jest.mock('@calcom/lib/hooks/useLocale', () => ({
-  useLocale: () => ({ t: (key: string) => key }),
-}));
-jest.mock('@calcom/prisma/enums', () => ({
-  MembershipRole: {
-    OWNER: 'OWNER',
-    ADMIN: 'ADMIN',
+// Mock modules using vi.mock or direct module replacement
+const mockModules = {
+  '@calcom/features/ee/common/components/LicenseRequired': {
+    default: ({ children }) => <>{children}</>,
   },
-}));
-jest.mock('@calcom/trpc/react', () => ({
+  '@calcom/features/users/components/UserTable/UserListTable': {
+    default: () => <div>UserListTable</div>,
+  },
+  '@calcom/lib/hooks/useLocale': {
+    useLocale: () => ({ t: (key: string) => key }),
+  },
+  '@calcom/prisma/enums': {
+    MembershipRole: {
+      OWNER: 'OWNER',
+      ADMIN: 'ADMIN',
+    },
+  },
+};
+
+// Create a mock for trpc
+const createTrpcMock = (isPrivate: boolean, userRole: string) => ({
   trpc: {
     viewer: {
       organizations: {
         listCurrent: {
           useQuery: () => ({
             data: {
-              isPrivate: false,
-              user: { role: 'OWNER' },
+              isPrivate,
+              user: { role: userRole },
             },
             isPending: false,
           }),
@@ -31,7 +38,19 @@ jest.mock('@calcom/trpc/react', () => ({
       },
     },
   },
-}));
+});
+
+// Override imports
+const originalRequire = window.require;
+window.require = (modulePath: string) => {
+  if (mockModules[modulePath]) {
+    return mockModules[modulePath];
+  }
+  if (modulePath === '@calcom/trpc/react') {
+    return createTrpcMock(false, 'OWNER'); // Default values
+  }
+  return originalRequire?.(modulePath);
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -48,24 +67,18 @@ export default function ComponentPreview() {
     },
   });
 
-  // Update the mock based on the state
-  jest.mock('@calcom/trpc/react', () => ({
-    trpc: {
-      viewer: {
-        organizations: {
-          listCurrent: {
-            useQuery: () => ({
-              data: {
-                isPrivate: state.isPrivate.value,
-                user: { role: state.userRole.value },
-              },
-              isPending: false,
-            }),
-          },
-        },
-      },
-    },
-  }));
+  // Update the mock values based on state
+  if (window.require) {
+    window.require = (modulePath: string) => {
+      if (mockModules[modulePath]) {
+        return mockModules[modulePath];
+      }
+      if (modulePath === '@calcom/trpc/react') {
+        return createTrpcMock(state.isPrivate.value, state.userRole.value);
+      }
+      return originalRequire?.(modulePath);
+    };
+  }
 
   return <ImportedComponent />;
 }

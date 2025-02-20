@@ -1,29 +1,52 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/security/sso/page';
 
+// Mock components and utilities
+const MockSAMLSSO = () => <div>SAMLSSO Component</div>;
+const MockSettingsHeader = ({ children, title, description }) => (
+  <div>
+    <h1>{title}</h1>
+    <p>{description}</p>
+    {children}
+  </div>
+);
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  getTranslate: jest.fn(() => ({
-    sso_configuration: 'SSO Configuration',
-    sso_configuration_description: 'SSO Configuration Description'
-  }))
-}));
+// Create a mock module object
+const mockModules = {
+  '@calcom/features/ee/sso/page/user-sso-view': MockSAMLSSO,
+  '@calcom/features/settings/appDir/SettingsHeader': MockSettingsHeader,
+  'app/_utils': {
+    getTranslate: () => ({
+      sso_configuration: 'SSO Configuration',
+      sso_configuration_description: 'SSO Configuration Description'
+    })
+  }
+};
 
-jest.mock('@calcom/features/ee/sso/page/user-sso-view', () => () => <div>SAMLSSO Component</div>);
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => 
-  ({ children, title, description }) => (
-    <div>
-      <h1>{title}</h1>
-      <p>{description}</p>
-      {children}
-    </div>
-  )
+// Override imports with mock components
+const ImportedComponent = React.lazy(() => 
+  Promise.resolve({
+    default: () => {
+      return (
+        <MockSettingsHeader 
+          title="SSO Configuration"
+          description="SSO Configuration Description"
+        >
+          <MockSAMLSSO />
+        </MockSettingsHeader>
+      );
+    }
+  })
 );
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({});
 
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="preview-container">
+        <ImportedComponent />
+      </div>
+    </Suspense>
+  );
 }

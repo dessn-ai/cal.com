@@ -1,22 +1,46 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { EventTeamAssignmentTab } from '../../../../packages/features/eventtypes/components/tabs/assignment/EventTeamAssignmentTab';
-
 import { FormProvider, useForm } from 'react-hook-form';
+import { SchedulingType } from '@calcom/prisma/enums';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     teamMembers: {
       type: "string",
       value: JSON.stringify([
-        { id: 1, name: "John Doe", email: "john@example.com", username: "johndoe" },
-        { id: 2, name: "Jane Smith", email: "jane@example.com", username: "janesmith" }
+        { 
+          id: 1, 
+          name: "John Doe", 
+          email: "john@example.com", 
+          username: "johndoe",
+          membership: {},
+          eventTypes: [],
+          avatar: "",
+          profile: {},
+          defaultScheduleId: null
+        },
+        { 
+          id: 2, 
+          name: "Jane Smith", 
+          email: "jane@example.com", 
+          username: "janesmith",
+          membership: {},
+          eventTypes: [],
+          avatar: "",
+          profile: {},
+          defaultScheduleId: null
+        }
       ]),
       label: "Team Members"
     },
     team: {
       type: "string",
-      value: JSON.stringify({ id: 1, name: "Sample Team" }),
+      value: JSON.stringify({ 
+        id: 1, 
+        name: "Sample Team",
+        parentId: null
+      }),
       label: "Team"
     },
     eventType: {
@@ -25,7 +49,7 @@ export default function ComponentPreview() {
         slug: "sample-event",
         team: { parentId: null },
         children: [],
-        schedulingType: "COLLECTIVE"
+        schedulingType: SchedulingType.COLLECTIVE
       }),
       label: "Event Type"
     },
@@ -43,10 +67,14 @@ export default function ComponentPreview() {
 
   const methods = useForm({
     defaultValues: {
-      schedulingType: "COLLECTIVE",
+      schedulingType: SchedulingType.COLLECTIVE,
       hosts: [],
       assignAllTeamMembers: false,
-      children: []
+      children: [],
+      maxLeadThreshold: null,
+      isRRWeightsEnabled: false,
+      assignRRMembersUsingSegment: false,
+      rrSegmentQueryValue: "",
     }
   });
 

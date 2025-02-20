@@ -2,9 +2,19 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { AttendeeUpdatedEmail } from '../../../../packages/emails/src/templates/AttendeeUpdatedEmail';
 
-import { TimeFormat } from '../../../../packages/emails/src/templates/AttendeeScheduledEmail';
+// Define TimeFormat enum locally since we can't locate the original import
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
 
 export default function ComponentPreview() {
+  const translate = (key: string) => {
+    // Simple translation function that returns the key
+    // In a real app, this would look up translations
+    return key;
+  };
+
   const [state, setState] = useParentState({
     calEvent: {
       type: 'string',
@@ -17,16 +27,20 @@ export default function ComponentPreview() {
           name: 'John Doe',
           email: 'john@example.com',
           timeZone: 'America/New_York',
-          language: { translate: (key: string) => key, locale: 'en' },
+          language: { translate, locale: 'en' },
         },
         attendees: [
           {
             name: 'Jane Smith',
             email: 'jane@example.com',
             timeZone: 'America/Los_Angeles',
-            language: { translate: (key: string) => key, locale: 'en' },
+            language: { translate, locale: 'en' },
           },
         ],
+        team: {
+          name: 'Team',
+          members: []
+        },
       }),
       label: 'Calendar Event',
     },
@@ -36,7 +50,7 @@ export default function ComponentPreview() {
         name: 'Jane Smith',
         email: 'jane@example.com',
         timeZone: 'America/Los_Angeles',
-        language: { translate: (key: string) => key, locale: 'en' },
+        language: { translate, locale: 'en' },
       }),
       label: 'Attendee',
     },
@@ -68,15 +82,13 @@ export default function ComponentPreview() {
     },
   });
 
-  const t = (key: string) => key;
-
   return (
     <AttendeeUpdatedEmail
       calEvent={JSON.parse(state.calEvent.value)}
       attendee={JSON.parse(state.attendee.value)}
       timeZone={state.timeZone.value}
       includeAppsStatus={state.includeAppsStatus.value}
-      t={t}
+      t={translate}
       locale={state.locale.value}
       timeFormat={state.timeFormat.value as TimeFormat}
       isOrganizer={state.isOrganizer.value}

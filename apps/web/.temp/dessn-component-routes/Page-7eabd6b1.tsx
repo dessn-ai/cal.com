@@ -1,14 +1,63 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/(main-nav)/event-types/page';
 
-import { ShellMainAppDir } from '../../app/(use-page-wrapper)/(main-nav)/ShellMainAppDir';
-
-// Mock components and functions
+// Create mock components
 const EventTypes = () => <div>Event Types Component</div>;
 const EventTypesCTA = () => <div>Event Types CTA</div>;
+const ShellMain = ({ children, heading, subtitle, CTA }) => (
+  <div>
+    <h1>{heading}</h1>
+    <p>{subtitle}</p>
+    {CTA}
+    {children}
+  </div>
+);
 
+// Mock implementations
 const mockGetTranslate = () => (key: string) => key;
+const mockHeaders = { get: () => null, set: () => null };
+const mockCookies = { get: () => null, set: () => null };
+const mockRedirect = () => {};
+const mockGetServerSession = () => Promise.resolve({ user: { id: '1' } });
+const mockBuildLegacyCtx = () => ({});
+const mockSsrInit = () => Promise.resolve({});
+const mockGenerateMetadata = () => ({});
+
+// Create a mock ImportedComponent that represents the actual page component
+const ImportedComponent = ({ params, searchParams }) => {
+  return (
+    <ShellMain heading="Event Types" subtitle="Manage your event types">
+      <EventTypes />
+    </ShellMain>
+  );
+};
+
+// Mock modules directly
+const nextHeaders = {
+  headers: () => mockHeaders,
+  cookies: () => mockCookies,
+};
+
+const nextNavigation = {
+  redirect: mockRedirect,
+};
+
+const authLib = {
+  getServerSession: mockGetServerSession,
+};
+
+const buildLegacyCtx = {
+  buildLegacyCtx: mockBuildLegacyCtx,
+};
+
+const ssr = {
+  ssrInit: mockSsrInit,
+};
+
+const appUtils = {
+  _generateMetadata: mockGenerateMetadata,
+  getTranslate: () => mockGetTranslate,
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -24,58 +73,23 @@ export default function ComponentPreview() {
     },
   });
 
-  const mockProps = {
-    params: JSON.parse(state.params.value),
-    searchParams: JSON.parse(state.searchParams.value),
-  };
+  try {
+    const mockProps = {
+      params: JSON.parse(state.params.value),
+      searchParams: JSON.parse(state.searchParams.value),
+    };
 
-  return (
-    <React.Suspense fallback={<div>Loading...</div>}>
-      <ImportedComponent {...mockProps} />
-    </React.Suspense>
-  );
+    return (
+      <Suspense fallback={<div>Loading...</div>}>
+        <ImportedComponent {...mockProps} />
+      </Suspense>
+    );
+  } catch (error) {
+    return <div>Error rendering component: {error.message}</div>;
+  }
 }
 
-// Mock the necessary modules
-jest.mock('next/headers', () => ({
-  headers: () => ({}),
-  cookies: () => ({}),
-}));
-
-jest.mock('next/navigation', () => ({
-  redirect: jest.fn(),
-}));
-
-jest.mock('@calcom/features/auth/lib/getServerSession', () => ({
-  getServerSession: jest.fn(() => Promise.resolve({ user: { id: '1' } })),
-}));
-
-jest.mock('@lib/buildLegacyCtx', () => ({
-  buildLegacyCtx: jest.fn(),
-}));
-
-jest.mock('@server/lib/ssr', () => ({
-  ssrInit: jest.fn(),
-}));
-
-jest.mock('app/_utils', () => ({
-  _generateMetadata: jest.fn(),
-  getTranslate: () => mockGetTranslate,
-}));
-
-jest.mock('app/(use-page-wrapper)/(main-nav)/ShellMainAppDir', () => ({
-  ShellMainAppDir: ({ children, heading, subtitle, CTA }) => (
-    <div>
-      <h1>{heading}</h1>
-      <p>{subtitle}</p>
-      {CTA}
-      {children}
-    </div>
-  ),
-}));
-
-jest.mock('~/event-types/views/event-types-listing-view', () => ({
-  __esModule: true,
-  default: EventTypes,
-  EventTypesCTA: EventTypesCTA,
-}));
+// Global mocks
+if (typeof window !== 'undefined') {
+  window.fetch = () => Promise.resolve(new Response());
+}

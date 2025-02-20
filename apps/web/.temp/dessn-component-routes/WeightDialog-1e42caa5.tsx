@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { WeightDialog } from '../../../../packages/features/eventtypes/components/HostEditDialogs';
-
+import { useForm, FormProvider } from 'react-hook-form';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -45,12 +45,26 @@ export default function ComponentPreview() {
     weight: state.optionWeight.value,
   };
 
+  const methods = useForm({
+    defaultValues: {
+      hosts: [{
+        userId: parseInt(option.value),
+        priority: option.priority,
+        weight: option.weight,
+        isFixed: false
+      }],
+      isRRWeightsEnabled: true
+    }
+  });
+
   return (
-    <WeightDialog
-      isOpenDialog={state.isOpenDialog.value}
-      setIsOpenDialog={(value) => setState('isOpenDialog', value)}
-      option={option}
-      onChange={(value) => console.log('onChange', value)}
-    />
+    <FormProvider {...methods}>
+      <WeightDialog
+        isOpenDialog={state.isOpenDialog.value}
+        setIsOpenDialog={(value) => setState('isOpenDialog', value)}
+        option={option}
+        onChange={(value) => console.log('onChange', value)}
+      />
+    </FormProvider>
   );
 }

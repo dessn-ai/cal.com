@@ -1,7 +1,36 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../pages/team/[slug]/embed';
+import dynamic from 'next/dynamic';
 
+// Error Boundary Component
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Error loading component. Please try again.</div>;
+    }
+    return this.props.children;
+  }
+}
+
+// Dynamically import the component with no SSR
+const DynamicComponent = dynamic(
+  () => import('../../pages/team/[slug]/embed').catch(() => {
+    return () => <div>Failed to load component</div>;
+  }),
+  {
+    ssr: false,
+    loading: () => <div>Loading...</div>
+  }
+);
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -64,14 +93,18 @@ export default function ComponentPreview() {
   });
 
   return (
-    <ImportedComponent
-      team={state.team.value}
-      trpcState={state.trpcState.value}
-      themeBasis={state.themeBasis.value}
-      markdownStrippedBio={state.markdownStrippedBio.value}
-      isValidOrgDomain={state.isValidOrgDomain.value}
-      currentOrgDomain={state.currentOrgDomain.value}
-      isSEOIndexable={state.isSEOIndexable.value}
-    />
+    <ErrorBoundary>
+      <Suspense fallback={<div>Loading...</div>}>
+        <DynamicComponent
+          team={state.team.value}
+          trpcState={state.trpcState.value}
+          themeBasis={state.themeBasis.value}
+          markdownStrippedBio={state.markdownStrippedBio.value}
+          isValidOrgDomain={state.isValidOrgDomain.value}
+          currentOrgDomain={state.currentOrgDomain.value}
+          isSEOIndexable={state.isSEOIndexable.value}
+        />
+      </Suspense>
+    </ErrorBoundary>
   );
 }

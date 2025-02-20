@@ -1,9 +1,15 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/platform/atoms/event-types/wrappers/EventRecurringWebWrapper';
-
+import { FormProvider, useForm } from 'react-hook-form';
 
 export default function ComponentPreview() {
+  const methods = useForm({
+    defaultValues: {
+      recurringEvent: null,
+    },
+  });
+
   const [state, setState] = useParentState({
     eventType: {
       type: 'dropdown',
@@ -62,9 +68,11 @@ export default function ComponentPreview() {
   };
 
   return (
-    <ImportedComponent
-      eventType={eventType}
-      customClassNames={JSON.parse(state.customClassNames.value)}
-    />
+    <FormProvider {...methods}>
+      <ImportedComponent
+        eventType={eventType}
+        customClassNames={JSON.parse(state.customClassNames.value)}
+      />
+    </FormProvider>
   );
 }

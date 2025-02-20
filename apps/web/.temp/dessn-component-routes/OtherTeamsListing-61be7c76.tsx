@@ -1,8 +1,22 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { OtherTeamsListing } from '../../../../packages/features/ee/organizations/pages/components/OtherTeamsListing';
-
 import { trpc } from '@calcom/trpc/react';
+
+// Create a simple mock for i18n
+const mockI18n = {
+  defaultLocale: 'en',
+  locale: 'en',
+  i18n: {
+    defaultLocale: 'en',
+    locale: 'en',
+  },
+};
+
+// Mock I18nProvider component
+const I18nProvider = ({ children }: { children: React.ReactNode }) => {
+  return <>{children}</>;
+};
 
 // Mock the trpc hook
 const mockUseQuery = () => ({
@@ -25,6 +39,7 @@ const mockTrpc = {
 // Mock the useLocale hook
 const mockUseLocale = () => ({
   t: (key: string) => key,
+  i18n: mockI18n,
 });
 
 export default function ComponentPreview() {
@@ -46,18 +61,12 @@ export default function ComponentPreview() {
     },
   });
 
-  // Override the trpc hook with our mock data
-  (trpc as any) = mockTrpc;
+  // Create mock data based on state
+  const mockData = Array(state.teamsCount.value).fill({ id: 1, name: 'Team' });
 
-  // Override the useLocale hook
-  (useLocale as any) = mockUseLocale;
-
-  // Modify the mock data based on the state
-  mockUseQuery.mockImplementation(() => ({
-    data: Array(state.teamsCount.value).fill({ id: 1, name: 'Team' }),
-    isPending: state.isPending.value,
-    error: state.hasError.value ? new Error("Mock error") : null,
-  }));
-
-  return <OtherTeamsListing />;
+  return (
+    <I18nProvider>
+      <OtherTeamsListing />
+    </I18nProvider>
+  );
 }

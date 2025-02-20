@@ -1,9 +1,42 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { FormAction } from '../../../../packages/app-store/routing-forms/components/FormActions';
-
-import { EmbedDialogProvider } from '@calcom/features/embed/lib/hooks/useEmbedDialogCtx';
 import { FormActionsProvider } from '../../../../packages/app-store/routing-forms/components/FormActions';
+import { OrgBrandingProvider } from '@calcom/features/ee/organizations/context/provider';
+
+// Create mock EmbedDialogProvider
+const EmbedDialogContext = React.createContext({
+  isEmbedDialogOpen: false,
+  setIsEmbedDialogOpen: () => {},
+  embedType: null,
+  setEmbedType: () => {},
+});
+
+const EmbedDialogProvider = ({ children }) => {
+  return (
+    <EmbedDialogContext.Provider 
+      value={{
+        isEmbedDialogOpen: false,
+        setIsEmbedDialogOpen: () => {},
+        embedType: null,
+        setEmbedType: () => {},
+      }}
+    >
+      {children}
+    </EmbedDialogContext.Provider>
+  );
+};
+
+// Mock organization branding context
+const mockOrgBranding = {
+  orgBranding: {
+    theme: null,
+    logo: null,
+    brandColor: null,
+    darkBrandColor: null,
+  },
+  isLoading: false,
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -31,18 +64,20 @@ export default function ComponentPreview() {
     : null;
 
   return (
-    <EmbedDialogProvider>
-      <FormActionsProvider
-        appUrl={state.appUrl.value}
-        newFormDialogState={null}
-        setNewFormDialogState={() => {}}>
-        <FormAction
-          routingForm={routingForm}
-          action={state.action.value as any}
-        >
-          {state.action.value}
-        </FormAction>
-      </FormActionsProvider>
-    </EmbedDialogProvider>
+    <OrgBrandingProvider value={mockOrgBranding}>
+      <EmbedDialogProvider>
+        <FormActionsProvider
+          appUrl={state.appUrl.value}
+          newFormDialogState={null}
+          setNewFormDialogState={() => {}}>
+          <FormAction
+            routingForm={routingForm}
+            action={state.action.value as any}
+          >
+            {state.action.value}
+          </FormAction>
+        </FormActionsProvider>
+      </EmbedDialogProvider>
+    </OrgBrandingProvider>
   );
 }

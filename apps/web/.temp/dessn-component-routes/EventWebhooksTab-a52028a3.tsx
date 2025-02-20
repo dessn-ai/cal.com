@@ -1,7 +1,31 @@
-import React from 'react';
+import React, { createContext, useContext } from 'react';
 import { useParentState } from '../useIframeState';
 import { EventWebhooksTab } from '../../../../packages/features/eventtypes/components/tabs/webhooks/EventWebhooksTab';
+import { FormProvider, useForm } from 'react-hook-form';
 
+// Create a mock context
+const ManagedEventTypeContext = createContext({
+  isManagedEventType: false,
+  managedEventType: null,
+  getManagedParentOption: () => null,
+  isChildrenManagedEventType: false,
+});
+
+// Mock provider component
+const MockManagedEventTypeProvider = ({ children }) => {
+  const value = {
+    isManagedEventType: false,
+    managedEventType: null,
+    getManagedParentOption: () => null,
+    isChildrenManagedEventType: false,
+  };
+  
+  return (
+    <ManagedEventTypeContext.Provider value={value}>
+      {children}
+    </ManagedEventTypeContext.Provider>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -17,10 +41,24 @@ export default function ComponentPreview() {
         teamId: null,
         userId: 1,
         webhooks: [],
+        metadata: {},
+        isParentEventType: false,
       },
       label: "Event Type",
     },
   });
 
-  return <EventWebhooksTab eventType={state.eventType.value} />;
+  const formMethods = useForm({
+    defaultValues: {
+      webhooks: state.eventType.value.webhooks || [],
+    },
+  });
+
+  return (
+    <MockManagedEventTypeProvider>
+      <FormProvider {...formMethods}>
+        <EventWebhooksTab eventType={state.eventType.value} />
+      </FormProvider>
+    </MockManagedEventTypeProvider>
+  );
 }

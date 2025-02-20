@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { PriorityDialog } from '../../../../packages/features/eventtypes/components/HostEditDialogs';
-
+import { FormProvider, useForm } from 'react-hook-form';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -60,13 +60,30 @@ export default function ComponentPreview() {
     confirmButton: state.customClassNamesConfirmButton.value,
   };
 
+  // Add form context
+  const methods = useForm({
+    defaultValues: {
+      hosts: [
+        {
+          userId: parseInt(option.value),
+          priority: option.priority,
+          isFixed: false,
+          weight: 100,
+        },
+      ],
+      isRRWeightsEnabled: false,
+    },
+  });
+
   return (
-    <PriorityDialog
-      isOpenDialog={state.isOpenDialog.value}
-      setIsOpenDialog={(value) => setState('isOpenDialog', value)}
-      option={option}
-      onChange={(value) => console.log('onChange', value)}
-      customClassNames={customClassNames}
-    />
+    <FormProvider {...methods}>
+      <PriorityDialog
+        isOpenDialog={state.isOpenDialog.value}
+        setIsOpenDialog={(value) => setState('isOpenDialog', value)}
+        option={option}
+        onChange={(value) => console.log('onChange', value)}
+        customClassNames={customClassNames}
+      />
+    </FormProvider>
   );
 }

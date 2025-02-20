@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/ee/workflows/components/WorkflowStepContainer';
-
+import { FormProvider, useForm } from 'react-hook-form';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -21,13 +21,51 @@ export default function ComponentPreview() {
     form: {
       type: "object",
       value: {
-        getValues: () => ({}),
-        setValue: () => {},
-        register: () => ({}),
-        control: {},
+        getValues: "function",
+        setValue: "function",
+        control: {
+          _removeUnmounted: "function",
+          _updateValid: "function",
+          register: "function",
+          unregister: "function",
+          _getWatch: "function",
+          _getDirty: "function",
+          _updateFieldArray: "function",
+          _getFieldArray: "function",
+          _reset: "function",
+          defaultValuesRef: { current: {} },
+          _fields: {},
+          _formValues: {},
+          _formState: {
+            isDirty: false,
+            isSubmitted: false,
+            submitCount: 0,
+            touched: {},
+            isSubmitting: false,
+            isSubmitSuccessful: false,
+            isValid: true,
+            errors: {}
+          },
+          _names: {
+            array: [],
+            mount: [],
+            unMount: [],
+            watch: [],
+            focus: "",
+            watchAll: false
+          },
+          _subjects: {
+            watch: { next: "function" },
+            array: { next: "function" },
+            state: { next: "function" }
+          }
+        },
+        register: "function",
         formState: { errors: {} },
-        clearErrors: () => {},
-        unregister: () => {},
+        clearErrors: "function",
+        unregister: "function",
+        watch: "function",
+        handleSubmit: "function"
       },
       label: "Form",
     },
@@ -47,8 +85,8 @@ export default function ComponentPreview() {
       label: "Reload",
     },
     setReload: {
-      type: "function",
-      value: () => {},
+      type: "string",
+      value: "function",
       label: "Set Reload",
     },
     teamId: {
@@ -63,15 +101,25 @@ export default function ComponentPreview() {
     },
   });
 
+  // Use real react-hook-form instead of mocking
+  const methods = useForm({
+    defaultValues: {
+      reminderBody: state.step.value.reminderBody,
+      emailSubject: state.step.value.emailSubject,
+    }
+  });
+
   return (
-    <ImportedComponent
-      step={state.step.value}
-      form={state.form.value}
-      user={state.user.value}
-      reload={state.reload.value}
-      setReload={state.setReload.value}
-      teamId={state.teamId.value}
-      readOnly={state.readOnly.value}
-    />
+    <FormProvider {...methods}>
+      <ImportedComponent
+        step={state.step.value}
+        form={methods}
+        user={state.user.value}
+        reload={state.reload.value}
+        setReload={() => {}}
+        teamId={state.teamId.value}
+        readOnly={state.readOnly.value}
+      />
+    </FormProvider>
   );
 }

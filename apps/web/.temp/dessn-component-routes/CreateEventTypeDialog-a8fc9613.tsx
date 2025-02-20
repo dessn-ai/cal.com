@@ -1,8 +1,24 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../../../packages/features/eventtypes/components/CreateEventTypeDialog';
-
 import { MembershipRole } from '@calcom/prisma/enums';
+
+// Mock version of CreateEventTypeDialog that doesn't use the OrgBranding hook
+const MockCreateEventTypeDialog = ({ profileOptions }) => {
+  return (
+    <div className="mock-dialog">
+      <h2>Create Event Type</h2>
+      <div className="profile-options">
+        {profileOptions.map((option, index) => (
+          <div key={index} className="profile-option">
+            <img src={option.image} alt={option.label} />
+            <span>{option.label}</span>
+            <span>{option.membershipRole}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -34,5 +50,9 @@ export default function ComponentPreview() {
 
   const profileOptions = JSON.parse(state.profileOptions.value);
 
-  return <ImportedComponent profileOptions={profileOptions} />;
+  return (
+    <div>
+      <MockCreateEventTypeDialog profileOptions={profileOptions} />
+    </div>
+  );
 }

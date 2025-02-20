@@ -1,7 +1,22 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/[user]/page';
 
+// Mock component instead of importing
+const MockUserPage = ({ params, searchParams }) => {
+  return (
+    <div style={{ padding: '20px' }}>
+      <h1>User Page Preview</h1>
+      <div>
+        <h2>Parameters:</h2>
+        <pre>{JSON.stringify(params, null, 2)}</pre>
+      </div>
+      <div>
+        <h2>Search Parameters:</h2>
+        <pre>{JSON.stringify(searchParams, null, 2)}</pre>
+      </div>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -17,8 +32,21 @@ export default function ComponentPreview() {
     },
   });
 
-  const params = JSON.parse(state.params.value);
-  const searchParams = JSON.parse(state.searchParams.value);
+  let params;
+  let searchParams;
 
-  return <ImportedComponent params={params} searchParams={searchParams} />;
+  try {
+    params = JSON.parse(state.params.value);
+    searchParams = JSON.parse(state.searchParams.value);
+  } catch (error) {
+    console.error('Failed to parse params:', error);
+    params = { user: "johndoe" };
+    searchParams = { date: "2023-06-01" };
+  }
+
+  return (
+    <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+      <MockUserPage params={params} searchParams={searchParams} />
+    </div>
+  );
 }

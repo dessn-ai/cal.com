@@ -1,8 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/twipla/components/EventTypeAppCardInterface';
-
-import { AppContextProvider } from '@calcom/app-store/EventTypeAppContext';
+import EventTypeAppContext from '@calcom/app-store/EventTypeAppContext';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -51,13 +50,21 @@ export default function ComponentPreview() {
     }
   });
 
+  // Create simple mock functions for the context
+  const contextValue = {
+    getAppData: (key: string) => ({}),
+    setAppData: (key: string, value: unknown) => {},
+    LockedIcon: undefined,
+    disabled: false
+  };
+
   return (
-    <AppContextProvider>
+    <EventTypeAppContext.Provider value={contextValue}>
       <ImportedComponent 
         eventType={state.eventType.value}
         app={state.app.value}
         disabled={state.disabled.value}
       />
-    </AppContextProvider>
+    </EventTypeAppContext.Provider>
   );
 }

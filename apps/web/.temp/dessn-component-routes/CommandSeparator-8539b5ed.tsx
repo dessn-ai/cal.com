@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { CommandSeparator } from '../../../../packages/ui/components/command/index';
-
+import { Command, CommandInput, CommandList, CommandItem, CommandSeparator } from '../../../../packages/ui/components/command/index';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -14,7 +13,14 @@ export default function ComponentPreview() {
 
   return (
     <div style={{ padding: '20px', background: '#f0f0f0' }}>
-      <CommandSeparator className={state.className.value} />
+      <Command>
+        <CommandInput placeholder="Type a command or search..." />
+        <CommandList>
+          <CommandItem>Item 1</CommandItem>
+          <CommandSeparator className={state.className.value} />
+          <CommandItem>Item 2</CommandItem>
+        </CommandList>
+      </Command>
     </div>
   );
 }

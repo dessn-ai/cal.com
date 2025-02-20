@@ -1,25 +1,35 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { TimeFormatToggle } from '../../../../packages/features/bookings/components/TimeFormatToggle';
-
 import { TimeFormat } from '@calcom/lib/timeFormat';
 import { useTimePreferences } from '../../../../packages/features/bookings/lib';
 import { useLocale } from '@calcom/lib/hooks/useLocale';
 
-// Mock the hooks
-const mockUseTimePreferences = () => ({
+// Create mock contexts
+const TimePreferencesContext = React.createContext({
   timeFormat: TimeFormat.TWELVE_HOUR,
   setTimeFormat: () => {},
 });
 
-const mockUseLocale = () => ({
+const LocaleContext = React.createContext({
   t: (key: string) => key,
 });
 
-// Override the hooks
-React.useState = () => [TimeFormat.TWELVE_HOUR, () => {}] as const;
-(useTimePreferences as jest.Mock) = mockUseTimePreferences;
-(useLocale as jest.Mock) = mockUseLocale;
+// Create provider wrapper
+const MockProviders = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <LocaleContext.Provider value={{ t: (key: string) => key }}>
+      <TimePreferencesContext.Provider 
+        value={{
+          timeFormat: TimeFormat.TWELVE_HOUR,
+          setTimeFormat: () => {},
+        }}
+      >
+        {children}
+      </TimePreferencesContext.Provider>
+    </LocaleContext.Provider>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -30,5 +40,9 @@ export default function ComponentPreview() {
     },
   });
 
-  return <TimeFormatToggle customClassName={state.customClassName.value} />;
+  return (
+    <MockProviders>
+      <TimeFormatToggle customClassName={state.customClassName.value} />
+    </MockProviders>
+  );
 }

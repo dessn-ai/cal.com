@@ -2,36 +2,31 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/ee/dsync/page/team-dsync-view';
 
-import { trpc } from '@calcom/trpc/react';
-
-// Mock trpc.viewer.organizations.listCurrent.useQuery
-jest.mock('@calcom/trpc/react', () => ({
-  trpc: {
-    viewer: {
-      organizations: {
-        listCurrent: {
-          useQuery: jest.fn(() => ({
-            data: { id: '123' },
-            isLoading: false,
-            error: null,
-          })),
-        },
+// Mock the trpc module
+const mockTrpc = {
+  viewer: {
+    organizations: {
+      listCurrent: {
+        useQuery: () => ({
+          data: { id: '123' },
+          isLoading: false,
+          error: null,
+        }),
       },
     },
   },
-}));
+};
 
-// Mock next/navigation
-jest.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: jest.fn(),
-  }),
-}));
+// Override the real trpc with our mock
+export const trpc = mockTrpc;
 
-// Mock @calcom/lib/constants
-jest.mock('@calcom/lib/constants', () => ({
-  HOSTED_CAL_FEATURES: true,
-}));
+// Mock router object
+const mockRouter = {
+  push: () => {},
+};
+
+// Mock constants
+const HOSTED_CAL_FEATURES = true;
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({

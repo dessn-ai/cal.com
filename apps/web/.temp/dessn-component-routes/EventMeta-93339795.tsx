@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { EventMeta } from '../../../../packages/features/bookings/Booker/components/EventMeta';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     isPending: {
@@ -44,7 +43,12 @@ export default function ComponentPreview() {
     price: 0,
     currency: "USD",
     fieldTranslations: [],
-    entity: null,
+    entity: {
+      teamSlug: "sample-team",
+      orgSlug: "sample-org",
+      name: "Sample Team",
+      logoUrl: "https://example.com/logo.png"
+    },
     isDynamic: false,
     subsetOfUsers: [
       {
@@ -52,7 +56,13 @@ export default function ComponentPreview() {
         username: "johndoe",
         avatarUrl: "https://example.com/avatar.jpg",
         weekStart: "Monday",
-        profile: { name: "John Doe" },
+        profile: { 
+          name: "John Doe",
+          username: "johndoe",
+          organization: {
+            slug: "sample-org"
+          }
+        },
       },
     ],
   };

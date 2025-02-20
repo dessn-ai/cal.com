@@ -4834,6 +4834,12 @@ addRoute({
   label: 'Calendar-8580d1b1',
   componentId: 'Calendar-8580d1b1',
 });
+// Add route for mockOrgBranding
+addRoute({
+  path: '/mockOrgBranding',
+  label: 'mockOrgBranding',
+  componentId: 'mockOrgBranding',
+});
 // Add route for Page-a397ef86
 addRoute({
   path: '/Page-a397ef86',

@@ -2,6 +2,7 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { OrganizerReassignedEmail } from '../../../../packages/emails/src/templates/OrganizerReassignedEmail';
 
+const defaultTranslate = (key: string) => key;
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -17,8 +18,7 @@ export default function ComponentPreview() {
           email: 'john@example.com',
           timeZone: 'America/New_York',
           language: {
-            translate: (key: string) => key,
-            locale: 'en',
+            locale: 'en'
           },
         },
         attendees: [
@@ -27,8 +27,7 @@ export default function ComponentPreview() {
             email: 'jane@example.com',
             timeZone: 'America/Los_Angeles',
             language: {
-              translate: (key: string) => key,
-              locale: 'en',
+              locale: 'en'
             },
           },
         ],
@@ -42,8 +41,7 @@ export default function ComponentPreview() {
         email: 'jane@example.com',
         timeZone: 'America/Los_Angeles',
         language: {
-          translate: (key: string) => key,
-          locale: 'en',
+          locale: 'en'
         },
       }),
       label: 'Attendee',
@@ -65,8 +63,7 @@ export default function ComponentPreview() {
         email: 'team@example.com',
         timeZone: 'Europe/London',
         language: {
-          translate: (key: string) => key,
-          locale: 'en',
+          locale: 'en'
         },
       }),
       label: 'Team Member',
@@ -83,14 +80,25 @@ export default function ComponentPreview() {
     },
   });
 
+  // Parse the JSON values
+  const calEvent = JSON.parse(state.calEvent.value);
+  const attendee = JSON.parse(state.attendee.value);
+  const teamMember = JSON.parse(state.teamMember.value);
+  const reassigned = JSON.parse(state.reassigned.value);
+
+  // Add translate function to the required objects
+  calEvent.organizer.language.translate = defaultTranslate;
+  teamMember.language.translate = defaultTranslate;
+  attendee.language.translate = defaultTranslate;
+
   return (
     <OrganizerReassignedEmail
-      calEvent={JSON.parse(state.calEvent.value)}
-      attendee={JSON.parse(state.attendee.value)}
+      calEvent={calEvent}
+      attendee={attendee}
       newSeat={state.newSeat.value}
       attendeeCancelled={state.attendeeCancelled.value}
-      teamMember={JSON.parse(state.teamMember.value)}
-      reassigned={JSON.parse(state.reassigned.value)}
+      teamMember={teamMember}
+      reassigned={reassigned}
     />
   );
 }

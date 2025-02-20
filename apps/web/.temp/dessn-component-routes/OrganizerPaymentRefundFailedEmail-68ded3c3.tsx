@@ -2,7 +2,11 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { OrganizerPaymentRefundFailedEmail } from '../../../../packages/emails/src/templates/OrganizerPaymentRefundFailedEmail';
 
-import { TimeFormat } from '../../../../packages/types/Calendar';
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,9 +22,9 @@ export default function ComponentPreview() {
           email: 'jane@example.com',
           timeZone: 'America/New_York',
           language: {
-            translate: (key: string) => key,
             locale: 'en',
-          },
+            translate: 'no-op-translate'
+          }
         },
         attendees: [
           {
@@ -28,9 +32,9 @@ export default function ComponentPreview() {
             email: 'john@example.com',
             timeZone: 'America/Los_Angeles',
             language: {
-              translate: (key: string) => key,
               locale: 'en',
-            },
+              translate: 'no-op-translate'
+            }
           },
         ],
         paymentInfo: {
@@ -47,9 +51,9 @@ export default function ComponentPreview() {
         email: 'john@example.com',
         timeZone: 'America/Los_Angeles',
         language: {
-          translate: (key: string) => key,
           locale: 'en',
-        },
+          translate: 'no-op-translate'
+        }
       },
       label: 'Attendee',
     },
@@ -66,12 +70,40 @@ export default function ComponentPreview() {
     },
   });
 
-  return (
-    <OrganizerPaymentRefundFailedEmail
-      calEvent={state.calEvent.value}
-      attendee={state.attendee.value}
-      timeZone={state.timeZone.value}
-      timeFormat={state.timeFormat.value}
-    />
-  );
+  // Wrap the component in an error boundary
+  try {
+    return (
+      <OrganizerPaymentRefundFailedEmail
+        calEvent={{
+          ...state.calEvent.value,
+          organizer: {
+            ...state.calEvent.value.organizer,
+            language: {
+              ...state.calEvent.value.organizer.language,
+              translate: (key: string) => key
+            }
+          },
+          attendees: state.calEvent.value.attendees.map(attendee => ({
+            ...attendee,
+            language: {
+              ...attendee.language,
+              translate: (key: string) => key
+            }
+          }))
+        }}
+        attendee={{
+          ...state.attendee.value,
+          language: {
+            ...state.attendee.value.language,
+            translate: (key: string) => key
+          }
+        }}
+        timeZone={state.timeZone.value}
+        timeFormat={state.timeFormat.value}
+      />
+    );
+  } catch (error) {
+    console.error('Error rendering email preview:', error);
+    return <div>Error rendering email preview. Please check the console for details.</div>;
+  }
 }

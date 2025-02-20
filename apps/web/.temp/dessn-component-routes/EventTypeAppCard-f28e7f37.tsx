@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/closecom/components/EventTypeAppCardInterface';
-
+import EventTypeAppContext from '../../../../packages/app-store/EventTypeAppContext';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -30,10 +30,18 @@ export default function ComponentPreview() {
         type: "closecom_other_calendar",
         variant: "other_calendar",
         key: "closecom",
+        slug: "closecom",
+        logo: "https://app.close.com/static/img/close-logo.png",
+        categories: ["calendar"],
+        enabled: true,
+        isInstalled: true,
+        isSetupAlready: true,
         credentialOwner: {
           name: "John Doe",
-          avatar: "https://example.com/avatar.jpg"
+          avatar: "https://example.com/avatar.jpg",
+          credentialId: 1
         },
+        userCredentialIds: [1, 2, 3],
         credentialIds: [1, 2, 3]
       },
       label: "App"
@@ -45,11 +53,29 @@ export default function ComponentPreview() {
     }
   });
 
+  // Mock app context data
+  const appContextValue = {
+    appData: {
+      enabled: true,
+      credentialId: 1
+    },
+    setAppData: (key: string, value: any) => {
+      console.log('Setting app data:', key, value);
+    },
+    getAppData: (key: string) => {
+      if (key === 'enabled') return true;
+      if (key === 'credentialId') return 1;
+      return undefined;
+    }
+  };
+
   return (
-    <ImportedComponent
-      eventType={state.eventType.value}
-      app={state.app.value}
-      disabled={state.disabled.value}
-    />
+    <EventTypeAppContext.Provider value={appContextValue}>
+      <ImportedComponent
+        eventType={state.eventType.value}
+        app={state.app.value}
+        disabled={state.disabled.value}
+      />
+    </EventTypeAppContext.Provider>
   );
 }

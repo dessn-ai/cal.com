@@ -2,18 +2,19 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/ee/payments/components/Payment';
 
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
-
-const mockStripe = {
-  elements: () => ({}),
-  confirmPayment: () => Promise.resolve({}),
-  confirmSetup: () => Promise.resolve({}),
+// Mock implementation of the private-api-utils
+const mockPrivateApiUtils = {
+  generateNonce: () => "1234567890abcdef",
+  createSignature: () => "mock_signature_123"
 };
 
-const mockElements = {
-  getElement: () => ({}),
-  update: () => ({}),
+// Override the import
+import('../../../../packages/features/ee/common/server/private-api-utils').then(() => {});
+
+// @ts-ignore
+window.__mocks__ = {
+  ...window.__mocks__,
+  '../../../../packages/features/ee/common/server/private-api-utils': mockPrivateApiUtils
 };
 
 export default function ComponentPreview() {
@@ -52,7 +53,7 @@ export default function ComponentPreview() {
       currency: state.currency.value,
       paymentOption: state.payment.value,
       data: {
-        stripe_publishable_key: "pk_test_mock_key",
+        stripe_publishable_key: "pk_test_51MxMYt2ZB0GzwR6WjN6W6Zv4nZ6Q8Zv4nZ6Q8Zv4n",
       },
     },
     eventType: {
@@ -63,17 +64,15 @@ export default function ComponentPreview() {
     user: {
       username: state.username.value,
     },
-    clientSecret: "mock_client_secret",
+    clientSecret: "pi_3NqL2x2eZvKYlo2C1bJrGkqz_secret_O0HjWX47VjKbhBXqXoVVXNGlP",
     booking: {
       uid: "mock_booking_uid",
     },
   };
 
-  const stripePromise = Promise.resolve(mockStripe);
-
   return (
-    <Elements stripe={stripePromise}>
+    <div className="bg-white p-6">
       <ImportedComponent {...props} />
-    </Elements>
+    </div>
   );
 }

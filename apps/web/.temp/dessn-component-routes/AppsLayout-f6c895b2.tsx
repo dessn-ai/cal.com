@@ -27,10 +27,14 @@ export default function ComponentPreview() {
   const session = useSession();
   const router = useRouter();
 
+  const renderActions = (className?: string) => {
+    return <button className={className}>Action</button>;
+  };
+
   return (
     <ImportedComponent
       children={<div dangerouslySetInnerHTML={{ __html: state.children.value }} />}
-      actions={(className) => eval(state.actions.value)}
+      actions={renderActions}
       emptyStore={state.emptyStore.value}
     />
   );

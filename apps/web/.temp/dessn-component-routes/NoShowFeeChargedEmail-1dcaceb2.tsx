@@ -2,11 +2,24 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { NoShowFeeChargedEmail } from '../../../../packages/emails/src/templates/NoShowFeeChargedEmail';
 
-import { TimeFormat } from '@calcom/types/Calendar';
+// Mock TimeFormat enum locally instead of importing from @calcom/types/Calendar
+enum TimeFormat {
+  TWELVE_HOUR = 12,
+  TWENTY_FOUR_HOUR = 24
+}
 
 export default function ComponentPreview() {
+  // Create translation function
+  const translate = (key: string, vars?: Record<string, any>) => {
+    const translations: Record<string, string> = {
+      "no_show_fee_charged_text_body": "No-show fee charged",
+      "no_show_fee_charged_subtitle": `A no-show fee of ${vars?.amount || 10} ${vars?.formatParams?.amount?.currency || 'USD'} has been charged`,
+    };
+    return translations[key] || key;
+  };
+
   const [state, setState] = useParentState({
-    calEvent: {
+    calEventString: {
       type: 'string',
       value: JSON.stringify({
         type: 'default',
@@ -17,31 +30,47 @@ export default function ComponentPreview() {
           name: 'Organizer',
           email: 'organizer@example.com',
           timeZone: 'UTC',
-          language: { translate: (key: string) => key, locale: 'en' },
         },
         attendees: [],
         paymentInfo: {
           amount: 1000,
           currency: 'USD',
         },
+        uid: 'unique-id',
       }),
       label: 'Calendar Event',
     },
-    attendee: {
+    attendeeString: {
       type: 'string',
       value: JSON.stringify({
         name: 'Attendee',
         email: 'attendee@example.com',
         timeZone: 'UTC',
-        language: { translate: (key: string) => key, locale: 'en' },
         timeFormat: TimeFormat.TWELVE_HOUR,
       }),
       label: 'Attendee',
     },
   });
 
-  const calEvent = JSON.parse(state.calEvent.value);
-  const attendee = JSON.parse(state.attendee.value);
+  // Parse the serialized data and add the non-serializable properties
+  const calEvent = {
+    ...JSON.parse(state.calEventString.value),
+    organizer: {
+      ...JSON.parse(state.calEventString.value).organizer,
+      language: {
+        translate,
+        locale: 'en'
+      },
+    },
+  };
+
+  const attendee = {
+    ...JSON.parse(state.attendeeString.value),
+    language: {
+      translate,
+      locale: 'en'
+    },
+  };
 
   return (
     <NoShowFeeChargedEmail

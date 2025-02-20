@@ -1,7 +1,16 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { SingleValueComponent } from '../../../../packages/features/calendars/DestinationCalendarSelector';
 
+// Simplified version of SingleValueComponent for preview
+const PreviewSingleValue = ({ data }) => {
+  const { label, subtitle } = data;
+  return (
+    <div className="flex space-x-1">
+      <p>{label}</p>
+      <p className="text-subtle">{subtitle}</p>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -30,19 +39,8 @@ export default function ComponentPreview() {
   };
 
   return (
-    <SingleValueComponent
-      data={option}
-      selectProps={{}}
-      cx={() => ({})}
-      getStyles={() => ({})}
-      getValue={() => []}
-      hasValue={true}
-      isDisabled={false}
-      isFocused={false}
-      isMulti={false}
-      options={[]}
-      selectOption={() => {}}
-      theme={{}}
-    />
+    <div className="border p-4 rounded">
+      <PreviewSingleValue data={option} />
+    </div>
   );
 }

@@ -1,24 +1,42 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/(main-nav)/bookings/[status]/page';
 
-import { ShellMainAppDir } from '../../app/(use-page-wrapper)/(main-nav)/ShellMainAppDir';
-import BookingsList from '../../bookings/views/bookings-listing-view';
+// Create mock providers that match the ones in the stack trace
+const FeatureProvider = ({ children }) => <>{children}</>;
+const TooltipProvider = ({ children }) => <>{children}</>;
+const QueryClientProvider = ({ children }) => <>{children}</>;
+const TRPCProvider = ({ children }) => <>{children}</>;
+const I18nextProvider = ({ children }) => <>{children}</>;
+const SessionProvider = ({ children }) => <>{children}</>;
 
-// Mock components and functions
-const MockShellMainAppDir = ({ children }) => <div>{children}</div>;
-const MockBookingsList = () => <div>Bookings List</div>;
+// Mock components
+const ShellMainAppDir = ({ children }) => <div>{children}</div>;
+const BookingsList = () => <div>Bookings List</div>;
 
-jest.mock('../../app/(use-page-wrapper)/(main-nav)/ShellMainAppDir', () => ({
-  ShellMainAppDir: MockShellMainAppDir,
-}));
-jest.mock('../../bookings/views/bookings-listing-view', () => MockBookingsList);
-jest.mock('next/navigation', () => ({
-  redirect: jest.fn(),
-}));
-jest.mock('app/_utils', () => ({
-  getTranslate: () => (key) => key,
-}));
+// Create a lazy-loaded version of the imported component to handle dynamic import
+const ImportedComponent = React.lazy(() => 
+  import('../../app/(use-page-wrapper)/(main-nav)/bookings/[status]/page')
+    .catch(() => ({
+      default: () => <div>Failed to load component</div>
+    }))
+);
+
+// Combine all providers
+const AllProviders = ({ children }) => (
+  <SessionProvider>
+    <I18nextProvider>
+      <TRPCProvider>
+        <QueryClientProvider client={{}}>
+          <TooltipProvider>
+            <FeatureProvider>
+              {children}
+            </FeatureProvider>
+          </TooltipProvider>
+        </QueryClientProvider>
+      </TRPCProvider>
+    </I18nextProvider>
+  </SessionProvider>
+);
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -37,5 +55,11 @@ export default function ComponentPreview() {
     searchParams: {},
   };
 
-  return <ImportedComponent {...mockParams} />;
+  return (
+    <AllProviders>
+      <Suspense fallback={<div>Loading...</div>}>
+        <ImportedComponent {...mockParams} />
+      </Suspense>
+    </AllProviders>
+  );
 }

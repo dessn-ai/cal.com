@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/500/page';
 
+// Using dynamic import with error boundary
+const ImportedComponent = React.lazy(() => import('../../app/(use-page-wrapper)/500/page')
+  .catch(() => ({ 
+    default: () => <div>Error: Failed to load 500 error page component</div> 
+  }))
+);
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -16,5 +21,9 @@ export default function ComponentPreview() {
     error: state.error.value,
   };
 
-  return <ImportedComponent searchParams={searchParams} />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ImportedComponent searchParams={searchParams} />
+    </Suspense>
+  );
 }

@@ -2,6 +2,25 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../modules/bookings/views/bookings-single-view';
 
+// Override the useRouterQuery hook
+import * as routerHooks from '@calcom/lib/hooks/useRouterQuery';
+
+// Create a custom hook implementation
+const useCustomRouterQuery = () => ({
+  uid: "booking-uid",
+  email: "attendee1@example.com",
+  eventTypeSlug: "default-event",
+  cancel: false,
+  allRemainingBookings: false,
+  changes: false,
+  reschedule: false,
+  isSuccessBookingPage: true,
+  seatReferenceUid: null,
+  noShow: false,
+});
+
+// Override the original hook
+(routerHooks as any).useRouterQuery = useCustomRouterQuery;
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -218,6 +237,8 @@ export default function ComponentPreview() {
     },
   });
 
+  const bookingInfo = JSON.parse(state.bookingInfo.value);
+
   return (
     <ImportedComponent
       userTimeFormat={state.userTimeFormat.value}
@@ -234,8 +255,9 @@ export default function ComponentPreview() {
       recurringBookings={state.recurringBookings.value}
       trpcState={JSON.parse(state.trpcState.value)}
       dynamicEventName={state.dynamicEventName.value}
-      bookingInfo={JSON.parse(state.bookingInfo.value)}
+      bookingInfo={bookingInfo}
       paymentStatus={JSON.parse(state.paymentStatus.value)}
+      uid="booking-uid"
     />
   );
 }

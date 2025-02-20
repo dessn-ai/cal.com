@@ -1,11 +1,21 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../components/getting-started/steps-views/UserProfile';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { trpc } from "@calcom/trpc/react";
-import { useForm } from "react-hook-form";
+// Create a mock context
+const TRPCContext = React.createContext(null);
 
 export default function ComponentPreview() {
+  const [queryClient] = React.useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        refetchOnWindowFocus: false,
+      },
+    },
+  }));
+
   const [state, setState] = useParentState({
     user: {
       type: "string",
@@ -28,30 +38,32 @@ export default function ComponentPreview() {
     },
   });
 
-  const mockTrpc = {
+  // Create mock TRPC hooks
+  const mockTRPCHooks = {
     viewer: {
       me: {
         useSuspenseQuery: () => [JSON.parse(state.user.value)],
+        useQuery: () => ({ data: JSON.parse(state.user.value) }),
       },
       eventTypes: {
         list: {
           useQuery: () => ({ data: JSON.parse(state.eventTypes.value) }),
         },
-      },
-      updateProfile: {
-        useMutation: () => ({
-          mutate: () => {},
-          isPending: false,
-        }),
-      },
-      eventTypes: {
         create: {
           useMutation: () => ({
-            mutate: () => {},
+            mutate: async () => {},
+            isLoading: false,
           }),
         },
       },
+      updateProfile: {
+        useMutation: () => ({
+          mutate: async () => {},
+          isLoading: false,
+        }),
+      },
     },
+    useContext: () => mockTRPCHooks,
     useUtils: () => ({
       viewer: {
         me: {
@@ -62,8 +74,26 @@ export default function ComponentPreview() {
   };
 
   return (
-    <trpc.Provider client={mockTrpc as any}>
-      <ImportedComponent />
-    </trpc.Provider>
+    <QueryClientProvider client={queryClient}>
+      <TRPCContext.Provider value={mockTRPCHooks}>
+        <ImportedComponent />
+      </TRPCContext.Provider>
+    </QueryClientProvider>
   );
 }
+
+// Mock the trpc hooks
+const proxy = new Proxy({}, {
+  get: function(target, prop) {
+    return function() {
+      return mockTRPCHooks;
+    };
+  },
+});
+
+// Override the imported trpc object
+import { trpc } from "@calcom/trpc/react";
+Object.defineProperty(trpc, 'useContext', {
+  value: () => mockTRPCHooks,
+  writable: true,
+});

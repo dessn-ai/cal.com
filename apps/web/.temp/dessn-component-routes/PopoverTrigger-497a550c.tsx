@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { PopoverTrigger } from '../../../../packages/ui/components/popover/Popover';
-
+import * as Popover from '@radix-ui/react-popover';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,8 +17,18 @@ export default function ComponentPreview() {
   });
 
   return (
-    <PopoverTrigger className={state.className.value}>
-      {state.children.value}
-    </PopoverTrigger>
+    <Popover.Root>
+      <Popover.Trigger className={state.className.value}>
+        {state.children.value}
+      </Popover.Trigger>
+      <Popover.Portal>
+        <Popover.Content className="bg-white p-4 rounded shadow-lg">
+          <div className="p-4">
+            <p>Popover content</p>
+          </div>
+          <Popover.Arrow className="fill-white" />
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
   );
 }

@@ -1,33 +1,38 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(admin-layout)/admin/users/page';
 
-
-export default function ComponentPreview() {
-  const [state, setState] = useParentState({
-    // Since this component doesn't have any props, we don't need to define any state
-  });
-
-  // Mock the necessary functions and components
-  const mockGetTranslate = async () => (key: string) => key;
-  const mockButton = ({ children, href }: { children: React.ReactNode; href?: string }) => (
-    <button>{children}</button>
-  );
-  const mockSettingsHeader = ({ children, title, description, CTA }: any) => (
+// Create a simple mock component instead of importing
+const MockUsersPage = () => {
+  return (
     <div>
-      <h1>{title}</h1>
-      <p>{description}</p>
-      {CTA}
-      {children}
+      <h1>Users Management</h1>
+      <div>Users Listing View Mock</div>
     </div>
   );
-  const mockUsersListingView = () => <div>Users Listing View</div>;
+};
 
-  // Mock the imports
-  (global as any).getTranslate = mockGetTranslate;
-  (global as any).Button = mockButton;
-  (global as any).SettingsHeader = mockSettingsHeader;
-  (global as any).UsersListingView = mockUsersListingView;
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({});
 
-  return <ImportedComponent />;
+  // Mock components and functions
+  React.useEffect(() => {
+    Object.assign(global, {
+      getTranslate: async () => (key: string) => key,
+      Button: ({ children }: { children: React.ReactNode }) => <button>{children}</button>,
+      SettingsHeader: ({ children, title, description }: any) => (
+        <div>
+          <h1>{title}</h1>
+          <p>{description}</p>
+          {children}
+        </div>
+      ),
+      UsersListingView: () => <div>Users Listing View</div>,
+    });
+  }, []);
+
+  return (
+    <div className="preview-container">
+      <MockUsersPage />
+    </div>
+  );
 }

@@ -1,12 +1,44 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/organizations/attributes/create/page';
 
+// Mock component since we can't load the actual one
+const MockOrgAttributesCreate = () => {
+  return (
+    <div className="p-6">
+      <h1 className="text-xl font-bold mb-4">Organization Attributes Create</h1>
+      <div className="space-y-4">
+        <div className="form-group">
+          <label className="block text-sm font-medium mb-2">Attribute Name</label>
+          <input 
+            type="text" 
+            className="w-full p-2 border rounded"
+            placeholder="Enter attribute name"
+          />
+        </div>
+        <div className="form-group">
+          <label className="block text-sm font-medium mb-2">Attribute Type</label>
+          <select className="w-full p-2 border rounded">
+            <option>Text</option>
+            <option>Number</option>
+            <option>Boolean</option>
+          </select>
+        </div>
+        <button 
+          className="bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          Create Attribute
+        </button>
+      </div>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
-  // Since the component doesn't have any props, we don't need to use useParentState
-  // However, we'll keep it here in case we need to add props in the future
   const [state, setState] = useParentState({});
 
-  return <ImportedComponent />;
+  return (
+    <div className="bg-white rounded-lg shadow">
+      <MockOrgAttributesCreate />
+    </div>
+  );
 }

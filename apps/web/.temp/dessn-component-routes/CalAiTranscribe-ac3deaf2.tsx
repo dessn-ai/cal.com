@@ -1,40 +1,43 @@
 import React from 'react';
+import { RecoilRoot } from 'recoil';
 import { useParentState } from '../useIframeState';
 import { CalAiTranscribe } from '../../modules/videos/ai/ai-transcribe';
 
-
-// Mock the necessary hooks and functions
-const mockUseDaily = () => ({
-  updateCustomTrayButtons: () => {},
-  startRecording: () => Promise.resolve(),
-  stopRecording: () => Promise.resolve(),
-  startTranscription: () => {},
-  stopTranscription: () => {},
+// Create a context for Daily-co
+const DailyContext = React.createContext({
+  useDaily: () => ({
+    updateCustomTrayButtons: () => {},
+    startRecording: () => Promise.resolve(),
+    stopRecording: () => Promise.resolve(),
+    startTranscription: () => {},
+    stopTranscription: () => {},
+  }),
+  useDailyEvent: () => {},
+  useTranscription: () => ({
+    isTranscribing: false,
+  }),
+  useRecording: () => ({
+    isRecording: false,
+  }),
 });
 
-const mockUseTranscription = () => ({
-  isTranscribing: false,
-});
-
-const mockUseRecording = () => ({
-  isRecording: false,
-});
-
-const mockUseLocale = () => ({
+// Create a context for Locale
+const LocaleContext = React.createContext({
   t: (key: string) => key,
 });
 
-// Mock the hooks
-jest.mock('@daily-co/daily-react', () => ({
-  useDaily: mockUseDaily,
-  useDailyEvent: () => {},
-  useTranscription: mockUseTranscription,
-  useRecording: mockUseRecording,
-}));
-
-jest.mock('@calcom/lib/hooks/useLocale', () => ({
-  useLocale: mockUseLocale,
-}));
+// Wrapper component to provide all necessary contexts
+const PreviewWrapper = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <RecoilRoot>
+      <DailyContext.Provider value={DailyContext}>
+        <LocaleContext.Provider value={LocaleContext}>
+          {children}
+        </LocaleContext.Provider>
+      </DailyContext.Provider>
+    </RecoilRoot>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -45,8 +48,11 @@ export default function ComponentPreview() {
     },
   });
 
-  // Override the useState to use our mocked transcript
-  React.useState = jest.fn().mockReturnValue([state.transcript.value, () => {}]);
+  const [transcript] = React.useState(state.transcript.value);
 
-  return <CalAiTranscribe />;
+  return (
+    <PreviewWrapper>
+      <CalAiTranscribe />
+    </PreviewWrapper>
+  );
 }

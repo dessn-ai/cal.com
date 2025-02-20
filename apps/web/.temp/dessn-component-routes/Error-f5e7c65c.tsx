@@ -1,10 +1,30 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/error';
+import dynamic from 'next/dynamic';
 
+// Dynamically import the error component with no SSR to avoid Buffer conflicts
+const ImportedComponent = dynamic(() => import('../../app/error'), {
+  ssr: false,
+});
+
+// Custom error boundary component
+class ErrorBoundary extends React.Component {
+  state = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong.</div>;
+    }
+    return this.props.children;
+  }
+}
 
 export default function ComponentPreview() {
-  const [state, setState] = useParentState({
+  const [state] = useParentState({
     errorMessage: {
       type: "string",
       value: "An unexpected error occurred",
@@ -22,9 +42,17 @@ export default function ComponentPreview() {
     },
   });
 
-  const error = new Error(state.errorMessage.value);
-  error.name = state.errorName.value;
-  (error as any).statusCode = state.statusCode.value;
+  const errorProps = {
+    message: state.errorMessage.value,
+    name: state.errorName.value,
+    statusCode: state.statusCode.value,
+  };
 
-  return <ImportedComponent error={error} />;
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<div>Loading...</div>}>
+        <ImportedComponent error={errorProps} />
+      </Suspense>
+    </ErrorBoundary>
+  );
 }

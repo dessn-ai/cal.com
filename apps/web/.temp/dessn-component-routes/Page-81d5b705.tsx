@@ -1,30 +1,36 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/security/impersonation/page';
 
+// Create mock components and utilities
+const MockSettingsHeader = ({ children }) => <div>{children}</div>;
+const MockProfileImpersonationViewWrapper = () => <div>ProfileImpersonationViewWrapper</div>;
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  getTranslate: jest.fn(() => ({
-    impersonation: 'Impersonation',
-    impersonation_description: 'Impersonation Description'
-  }))
-}));
+// Mock translations
+const mockTranslations = {
+  impersonation: 'Impersonation',
+  impersonation_description: 'Impersonation Description'
+};
 
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children }) {
-    return <div>{children}</div>;
-  };
-});
-
-jest.mock('~/settings/security/impersonation-view', () => {
-  return function MockProfileImpersonationViewWrapper() {
-    return <div>ProfileImpersonationViewWrapper</div>;
-  };
-});
+// Create a mock component that represents the imported page
+const MockImpersonationPage = () => {
+  return (
+    <div>
+      <MockSettingsHeader>
+        <h2>Impersonation Settings</h2>
+      </MockSettingsHeader>
+      <MockProfileImpersonationViewWrapper />
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({});
 
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="preview-container">
+        <MockImpersonationPage />
+      </div>
+    </Suspense>
+  );
 }

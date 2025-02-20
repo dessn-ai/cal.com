@@ -1,10 +1,18 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../modules/videos/views/videos-single-view';
-
-import { DehydratedState } from '@tanstack/react-query';
+import { DehydratedState, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 export default function ComponentPreview() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        refetchOnWindowFocus: false,
+      },
+    },
+  });
+
   const [state, setState] = useParentState({
     booking: {
       type: 'object',
@@ -79,13 +87,15 @@ export default function ComponentPreview() {
   });
 
   return (
-    <ImportedComponent
-      booking={state.booking.value}
-      hasTeamPlan={state.hasTeamPlan.value}
-      calVideoLogo={state.calVideoLogo.value}
-      trpcState={state.trpcState.value}
-      meetingPassword={state.meetingPassword.value}
-      meetingUrl={state.meetingUrl.value}
-    />
+    <QueryClientProvider client={queryClient}>
+      <ImportedComponent
+        booking={state.booking.value}
+        hasTeamPlan={state.hasTeamPlan.value}
+        calVideoLogo={state.calVideoLogo.value}
+        trpcState={state.trpcState.value}
+        meetingPassword={state.meetingPassword.value}
+        meetingUrl={state.meetingUrl.value}
+      />
+    </QueryClientProvider>
   );
 }

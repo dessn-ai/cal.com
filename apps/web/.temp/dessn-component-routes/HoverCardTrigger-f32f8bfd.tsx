@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { HoverCardTrigger } from '../../../../packages/ui/components/hover-card/index';
-
+import { HoverCard, HoverCardTrigger, HoverCardContent } from '../../../../packages/ui/components/hover-card/index';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,8 +17,15 @@ export default function ComponentPreview() {
   });
 
   return (
-    <HoverCardTrigger className={state.className.value}>
-      {state.children.value}
-    </HoverCardTrigger>
+    <HoverCard>
+      <HoverCardTrigger className={state.className.value}>
+        {state.children.value}
+      </HoverCardTrigger>
+      <HoverCardContent>
+        <div className="p-4">
+          Hover card content
+        </div>
+      </HoverCardContent>
+    </HoverCard>
   );
 }

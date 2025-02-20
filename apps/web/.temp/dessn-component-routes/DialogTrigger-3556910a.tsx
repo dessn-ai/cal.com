@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { DialogTrigger } from '../../../../packages/platform/atoms/src/components/ui/dialog';
-
+import { Dialog, DialogTrigger, DialogContent } from '../../../../packages/platform/atoms/src/components/ui/dialog';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,8 +17,13 @@ export default function ComponentPreview() {
   });
 
   return (
-    <DialogTrigger className={state.className.value}>
-      {state.children.value}
-    </DialogTrigger>
+    <Dialog>
+      <DialogTrigger className={state.className.value}>
+        {state.children.value}
+      </DialogTrigger>
+      <DialogContent>
+        <div>Dialog Content</div>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../modules/settings/teams/new/create-new-team-view';
-
 import { WizardLayout } from '@calcom/ui';
+import { OrgBrandingProvider } from '@calcom/features/ee/organizations/context/provider';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,19 +18,28 @@ export default function ComponentPreview() {
     },
   });
 
-  // Mock the next/navigation router
-  const mockRouter = {
-    push: (url: string) => console.log(`Navigating to: ${url}`),
-  };
-
-  // Mock the telemetry
-  const mockTelemetry = {
-    event: (eventName: string) => console.log(`Telemetry event: ${eventName}`),
+  const mockOrgBranding = {
+    orgBrand: {
+      id: 1,
+      name: "Test Organization",
+      slug: "test-org",
+      logoUrl: null,
+      fullDomain: "test-org.cal.com",
+      domainSuffix: "cal.com",
+      role: "OWNER",
+      theme: null,
+      brandColor: "#292929",
+      darkBrandColor: "#fafafa",
+      logo: "",
+      logoUrl: "",
+    }
   };
 
   return (
-    <WizardLayout currentStep={1} maxSteps={3}>
-      <ImportedComponent />
-    </WizardLayout>
+    <OrgBrandingProvider value={mockOrgBranding}>
+      <WizardLayout currentStep={1} maxSteps={3}>
+        <ImportedComponent />
+      </WizardLayout>
+    </OrgBrandingProvider>
   );
 }

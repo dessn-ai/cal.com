@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { ShellMainAppDir } from '../../app/(use-page-wrapper)/(main-nav)/ShellMainAppDir';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     centered: {
@@ -78,23 +77,25 @@ export default function ComponentPreview() {
   });
 
   return (
-    <ShellMainAppDir
-      centered={state.centered.value}
-      title={state.title.value}
-      description={state.description.value}
-      heading={state.heading.value}
-      subtitle={state.subtitle.value}
-      headerClassName={state.headerClassName.value}
-      large={state.large.value}
-      flexChildrenContainer={state.flexChildrenContainer.value}
-      isPublic={state.isPublic.value}
-      withoutMain={state.withoutMain.value}
-      withoutSeo={state.withoutSeo.value}
-      smallHeading={state.smallHeading.value}
-      isPlatformUser={state.isPlatformUser.value}
-      backPath={state.backPath.value}
-    >
-      <div>Sample content for ShellMainAppDir</div>
-    </ShellMainAppDir>
+    <div className="min-h-screen">
+      <ShellMainAppDir
+        centered={state.centered.value}
+        title={state.title.value}
+        description={state.description.value}
+        heading={state.heading.value}
+        subtitle={state.subtitle.value}
+        headerClassName={state.headerClassName.value}
+        large={state.large.value}
+        flexChildrenContainer={state.flexChildrenContainer.value}
+        isPublic={state.isPublic.value}
+        withoutMain={state.withoutMain.value}
+        withoutSeo={state.withoutSeo.value}
+        smallHeading={state.smallHeading.value}
+        isPlatformUser={state.isPlatformUser.value}
+        backPath={state.backPath.value}
+      >
+        <div>Sample content for ShellMainAppDir</div>
+      </ShellMainAppDir>
+    </div>
   );
 }

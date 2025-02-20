@@ -2,7 +2,32 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { AttendeeCancelledSeatEmail } from '../../../../packages/emails/src/templates/AttendeeCancelledSeatEmail';
 
-import { TimeFormat } from '../../../../packages/types/Calendar';
+// Define necessary types inline
+export enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
+
+interface Language {
+  translate: (key: string) => string;
+  locale: string;
+}
+
+interface Person {
+  name: string;
+  email: string;
+  timeZone: string;
+  language: Language;
+}
+
+interface CalendarEvent {
+  type: string;
+  title: string;
+  startTime: string;
+  endTime: string;
+  organizer: Person;
+  attendees: Person[];
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({

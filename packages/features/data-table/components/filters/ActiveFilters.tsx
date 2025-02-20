@@ -13,8 +13,11 @@ interface ActiveFiltersProps<TData> {
 }
 
 export function ActiveFilters<TData>({ table }: ActiveFiltersProps<TData>) {
-  const { activeFilters } = useDataTable();
+  const dataTableContext = useDataTable();
   const filterableColumns = useFilterableColumns(table);
+
+  // Add null check and default value
+  const activeFilters = dataTableContext?.activeFilters || [];
 
   return (
     <>

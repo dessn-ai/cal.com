@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { SideBar } from '../../../../packages/features/shell/SideBar';
-
+import { OrgBrandingProvider } from '../../../../packages/features/ee/organizations/context/provider';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -26,11 +26,20 @@ export default function ComponentPreview() {
     role: 'USER',
   };
 
+  // Mock organization branding data
+  const mockOrgBranding = {
+    theme: null,
+    organization: null,
+    isLoading: false,
+  };
+
   return (
-    <SideBar 
-      bannersHeight={state.bannersHeight.value} 
-      isPlatformUser={state.isPlatformUser.value}
-      user={mockUser}
-    />
+    <OrgBrandingProvider value={mockOrgBranding}>
+      <SideBar 
+        bannersHeight={state.bannersHeight.value} 
+        isPlatformUser={state.isPlatformUser.value}
+        user={mockUser}
+      />
+    </OrgBrandingProvider>
   );
 }

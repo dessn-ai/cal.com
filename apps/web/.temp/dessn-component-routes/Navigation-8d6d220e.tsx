@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { Navigation } from '../../../../packages/features/shell/navigation/Navigation';
-
+import { OrgBrandingProvider } from '../../../../packages/features/ee/organizations/context/provider';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -12,7 +12,16 @@ export default function ComponentPreview() {
     },
   });
 
+  // Mock organization branding data
+  const mockOrgBranding = {
+    theme: null,
+    organization: null,
+    isLoading: false,
+  };
+
   return (
-    <Navigation isPlatformNavigation={state.isPlatformNavigation.value} />
+    <OrgBrandingProvider value={mockOrgBranding}>
+      <Navigation isPlatformNavigation={state.isPlatformNavigation.value} />
+    </OrgBrandingProvider>
   );
 }

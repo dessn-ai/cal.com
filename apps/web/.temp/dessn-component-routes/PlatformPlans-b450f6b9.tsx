@@ -2,15 +2,9 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../modules/settings/platform/plans/platform-plans-view';
 
-import { useGetUserAttributes } from '@components/settings/platform/hooks/useGetUserAttributes';
-
-// Mock the useGetUserAttributes hook
-jest.mock('@components/settings/platform/hooks/useGetUserAttributes', () => ({
-  useGetUserAttributes: jest.fn(),
-}));
-
-export default function ComponentPreview() {
-  const [state, setState] = useParentState({
+// Create a wrapper component that provides the mocked data
+const MockedPlatformPlans = () => {
+  const [state] = useParentState({
     isUserLoading: {
       type: "boolean",
       value: false,
@@ -43,15 +37,29 @@ export default function ComponentPreview() {
     },
   });
 
-  // Mock the useGetUserAttributes hook
-  (useGetUserAttributes as jest.Mock).mockReturnValue({
+  // Create the mock data object
+  const mockData = {
     isUserLoading: state.isUserLoading.value,
     isUserBillingDataLoading: state.isUserBillingDataLoading.value,
     isPlatformUser: state.isPlatformUser.value,
     isPaidUser: state.isPaidUser.value,
     userBillingData: JSON.parse(state.userBillingData.value),
     userOrgId: state.userOrgId.value,
-  });
+  };
 
-  return <ImportedComponent />;
+  // Wrap the component in a try-catch to handle any potential errors
+  try {
+    return (
+      <div data-testid="platform-plans-preview">
+        <ImportedComponent {...mockData} />
+      </div>
+    );
+  } catch (error) {
+    console.error('Error rendering PlatformPlans:', error);
+    return <div>Error rendering PlatformPlans component</div>;
+  }
+};
+
+export default function ComponentPreview() {
+  return <MockedPlatformPlans />;
 }

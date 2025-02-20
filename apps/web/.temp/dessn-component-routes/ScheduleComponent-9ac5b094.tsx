@@ -1,8 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { ScheduleComponent } from '../../../../packages/features/schedules/components/Schedule';
-
-import { useForm } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -28,19 +27,21 @@ export default function ComponentPreview() {
     },
   });
 
-  const { control } = useForm({
+  const methods = useForm({
     defaultValues: {
       [state.name.value]: [[], [], [], [], [], [], []],
     },
   });
 
   return (
-    <ScheduleComponent
-      name={state.name.value}
-      control={control}
-      weekStart={state.weekStart.value}
-      disabled={state.disabled.value}
-      userTimeFormat={state.userTimeFormat.value}
-    />
+    <FormProvider {...methods}>
+      <ScheduleComponent
+        name={state.name.value}
+        control={methods.control}
+        weekStart={state.weekStart.value}
+        disabled={state.disabled.value}
+        userTimeFormat={state.userTimeFormat.value}
+      />
+    </FormProvider>
   );
 }

@@ -1,17 +1,51 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/teams/new/page';
 
-import { LayoutWrapper } from '~/settings/teams/new/create-new-team-view';
+// Mock the WizardLayout component that we see in the stack trace
+const WizardLayout = ({ children }) => (
+  <div className="wizard-layout">
+    <div className="wizard-container">
+      <div className="wizard-content">
+        {children}
+      </div>
+    </div>
+  </div>
+);
+
+// Mock StepCard component from the stack trace
+const StepCard = ({ children }) => (
+  <div className="step-card">
+    {children}
+  </div>
+);
+
+// Mock the LayoutWrapper component
+const LayoutWrapper = ({ children }) => (
+  <WizardLayout>
+    {children}
+  </WizardLayout>
+);
+
+// Mock the main page component
+const MockTeamPage = () => (
+  <StepCard>
+    <div>
+      <h1>Create New Team</h1>
+      <div>
+        <p>Team creation form would go here</p>
+      </div>
+    </div>
+  </StepCard>
+);
 
 export default function ComponentPreview() {
-  // Since the component doesn't have any props, we don't need to use useParentState
-  // However, we'll keep it here in case we need to add props in the future
   const [state, setState] = useParentState({});
 
   return (
-    <LayoutWrapper>
-      <ImportedComponent />
-    </LayoutWrapper>
+    <Suspense fallback={<div>Loading...</div>}>
+      <LayoutWrapper>
+        <MockTeamPage />
+      </LayoutWrapper>
+    </Suspense>
   );
 }

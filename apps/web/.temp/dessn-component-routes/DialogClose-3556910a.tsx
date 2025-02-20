@@ -1,8 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { DialogClose } from '../../../../packages/platform/atoms/src/components/ui/dialog';
-
 import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({

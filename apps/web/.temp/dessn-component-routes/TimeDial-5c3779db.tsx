@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { TimeDial } from '../../../../packages/features/timezone-buddy/components/TimeDial';
-
 import { TBContext } from '../../../../packages/features/timezone-buddy/store';
 import dayjs from '@calcom/dayjs';
 
@@ -36,18 +35,34 @@ export default function ComponentPreview() {
     }
   }, [state.dateRanges.value]);
 
-  const mockStore = React.useMemo(() => {
+  // Create a stable store reference that won't change on every render
+  const store = React.useMemo(() => {
+    const initialState = {
+      browsingDate: dayjs(),
+      emitCellPosition: (position: number) => {
+        // No-op implementation since it's just for preview
+      },
+    };
+
+    let listeners: Array<() => void> = [];
+
     return {
-      getState: () => ({
-        browsingDate: dayjs(),
-        emitCellPosition: () => {},
-      }),
-      subscribe: () => () => {},
+      getState: () => initialState,
+      setState: () => {}, // No-op since we don't need to update state in preview
+      subscribe: (listener: () => void) => {
+        listeners.push(listener);
+        return () => {
+          listeners = listeners.filter(l => l !== listener);
+        };
+      },
+      destroy: () => {
+        listeners = [];
+      },
     };
   }, []);
 
   return (
-    <TBContext.Provider value={mockStore}>
+    <TBContext.Provider value={store}>
       <TimeDial 
         timezone={state.timezone.value}
         dateRanges={parsedDateRanges}

@@ -2,6 +2,10 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { EventTypeAppSettings } from '../../../../packages/app-store/_components/EventTypeAppSettingsInterface';
 
+// Mock TRPCProvider
+const TRPCProvider = ({ children }: { children: React.ReactNode }) => {
+  return <>{children}</>;
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -43,12 +47,14 @@ export default function ComponentPreview() {
   const mockSetAppData = () => Promise.resolve();
 
   return (
-    <EventTypeAppSettings
-      slug={state.slug.value}
-      eventType={mockEventType}
-      getAppData={mockGetAppData}
-      setAppData={mockSetAppData}
-      disabled={state.disabled.value}
-    />
+    <TRPCProvider>
+      <EventTypeAppSettings
+        slug={state.slug.value}
+        eventType={mockEventType}
+        getAppData={mockGetAppData}
+        setAppData={mockSetAppData}
+        disabled={state.disabled.value}
+      />
+    </TRPCProvider>
   );
 }

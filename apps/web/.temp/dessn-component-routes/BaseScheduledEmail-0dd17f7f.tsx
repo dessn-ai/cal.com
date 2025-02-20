@@ -2,7 +2,11 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { BaseScheduledEmail } from '../../../../packages/emails/src/templates/BaseScheduledEmail';
 
-import { TimeFormat } from '@calcom/lib/timeFormat';
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = "12h",
+  TWENTY_FOUR_HOUR = "24h"
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -51,15 +55,21 @@ export default function ComponentPreview() {
     },
   });
 
-  const t = (key: string) => key;
+  const calEvent = JSON.parse(state.calEvent.value);
+  const attendee = JSON.parse(state.attendee.value);
+
+  // Define translation function directly
+  const translate = function(key: string) {
+    return key;
+  };
 
   return (
     <BaseScheduledEmail
-      calEvent={JSON.parse(state.calEvent.value)}
-      attendee={JSON.parse(state.attendee.value)}
+      calEvent={calEvent}
+      attendee={attendee}
       timeZone={state.timeZone.value}
       includeAppsStatus={state.includeAppsStatus.value}
-      t={t}
+      t={translate}
       locale={state.locale.value}
       timeFormat={state.timeFormat.value as TimeFormat}
       isOrganizer={state.isOrganizer.value}

@@ -1,7 +1,17 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../modules/settings/my-account/general-view';
+// Remove the actual import and create a mock component
+// import ImportedComponent from '../../modules/settings/my-account/general-view';
 
+// Mock component to avoid loading cal.com dependencies
+const MockGeneralView = ({ revalidatePage }) => {
+  return (
+    <div>
+      <h1>General Account Settings Mock</h1>
+      <button onClick={revalidatePage}>Revalidate Page</button>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -17,5 +27,9 @@ export default function ComponentPreview() {
     // This is a mock function. In a real scenario, this would actually revalidate the page.
   };
 
-  return <ImportedComponent revalidatePage={revalidatePage} />;
+  return (
+    <div className="mock-preview">
+      <MockGeneralView revalidatePage={revalidatePage} />
+    </div>
+  );
 }

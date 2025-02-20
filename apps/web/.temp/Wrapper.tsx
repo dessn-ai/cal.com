@@ -1,4 +1,3 @@
-
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import i18n from "i18next";
@@ -14,7 +13,17 @@ import type { AppRouter } from "@calcom/trpc/server/routers/_app";
 import { createTRPCReact } from "@trpc/react-query";
 
 import enCommon from "../public/static/locales/en/common.json";
+
+// Import global styles
 import "../styles/globals.css";
+import "../../storybook/styles/globals.css";
+
+// Import component-specific styles
+import "react-calendar/dist/Calendar.css";
+import "react-date-picker/dist/DatePicker.css";
+import "react-phone-input-2/lib/style.css";
+import "@glidejs/glide/dist/css/glide.core.min.css";
+import "@glidejs/glide/dist/css/glide.theme.min.css";
 
 // Initialize i18n
 const ns = ["common"];

@@ -1,9 +1,17 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/routing-forms/components/SingleForm';
-
+import { FormProvider, useForm } from 'react-hook-form';
+import { OrgBrandingProvider } from '../../../../packages/features/ee/organizations/context/provider';
 
 export default function ComponentPreview() {
+  const methods = useForm({
+    defaultValues: {
+      responses: [],
+      routes: [],
+    }
+  });
+
   const [state, setState] = useParentState({
     form: {
       type: "object",
@@ -41,12 +49,25 @@ export default function ComponentPreview() {
     }
   });
 
+  // Mock organization branding data
+  const orgBranding = {
+    theme: null,
+    orgSlug: null,
+    hideBranding: false,
+    currentOrgDomain: null,
+    fullDomain: null,
+  };
+
   return (
-    <ImportedComponent
-      form={state.form.value}
-      appUrl={state.appUrl.value}
-      Page={() => <div>Page Component</div>}
-      enrichedWithUserProfileForm={state.enrichedWithUserProfileForm.value}
-    />
+    <OrgBrandingProvider value={orgBranding}>
+      <FormProvider {...methods}>
+        <ImportedComponent
+          form={state.form.value}
+          appUrl={state.appUrl.value}
+          Page={() => <div>Page Component</div>}
+          enrichedWithUserProfileForm={state.enrichedWithUserProfileForm.value}
+        />
+      </FormProvider>
+    </OrgBrandingProvider>
   );
 }

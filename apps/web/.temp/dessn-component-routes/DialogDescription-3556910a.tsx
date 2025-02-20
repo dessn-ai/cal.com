@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { DialogDescription } from '../../../../packages/platform/atoms/src/components/ui/dialog';
-
+import { Dialog, DialogContent, DialogDescription } from '../../../../packages/platform/atoms/src/components/ui/dialog';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,10 +17,14 @@ export default function ComponentPreview() {
   });
 
   return (
-    <DialogDescription
-      className={state.className.value}
-    >
-      {state.children.value}
-    </DialogDescription>
+    <Dialog open={true}>
+      <DialogContent>
+        <DialogDescription
+          className={state.className.value}
+        >
+          {state.children.value}
+        </DialogDescription>
+      </DialogContent>
+    </Dialog>
   );
 }

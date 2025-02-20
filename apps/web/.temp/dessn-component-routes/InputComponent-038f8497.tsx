@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { InputComponent } from '../../../../packages/features/form/components/Select';
-
+import Select from '../../../../packages/features/form/components/Select';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -39,8 +38,8 @@ export default function ComponentPreview() {
   ];
 
   return (
-    <InputComponent
-      inputClassName={state.inputClassName.value}
+    <Select
+      className={state.inputClassName.value}
       placeholder={state.placeholder.value}
       isDisabled={state.isDisabled.value}
       isClearable={state.isClearable.value}

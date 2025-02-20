@@ -1,29 +1,54 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { CreateButtonWithTeamsList } from '../../../../packages/ui/components/createButton/CreateButtonWithTeamsList';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { trpc } from "@calcom/trpc/react";
-
-// Mock trpc.viewer.teamsAndUserProfilesQuery.useQuery
-const mockUseQuery = () => ({
-  data: [
-    { teamId: 1, name: 'Team 1', slug: 'team-1', image: 'https://example.com/team1.jpg', readOnly: false },
-    { teamId: 2, name: 'Team 2', slug: 'team-2', image: 'https://example.com/team2.jpg', readOnly: false },
-    { teamId: null, name: 'User Profile', slug: 'user-profile', image: 'https://example.com/user.jpg', readOnly: false },
-  ]
+// Create a mock QueryClient
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      cacheTime: 0,
+      staleTime: 0,
+    },
+  },
 });
 
-// Mock the trpc object
-const mockTrpc = {
-  viewer: {
-    teamsAndUserProfilesQuery: {
-      useQuery: mockUseQuery
-    }
-  }
-};
+// Mock data
+const mockTeamsData = [
+  { teamId: 1, name: 'Team 1', slug: 'team-1', image: 'https://example.com/team1.jpg', readOnly: false },
+  { teamId: 2, name: 'Team 2', slug: 'team-2', image: 'https://example.com/team2.jpg', readOnly: false },
+  { teamId: null, name: 'User Profile', slug: 'user-profile', image: 'https://example.com/user.jpg', readOnly: false },
+];
 
-// Replace the actual trpc with the mock
-(trpc as any) = mockTrpc;
+// Create a mock TRPC context
+const MockTRPCProvider = ({ children }) => {
+  // Mock the trpc context value
+  const mockTrpcContextValue = {
+    trpc: {
+      viewer: {
+        teamsAndUserProfilesQuery: {
+          useQuery: () => ({
+            data: mockTeamsData,
+            isLoading: false,
+            error: null
+          })
+        }
+      }
+    }
+  };
+
+  // Create a context to override the default TRPC context
+  const TRPCContext = React.createContext(mockTrpcContextValue);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TRPCContext.Provider value={mockTrpcContextValue}>
+        {children}
+      </TRPCContext.Provider>
+    </QueryClientProvider>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -50,11 +75,13 @@ export default function ComponentPreview() {
   });
 
   return (
-    <CreateButtonWithTeamsList
-      onlyShowWithTeams={state.onlyShowWithTeams.value}
-      onlyShowWithNoTeams={state.onlyShowWithNoTeams.value}
-      isAdmin={state.isAdmin.value}
-      includeOrg={state.includeOrg.value}
-    />
+    <MockTRPCProvider>
+      <CreateButtonWithTeamsList
+        onlyShowWithTeams={state.onlyShowWithTeams.value}
+        onlyShowWithNoTeams={state.onlyShowWithNoTeams.value}
+        isAdmin={state.isAdmin.value}
+        includeOrg={state.includeOrg.value}
+      />
+    </MockTRPCProvider>
   );
 }

@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/routing-forms/pages/form-edit/[...appPages]';
-
-import { useForm } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
+import { OrgBrandingProvider } from '@calcom/features/ee/organizations/context/provider';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -19,7 +19,14 @@ export default function ComponentPreview() {
         name: "Form Name",
         description: "Form Description",
         id: "form-id",
-        settings: {},
+        settings: {
+          emailOwnerOnSubmission: false,
+          customUrl: "",
+          submitText: "Submit",
+          redirectUrl: "",
+          sendUpdatesTo: [],
+          sendToAll: false
+        },
         disabled: false,
         position: 1,
         fields: [],
@@ -27,8 +34,21 @@ export default function ComponentPreview() {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         teamId: 1,
-        routes: {},
+        routes: [
+          {
+            id: "fallback",
+            isFallback: true,
+            action: {
+              type: "customPageMessage",
+              value: "Thank you for your submission"
+            },
+            queryValue: { id: "fallback", type: "group", children: [], properties: {} }
+          }
+        ],
         updatedById: 1,
+        teamMembers: [],
+        routers: [],
+        connectedForms: []
       }),
       label: "Form",
     },
@@ -43,7 +63,14 @@ export default function ComponentPreview() {
           brandColor: "#000000",
           darkBrandColor: "#FFFFFF",
           movedToProfileId: null,
-          organization: { slug: "org-slug" },
+          organization: { 
+            slug: "org-slug",
+            name: "Organization Name",
+            calVideoLogo: null,
+            logoUrl: null,
+            brandColor: "#292929",
+            darkBrandColor: "#fafafa"
+          },
           nonProfileUsername: null,
           profile: {},
         },
@@ -58,7 +85,14 @@ export default function ComponentPreview() {
         name: "Form Name",
         description: "Form Description",
         id: "form-id",
-        settings: {},
+        settings: {
+          emailOwnerOnSubmission: false,
+          customUrl: "",
+          submitText: "Submit",
+          redirectUrl: "",
+          sendUpdatesTo: [],
+          sendToAll: false
+        },
         disabled: false,
         position: 1,
         fields: [],
@@ -66,12 +100,25 @@ export default function ComponentPreview() {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         teamId: 1,
-        routes: {},
+        routes: [
+          {
+            id: "fallback",
+            isFallback: true,
+            action: {
+              type: "customPageMessage",
+              value: "Thank you for your submission"
+            },
+            queryValue: { id: "fallback", type: "group", children: [], properties: {} }
+          }
+        ],
         updatedById: 1,
         userOrigin: "origin",
         teamOrigin: "origin",
         nonOrgUsername: null,
         nonOrgTeamslug: null,
+        teamMembers: [],
+        routers: [],
+        connectedForms: []
       }),
       label: "Enriched With User Profile Form",
     },
@@ -82,16 +129,35 @@ export default function ComponentPreview() {
     },
   });
 
-  const hookForm = useForm({
+  const methods = useForm({
     defaultValues: JSON.parse(state.form.value),
   });
 
+  const enrichedForm = JSON.parse(state.enrichedWithUserProfileForm.value);
+  const orgBrand = enrichedForm.user.organization ? {
+    id: 1,
+    name: enrichedForm.user.organization.name,
+    slug: enrichedForm.user.organization.slug,
+    logoUrl: enrichedForm.user.organization.logoUrl,
+    fullDomain: `https://${enrichedForm.user.organization.slug}.cal.com`,
+    domainSuffix: "cal.com",
+    role: "OWNER",
+    brandColor: enrichedForm.user.organization.brandColor,
+    darkBrandColor: enrichedForm.user.organization.darkBrandColor,
+    theme: null,
+    hideBranding: false,
+  } : null;
+
   return (
-    <ImportedComponent
-      trpcState={JSON.parse(state.trpcState.value)}
-      form={JSON.parse(state.form.value)}
-      enrichedWithUserProfileForm={JSON.parse(state.enrichedWithUserProfileForm.value)}
-      appUrl={state.appUrl.value}
-    />
+    <OrgBrandingProvider value={{ orgBrand }}>
+      <FormProvider {...methods}>
+        <ImportedComponent
+          trpcState={JSON.parse(state.trpcState.value)}
+          form={JSON.parse(state.form.value)}
+          enrichedWithUserProfileForm={JSON.parse(state.enrichedWithUserProfileForm.value)}
+          appUrl={state.appUrl.value}
+        />
+      </FormProvider>
+    </OrgBrandingProvider>
   );
 }

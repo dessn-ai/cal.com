@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { LargeCalendar } from '../../../../packages/features/bookings/Booker/components/LargeCalendar';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     extraDays: {
@@ -22,13 +21,34 @@ export default function ComponentPreview() {
     },
   });
 
+  // Use fixed dates to avoid any timezone or calculation issues
   const mockSchedule = {
     slots: {
-      [new Date().toISOString().split('T')[0]]: [
-        { time: new Date().toISOString() },
-        { time: new Date(new Date().getTime() + 60 * 60 * 1000).toISOString() },
-      ],
-    },
+      "2024-01-20": [
+        {
+          time: "2024-01-20T09:00:00.000Z",
+          users: [],
+          attendees: [],
+        },
+        {
+          time: "2024-01-20T10:00:00.000Z",
+          users: [],
+          attendees: [],
+        },
+        {
+          time: "2024-01-20T11:00:00.000Z",
+          users: [],
+          attendees: [],
+        }
+      ]
+    }
+  };
+
+  // Mock event data with minimal required props
+  const mockEvent = {
+    data: {
+      length: state.eventLength.value
+    }
   };
 
   return (
@@ -37,11 +57,7 @@ export default function ComponentPreview() {
         extraDays={state.extraDays.value}
         schedule={mockSchedule}
         isLoading={state.isLoading.value}
-        event={{
-          data: {
-            length: state.eventLength.value,
-          },
-        }}
+        event={mockEvent}
       />
     </div>
   );

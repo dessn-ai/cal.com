@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { CommandInput } from '../../../../packages/ui/components/command/index';
-
+import { Command } from "cmdk";
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -23,10 +23,12 @@ export default function ComponentPreview() {
   });
 
   return (
-    <CommandInput
-      className={state.className.value}
-      placeholder={state.placeholder.value}
-      disabled={state.disabled.value}
-    />
+    <Command>
+      <CommandInput
+        className={state.className.value}
+        placeholder={state.placeholder.value}
+        disabled={state.disabled.value}
+      />
+    </Command>
   );
 }

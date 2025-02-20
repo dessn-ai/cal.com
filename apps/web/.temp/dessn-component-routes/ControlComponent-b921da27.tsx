@@ -1,11 +1,10 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { ControlComponent } from '../../../../packages/ui/components/form/select/components';
-
 import { GroupBase } from 'react-select';
 
 export default function ComponentPreview() {
-  const [state, setState] = useParentState({
+  const [state] = useParentState({
     selectProps: {
       type: "dropdown",
       value: "option1",
@@ -15,9 +14,8 @@ export default function ComponentPreview() {
   });
 
   const mockControlProps = {
-    selectProps: state.selectProps.value,
     children: null,
-    cx: () => "",
+    cx: ((...classes: any[]) => classes.filter(Boolean).join(' ')),
     clearValue: () => {},
     getStyles: () => ({}),
     getValue: () => [],
@@ -26,9 +24,16 @@ export default function ComponentPreview() {
     isRtl: false,
     options: [],
     selectOption: () => {},
-    selectProps: {},
+    selectProps: state.selectProps,
     setValue: () => {},
     theme: {},
+    getClassNames: (state: any) => ({
+      ...state,
+      className: ''
+    }),
+    innerProps: {},
+    menuIsOpen: false,
+    isFocused: false
   };
 
   return (

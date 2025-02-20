@@ -1,7 +1,47 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../pages/org/[orgSlug]/[user]/[type]/embed';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createTRPCReact, httpBatchLink } from '@trpc/react-query';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
+import { I18nextProvider } from 'react-i18next';
+import { SessionProvider } from 'next-auth/react';
+import { FeatureProvider } from '@calcom/features/flags/context/provider';
 
+// Mock Component instead of importing
+const MockComponent = (props) => {
+  return (
+    <div className="mock-embed">
+      <h1>Embed Preview</h1>
+      <pre>{JSON.stringify(props, null, 2)}</pre>
+    </div>
+  );
+};
+
+// Create a new QueryClient instance
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+// Create a mock TRPC
+const mockTrpc = createTRPCReact();
+
+// Create a minimal mock client
+const mockTrpcClient = mockTrpc.createClient({
+  links: [
+    httpBatchLink({
+      url: '/api/trpc',
+      // Add headers if needed
+      headers() {
+        return {};
+      },
+    }),
+  ],
+});
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -87,5 +127,21 @@ export default function ComponentPreview() {
     trpcState: {},
   };
 
-  return <ImportedComponent {...props} />;
+  return (
+    <SessionProvider session={null}>
+      <I18nextProvider i18n={{ language: 'en' }}>
+        <mockTrpc.Provider client={mockTrpcClient} queryClient={queryClient}>
+          <QueryClientProvider client={queryClient}>
+            <TooltipProvider>
+              <FeatureProvider>
+                <Suspense fallback={<div>Loading...</div>}>
+                  <MockComponent {...props} />
+                </Suspense>
+              </FeatureProvider>
+            </TooltipProvider>
+          </QueryClientProvider>
+        </mockTrpc.Provider>
+      </I18nextProvider>
+    </SessionProvider>
+  );
 }

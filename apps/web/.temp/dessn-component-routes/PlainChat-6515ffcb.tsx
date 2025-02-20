@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../lib/plain/plainChat';
-
 import { SessionProvider } from 'next-auth/react';
 
 export default function ComponentPreview() {
@@ -25,25 +24,19 @@ export default function ComponentPreview() {
 
   // Mock next/navigation hooks
   const usePathname = () => "/event-types";
-  const useSearchParams = () => new URLSearchParams(shouldOpenPlain ? "?openPlain=true" : "");
+  const useSearchParams = () => new URLSearchParams(state.shouldOpenPlain.value ? "?openPlain=true" : "");
 
-  // Mock fetch function
-  global.fetch = jest.fn(() =>
-    Promise.resolve({
-      ok: true,
-      json: () => Promise.resolve({
-        hash: "mockhash",
-        email: state.userEmail.value,
-        appId: "mockappid",
-        shortName: "User",
-        fullName: "Test User",
-        chatAvatarUrl: "https://example.com/avatar.jpg",
-      }),
-    })
-  );
+  // Create a mock session
+  const mockSession = {
+    user: { 
+      email: state.userEmail.value,
+      name: "Test User",
+    },
+    expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+  };
 
   return (
-    <SessionProvider session={{ user: { email: state.userEmail.value } }}>
+    <SessionProvider session={mockSession}>
       <ImportedComponent />
     </SessionProvider>
   );

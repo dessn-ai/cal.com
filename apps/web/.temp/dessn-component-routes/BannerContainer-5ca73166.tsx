@@ -1,7 +1,37 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { BannerContainer } from '../../../../packages/features/shell/banners/LayoutBanner';
 
+// Mock components
+const MockBanner = ({ children }) => <div className="mock-banner">{children}</div>;
+
+// Override the actual BannerContainer with our simplified version
+const BannerContainer = ({ banners }) => {
+  return (
+    <div className="banner-container">
+      {banners.teamUpgradeBanner && (
+        <MockBanner>Team Upgrade Banner</MockBanner>
+      )}
+      {banners.orgUpgradeBanner && (
+        <MockBanner>Organization Upgrade Banner</MockBanner>
+      )}
+      {banners.verifyEmailBanner && (
+        <MockBanner>Verify Email Banner</MockBanner>
+      )}
+      {banners.adminPasswordBanner && (
+        <MockBanner>Admin Password Banner</MockBanner>
+      )}
+      {banners.impersonationBanner && (
+        <MockBanner>Impersonation Banner</MockBanner>
+      )}
+      {banners.calendarCredentialBanner && (
+        <MockBanner>Calendar Credential Banner</MockBanner>
+      )}
+      {banners.invalidAppCredentialBanners && (
+        <MockBanner>Invalid App Credential Banners</MockBanner>
+      )}
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -52,5 +82,10 @@ export default function ComponentPreview() {
     invalidAppCredentialBanners: state.invalidAppCredentialBanners.value,
   };
 
-  return <BannerContainer banners={banners} />;
+  try {
+    return <BannerContainer banners={banners} />;
+  } catch (error) {
+    console.error('Error rendering BannerContainer:', error);
+    return <div>Error rendering banners</div>;
+  }
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { EditUserSheet } from '../../../../packages/features/users/components/UserTable/EditSheet/EditUserSheet';
-
+import { OrgBrandingProvider } from '../../../../packages/features/ee/organizations/context/provider';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -44,16 +44,34 @@ export default function ComponentPreview() {
     console.log("Dispatch called");
   }, []);
 
+  const mockOrgBranding = {
+    orgBrand: {
+      id: 1,
+      name: "Test Organization",
+      slug: "test-org",
+      logoUrl: null,
+      fullDomain: "test-org.cal.com",
+      domainSuffix: "cal.com",
+      role: "ADMIN",
+      theme: null,
+      brandColor: "#292929",
+      darkBrandColor: "#fafafa",
+      hideBranding: false
+    }
+  };
+
   return (
-    <EditUserSheet
-      state={{
-        changeMemberRole: { showModal: false },
-        deleteMember: { showModal: false },
-        impersonateMember: { showModal: false },
-        inviteMember: { showModal: false },
-        editSheet: state.editSheet.value
-      }}
-      dispatch={mockDispatch}
-    />
+    <OrgBrandingProvider value={mockOrgBranding}>
+      <EditUserSheet
+        state={{
+          changeMemberRole: { showModal: false },
+          deleteMember: { showModal: false },
+          impersonateMember: { showModal: false },
+          inviteMember: { showModal: false },
+          editSheet: state.editSheet.value
+        }}
+        dispatch={mockDispatch}
+      />
+    </OrgBrandingProvider>
   );
 }

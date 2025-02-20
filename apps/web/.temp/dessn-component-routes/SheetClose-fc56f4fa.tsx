@@ -1,7 +1,18 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { SheetClose } from '../../../../packages/ui/components/sheet/Sheet';
+import { Button } from '../../../../packages/ui/components/button';
 
+// Mock SheetClose for preview
+const PreviewSheetClose = ({ className, children }) => {
+  return (
+    <Button 
+      className={className}
+      onClick={() => console.log('Sheet would close here')}
+    >
+      {children}
+    </Button>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,8 +29,8 @@ export default function ComponentPreview() {
   });
 
   return (
-    <SheetClose className={state.className.value}>
+    <PreviewSheetClose className={state.className.value}>
       {state.children.value}
-    </SheetClose>
+    </PreviewSheetClose>
   );
 }

@@ -1,7 +1,36 @@
-import React from 'react';
+import React, { createContext } from 'react';
 import { useParentState } from '../useIframeState';
 import { BookerWebWrapper } from '../../../../packages/platform/atoms/booker/BookerWebWrapper';
 
+// Create mock atoms context
+type AtomsContextType = {
+  options: {
+    readingDirection: 'ltr' | 'rtl';
+    theme?: 'light' | 'dark';
+  };
+};
+
+const AtomsContext = createContext<AtomsContextType>({
+  options: {
+    readingDirection: 'ltr',
+    theme: 'light'
+  }
+});
+
+const AtomsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return (
+    <AtomsContext.Provider 
+      value={{
+        options: {
+          readingDirection: 'ltr',
+          theme: 'light'
+        }
+      }}
+    >
+      {children}
+    </AtomsContext.Provider>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -79,20 +108,22 @@ export default function ComponentPreview() {
   };
 
   return (
-    <BookerWebWrapper
-      eventSlug={state.eventSlug.value}
-      username={state.username.value}
-      orgBannerUrl={state.orgBannerUrl.value}
-      hideBranding={state.hideBranding.value}
-      allowsDynamicBooking={state.allowsDynamicBooking.value}
-      isTeamEvent={state.isTeamEvent.value}
-      duration={state.duration.value}
-      hashedLink={state.hashedLink.value}
-      isInstantMeeting={state.isInstantMeeting.value}
-      teamMemberEmail={state.teamMemberEmail.value}
-      userLocale={state.userLocale.value}
-      hasValidLicense={state.hasValidLicense.value}
-      entity={entity}
-    />
+    <AtomsProvider>
+      <BookerWebWrapper
+        eventSlug={state.eventSlug.value}
+        username={state.username.value}
+        orgBannerUrl={state.orgBannerUrl.value}
+        hideBranding={state.hideBranding.value}
+        allowsDynamicBooking={state.allowsDynamicBooking.value}
+        isTeamEvent={state.isTeamEvent.value}
+        duration={state.duration.value}
+        hashedLink={state.hashedLink.value}
+        isInstantMeeting={state.isInstantMeeting.value}
+        teamMemberEmail={state.teamMemberEmail.value}
+        userLocale={state.userLocale.value}
+        hasValidLicense={state.hasValidLicense.value}
+        entity={entity}
+      />
+    </AtomsProvider>
   );
 }

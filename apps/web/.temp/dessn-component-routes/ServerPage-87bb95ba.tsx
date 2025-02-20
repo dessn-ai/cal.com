@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/auth/forgot-password/[id]/page';
 
+// Use dynamic import with error boundary
+const ImportedComponent = React.lazy(() => import('../../app/(use-page-wrapper)/auth/forgot-password/[id]/page')
+  .catch(() => ({
+    default: () => <div>Error loading component</div>
+  }))
+);
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -20,5 +25,11 @@ export default function ComponentPreview() {
   const params = JSON.parse(state.params.value);
   const searchParams = JSON.parse(state.searchParams.value);
 
-  return <ImportedComponent params={params} searchParams={searchParams} />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <div style={{ padding: '20px' }}>
+        <ImportedComponent params={params} searchParams={searchParams} />
+      </div>
+    </Suspense>
+  );
 }

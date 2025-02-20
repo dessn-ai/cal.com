@@ -1,8 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { DataTableWrapper } from '../../../../packages/features/data-table/components/DataTableWrapper';
-
-import { useReactTable } from '@tanstack/react-table';
+import { useReactTable, getCoreRowModel } from '@tanstack/react-table';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -52,7 +51,7 @@ export default function ComponentPreview() {
   const mockTable = useReactTable({
     data: [],
     columns: [],
-    getCoreRowModel: () => ({ rows: [] }),
+    getCoreRowModel: getCoreRowModel(),
   });
 
   return (

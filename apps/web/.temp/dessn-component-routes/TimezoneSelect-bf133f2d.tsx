@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParentState } from '../useIframeState';
 import { TimezoneSelect } from '../../../../packages/ui/components/form/timezone-select/TimezoneSelect';
-
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -29,12 +28,16 @@ export default function ComponentPreview() {
     },
   });
 
+  const [selectedTimezone, setSelectedTimezone] = useState({ value: "America/New_York", label: "Eastern Time - US & Canada" });
+
   return (
     <TimezoneSelect
       variant={state.variant.value}
       timezoneSelectCustomClassname={state.timezoneSelectCustomClassname.value}
       size={state.size.value}
       grow={state.grow.value}
+      value={selectedTimezone}
+      onChange={setSelectedTimezone}
     />
   );
 }

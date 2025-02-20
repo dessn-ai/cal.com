@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../../../packages/features/ee/teams/components/TeamPill';
+import { TeamRole } from '../../../../packages/features/ee/teams/components/TeamPill';
 
 import { MembershipRole } from '@calcom/prisma/enums';
 
@@ -15,7 +15,7 @@ export default function ComponentPreview() {
   });
 
   return (
-    <ImportedComponent.TeamRole
+    <TeamRole
       role={state.role.value as MembershipRole}
     />
   );

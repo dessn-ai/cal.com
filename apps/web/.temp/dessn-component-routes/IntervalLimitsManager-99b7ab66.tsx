@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { IntervalLimitsManager } from '../../../../packages/features/eventtypes/components/tabs/limits/EventLimitsTab';
-
+import { useForm, FormProvider } from 'react-hook-form';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -33,13 +33,21 @@ export default function ComponentPreview() {
     },
   });
 
+  const formMethods = useForm({
+    defaultValues: {
+      [state.propertyName.value]: {}
+    }
+  });
+
   return (
-    <IntervalLimitsManager
-      propertyName={state.propertyName.value}
-      defaultLimit={state.defaultLimit.value}
-      step={state.step.value}
-      textFieldSuffix={state.textFieldSuffix.value}
-      disabled={state.disabled.value}
-    />
+    <FormProvider {...formMethods}>
+      <IntervalLimitsManager
+        propertyName={state.propertyName.value}
+        defaultLimit={state.defaultLimit.value}
+        step={state.step.value}
+        textFieldSuffix={state.textFieldSuffix.value}
+        disabled={state.disabled.value}
+      />
+    </FormProvider>
   );
 }

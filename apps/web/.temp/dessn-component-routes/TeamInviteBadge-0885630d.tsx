@@ -2,33 +2,60 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { TeamInviteBadge } from '../../../../packages/features/shell/TeamInviteBadge';
 
-
-// Mock the necessary hooks and components
-const mockUseTeamInvites = () => ({
+// Create mock data and context
+const MockTeamInvitesContext = React.createContext({
   isPending: false,
-  listInvites: ['invite1', 'invite2'],
+  listInvites: ['invite1', 'invite2']
 });
 
-const mockUseLocale = () => ({
-  t: (key: string) => key,
+const MockLocaleContext = React.createContext({
+  t: (key: string) => key
 });
 
-jest.mock('@calcom/lib/hooks/useHasPaidPlan', () => ({
-  useTeamInvites: mockUseTeamInvites,
-}));
+// Create mock providers
+const MockTeamInvitesProvider = ({ children }) => (
+  <MockTeamInvitesContext.Provider 
+    value={{
+      isPending: false,
+      listInvites: ['invite1', 'invite2']
+    }}
+  >
+    {children}
+  </MockTeamInvitesContext.Provider>
+);
 
-jest.mock('@calcom/lib/hooks/useLocale', () => ({
-  useLocale: mockUseLocale,
-}));
+const MockLocaleProvider = ({ children }) => (
+  <MockLocaleContext.Provider 
+    value={{
+      t: (key: string) => key
+    }}
+  >
+    {children}
+  </MockLocaleContext.Provider>
+);
 
-jest.mock('@calcom/ui', () => ({
-  Badge: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-}));
+// Mock Badge component
+const MockBadge = ({ children }) => <div>{children}</div>;
+
+// Override the hooks to use our mock contexts
+const useTeamInvites = () => React.useContext(MockTeamInvitesContext);
+const useLocale = () => React.useContext(MockLocaleContext);
+
+// Make the hooks available in the same scope as TeamInviteBadge
+TeamInviteBadge.useTeamInvites = useTeamInvites;
+TeamInviteBadge.useLocale = useLocale;
+TeamInviteBadge.Badge = MockBadge;
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     // No props to control for this component
   });
 
-  return <TeamInviteBadge />;
+  return (
+    <MockTeamInvitesProvider>
+      <MockLocaleProvider>
+        <TeamInviteBadge />
+      </MockLocaleProvider>
+    </MockTeamInvitesProvider>
+  );
 }

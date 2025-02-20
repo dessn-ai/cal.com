@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { EventSetupTab } from '../../../../packages/features/eventtypes/components/tabs/setup/EventSetupTab';
-
+import { FormProvider, useForm } from 'react-hook-form';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -55,16 +55,32 @@ export default function ComponentPreview() {
     },
   });
 
+  const methods = useForm({
+    defaultValues: {
+      title: state.eventType.value.title,
+      slug: state.eventType.value.slug,
+      length: state.eventType.value.length,
+      description: state.eventType.value.description,
+      locations: state.eventType.value.locations,
+      seatsPerTimeSlotEnabled: state.eventType.value.seatsPerTimeSlotEnabled,
+      autoTranslateDescriptionEnabled: state.eventType.value.autoTranslateDescriptionEnabled,
+      metadata: {},
+      users: [{ username: 'default-user' }]
+    }
+  });
+
   return (
-    <EventSetupTab
-      eventType={state.eventType.value}
-      locationOptions={state.locationOptions.value}
-      team={state.team.value}
-      teamMembers={state.teamMembers.value}
-      destinationCalendar={state.destinationCalendar.value}
-      urlPrefix={state.urlPrefix.value}
-      hasOrgBranding={state.hasOrgBranding.value}
-      orgId={state.orgId.value}
-    />
+    <FormProvider {...methods}>
+      <EventSetupTab
+        eventType={state.eventType.value}
+        locationOptions={state.locationOptions.value}
+        team={state.team.value}
+        teamMembers={state.teamMembers.value}
+        destinationCalendar={state.destinationCalendar.value}
+        urlPrefix={state.urlPrefix.value}
+        hasOrgBranding={state.hasOrgBranding.value}
+        orgId={state.orgId.value}
+      />
+    </FormProvider>
   );
 }

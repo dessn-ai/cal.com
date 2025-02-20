@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { FormBuilder } from '../../../../packages/features/form-builder/FormBuilder';
-
+import { FormProvider, useForm } from 'react-hook-form';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -38,17 +38,20 @@ export default function ComponentPreview() {
     },
   });
 
+  const methods = useForm();
   const dataStore = JSON.parse(state.dataStore.value);
 
   return (
-    <FormBuilder
-      formProp={state.formProp.value}
-      title={state.title.value}
-      description={state.description.value}
-      addFieldLabel={state.addFieldLabel.value}
-      disabled={state.disabled.value}
-      LockedIcon={false}
-      dataStore={dataStore}
-    />
+    <FormProvider {...methods}>
+      <FormBuilder
+        formProp={state.formProp.value}
+        title={state.title.value}
+        description={state.description.value}
+        addFieldLabel={state.addFieldLabel.value}
+        disabled={state.disabled.value}
+        LockedIcon={false}
+        dataStore={dataStore}
+      />
+    </FormProvider>
   );
 }

@@ -1,7 +1,30 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../pages/org/[orgSlug]/embed';
 
+// Dynamically import the component with error handling
+const ImportedComponent = React.lazy(() => import('../../pages/org/[orgSlug]/embed').catch(() => ({
+  default: () => <div>Failed to load component</div>
+})));
+
+// Simple error boundary component
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong.</div>;
+    }
+
+    return this.props.children;
+  }
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -64,14 +87,20 @@ export default function ComponentPreview() {
   });
 
   return (
-    <ImportedComponent
-      team={state.team.value}
-      trpcState={state.trpcState.value}
-      themeBasis={state.themeBasis.value}
-      markdownStrippedBio={state.markdownStrippedBio.value}
-      isValidOrgDomain={state.isValidOrgDomain.value}
-      currentOrgDomain={state.currentOrgDomain.value}
-      isSEOIndexable={state.isSEOIndexable.value}
-    />
+    <ErrorBoundary>
+      <Suspense fallback={<div>Loading...</div>}>
+        <div style={{ width: '100%', height: '100%' }}>
+          <ImportedComponent
+            team={state.team.value}
+            trpcState={state.trpcState.value}
+            themeBasis={state.themeBasis.value}
+            markdownStrippedBio={state.markdownStrippedBio.value}
+            isValidOrgDomain={state.isValidOrgDomain.value}
+            currentOrgDomain={state.currentOrgDomain.value}
+            isSEOIndexable={state.isSEOIndexable.value}
+          />
+        </div>
+      </Suspense>
+    </ErrorBoundary>
   );
 }

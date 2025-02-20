@@ -1,7 +1,29 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { RoutingFormEmbedButton } from '../../../../packages/features/embed/RoutingFormEmbed';
 
+// Mock RoutingFormEmbedButton component
+const MockRoutingFormEmbedButton = ({
+  embedUrl,
+  namespace,
+  className,
+  eventId,
+  noQueryParamMode
+}: {
+  embedUrl: string;
+  namespace: string;
+  className: string;
+  eventId: number;
+  noQueryParamMode: boolean;
+}) => {
+  return (
+    <button 
+      className={`${className} mock-embed-button`}
+      onClick={() => console.log('Embed button clicked')}
+    >
+      Embed Form
+    </button>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -28,7 +50,7 @@ export default function ComponentPreview() {
   });
 
   return (
-    <RoutingFormEmbedButton
+    <MockRoutingFormEmbedButton
       embedUrl={state.embedUrl.value}
       namespace={state.namespace.value}
       className={state.className.value}

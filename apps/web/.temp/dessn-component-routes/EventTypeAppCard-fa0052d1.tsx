@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/gtm/components/EventTypeAppCardInterface';
-
+import EventTypeAppContext from '@calcom/app-store/EventTypeAppContext';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -30,7 +30,11 @@ export default function ComponentPreview() {
         category: "analytics",
         description: "Google Tag Manager integration",
         credentialOwner: null,
-        credentialIds: []
+        credentialIds: [],
+        categories: ["analytics"],
+        isInstalled: true,
+        enabled: true,
+        isSetupAlready: true
       },
       label: "App"
     },
@@ -41,11 +45,22 @@ export default function ComponentPreview() {
     }
   });
 
+  // Mock the context values
+  const contextValue = {
+    getAppData: () => ({}),
+    setAppData: () => Promise.resolve(),
+    disabled: state.disabled.value,
+    appUrl: `${state.app.value.slug}`,
+    LockedIcon: undefined
+  };
+
   return (
-    <ImportedComponent
-      eventType={state.eventType.value}
-      app={state.app.value}
-      disabled={state.disabled.value}
-    />
+    <EventTypeAppContext.Provider value={contextValue}>
+      <ImportedComponent
+        eventType={state.eventType.value}
+        app={state.app.value}
+        disabled={state.disabled.value}
+      />
+    </EventTypeAppContext.Provider>
   );
 }

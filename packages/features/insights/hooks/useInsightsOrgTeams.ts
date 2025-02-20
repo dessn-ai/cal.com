@@ -1,27 +1,18 @@
-import { useSession } from "next-auth/react";
-import { useContext } from "react";
-
-import { InsightsOrgTeamsContext } from "../context/InsightsOrgTeamsProvider";
-
-export function useInsightsOrgTeams() {
-  const context = useContext(InsightsOrgTeamsContext);
-  if (!context) {
-    throw new Error("useInsightsOrgTeams must be used within a InsightsOrgTeamsProvider");
+export const useInsightsOrgTeams = () => ({
+  teams: [
+    {
+      id: 1,
+      name: "Mock Team",
+      slug: "mock-team",
+      members: [{ id: 1, name: "Mock User" }]
+    }
+  ],
+  isLoading: false,
+  error: null,
+  orgMembers: [{ id: 1, name: "Mock User" }],
+  currentTeam: {
+    id: 1,
+    name: "Mock Team",
+    slug: "mock-team",
   }
-  const session = useSession();
-  const currentOrgId = session.data?.user.org?.id;
-  const { orgTeamsType, selectedTeamId, setOrgTeamsType, setSelectedTeamId } = context;
-  const isAll = orgTeamsType === "org";
-  const teamId = orgTeamsType === "org" ? currentOrgId : orgTeamsType === "team" ? selectedTeamId : undefined;
-  const userId = orgTeamsType === "yours" ? session.data?.user.id : undefined;
-
-  return {
-    orgTeamsType,
-    setOrgTeamsType,
-    selectedTeamId,
-    setSelectedTeamId,
-    isAll,
-    teamId,
-    userId,
-  };
-}
+});

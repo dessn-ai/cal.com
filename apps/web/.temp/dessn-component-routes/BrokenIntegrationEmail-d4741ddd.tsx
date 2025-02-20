@@ -2,7 +2,11 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { BrokenIntegrationEmail } from '../../../../packages/emails/src/templates/BrokenIntegrationEmail';
 
-import { TimeFormat } from '@calcom/types/Calendar';
+// Mock TimeFormat enum locally instead of importing from @calcom/types/Calendar
+enum TimeFormat {
+  TWELVE_HOUR = "12h",
+  TWENTY_FOUR_HOUR = "24h"
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { EventAppsTab } from '../../../../packages/features/eventtypes/components/tabs/apps/EventAppsTab';
-
+import { FormProvider, useForm } from 'react-hook-form';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -23,5 +23,17 @@ export default function ComponentPreview() {
     }
   });
 
-  return <EventAppsTab eventType={state.eventType.value} />;
+  const methods = useForm({
+    defaultValues: {
+      metadata: {
+        apps: {},
+      }
+    }
+  });
+
+  return (
+    <FormProvider {...methods}>
+      <EventAppsTab eventType={state.eventType.value} />
+    </FormProvider>
+  );
 }

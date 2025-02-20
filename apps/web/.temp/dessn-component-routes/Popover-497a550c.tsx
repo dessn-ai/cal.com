@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { Popover } from '../../../../packages/ui/components/popover/Popover';
-
+import { Popover, PopoverTrigger, PopoverContent } from '../../../../packages/ui/components/popover/Popover';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -25,10 +24,10 @@ export default function ComponentPreview() {
 
   return (
     <Popover open={state.open.value}>
-      <Popover.Trigger>Click me</Popover.Trigger>
-      <Popover.Content align={state.align.value as "start" | "center" | "end"} sideOffset={state.sideOffset.value}>
+      <PopoverTrigger>Click me</PopoverTrigger>
+      <PopoverContent align={state.align.value as "start" | "center" | "end"} sideOffset={state.sideOffset.value}>
         <p>Popover content</p>
-      </Popover.Content>
+      </PopoverContent>
     </Popover>
   );
 }

@@ -1,9 +1,17 @@
 import React from 'react';
+import { useForm, FormProvider } from 'react-hook-form';
 import { useParentState } from '../useIframeState';
 import { EventInstantTab } from '../../../../packages/features/eventtypes/components/tabs/instant/EventInstantTab';
 
-
 export default function ComponentPreview() {
+  const methods = useForm({
+    defaultValues: {
+      // Add any form default values needed
+      instant: false,
+      requiresBookerEmailVerification: false,
+    }
+  });
+
   const [state, setState] = useParentState({
     eventType: {
       type: "object",
@@ -35,9 +43,11 @@ export default function ComponentPreview() {
   });
 
   return (
-    <EventInstantTab
-      eventType={state.eventType.value}
-      isTeamEvent={state.isTeamEvent.value}
-    />
+    <FormProvider {...methods}>
+      <EventInstantTab
+        eventType={state.eventType.value}
+        isTeamEvent={state.isTeamEvent.value}
+      />
+    </FormProvider>
   );
 }

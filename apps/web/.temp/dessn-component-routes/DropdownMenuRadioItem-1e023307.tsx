@@ -1,8 +1,11 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { DropdownMenuRadioItem } from '../../../../packages/ui/components/dropdown/Dropdown';
-
-import { DropdownMenuRadioGroup } from '@radix-ui/react-dropdown-menu';
+import Dropdown, { 
+  DropdownMenuTrigger, 
+  DropdownMenuContent,
+  DropdownMenuRadioItem,
+  DropdownMenuRadioGroup 
+} from '../../../../packages/ui/components/dropdown/Dropdown';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -19,10 +22,17 @@ export default function ComponentPreview() {
   });
 
   return (
-    <DropdownMenuRadioGroup value={state.value.value} onValueChange={(value) => setState('value', value)}>
-      <DropdownMenuRadioItem value={state.value.value}>
-        {state.children.value}
-      </DropdownMenuRadioItem>
-    </DropdownMenuRadioGroup>
+    <Dropdown>
+      <DropdownMenuTrigger asChild>
+        <button>Open Menu</button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuRadioGroup value={state.value.value} onValueChange={(value) => setState('value', value)}>
+          <DropdownMenuRadioItem value={state.value.value}>
+            {state.children.value}
+          </DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </Dropdown>
   );
 }

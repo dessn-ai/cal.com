@@ -1,30 +1,41 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/security/password/page';
 
+// Mock components and utilities
+const MockSettingsHeader = ({ children }: { children: React.ReactNode }) => <div>{children}</div>;
+const MockPasswordView = () => <div>Password View Wrapper</div>;
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  _generateMetadata: jest.fn(),
-  getTranslate: jest.fn(() => (key: string) => key),
-}));
+// Mock the modules directly
+const mockModules = {
+  '@calcom/features/settings/appDir/SettingsHeader': MockSettingsHeader,
+  '~/settings/security/password-view': MockPasswordView,
+  'app/_utils': {
+    _generateMetadata: () => ({
+      title: 'Password Settings',
+      description: 'Manage your password settings'
+    }),
+    getTranslate: () => (key: string) => key
+  }
+};
 
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children }: { children: React.ReactNode }) {
-    return <div>{children}</div>;
-  };
-});
-
-jest.mock('~/settings/security/password-view', () => {
-  return function MockPasswordViewWrapper() {
-    return <div>Password View Wrapper</div>;
-  };
-});
+// Create a wrapped version of the imported component that includes necessary mocks
+const ImportedComponent = React.lazy(() => 
+  import('../../app/(use-page-wrapper)/settings/(settings-layout)/security/password/page')
+    .catch(error => ({
+      default: () => (
+        <div>Error loading component: {error.message}</div>
+      )
+    }))
+);
 
 export default function ComponentPreview() {
-  const [state, setState] = useParentState({
-    // No props identified for this component
-  });
+  const [state, setState] = useParentState({});
 
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="preview-container">
+        <ImportedComponent />
+      </div>
+    </Suspense>
+  );
 }

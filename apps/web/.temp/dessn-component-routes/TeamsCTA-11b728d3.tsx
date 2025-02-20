@@ -2,8 +2,10 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { TeamsCTA } from '../../modules/teams/teams-view';
 
-import { TRPCProvider } from '@calcom/trpc/react';
-import { I18nLanguageHandler } from '@calcom/features/i18n';
+// Create a mock TRPC context if needed
+const MockProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return <>{children}</>;
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -25,10 +27,8 @@ export default function ComponentPreview() {
   });
 
   return (
-    <TRPCProvider>
-      <I18nLanguageHandler>
-        <TeamsCTA />
-      </I18nLanguageHandler>
-    </TRPCProvider>
+    <MockProvider>
+      <TeamsCTA />
+    </MockProvider>
   );
 }

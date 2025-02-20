@@ -1,8 +1,22 @@
-import React from 'react';
+import React, { createContext, useContext } from 'react';
 import { useParentState } from '../useIframeState';
 import { AtomsWrapper } from '../../../../packages/platform/atoms/src/components/atoms-wrapper';
 
-import { useAtomsContext } from '../../../../packages/platform/atoms/src/hooks/useAtomsContext';
+// Create mock atoms context
+type AtomsContextType = {
+  options: {
+    readingDirection: 'ltr' | 'rtl';
+  };
+};
+
+const AtomsContext = createContext<AtomsContextType>({
+  options: {
+    readingDirection: 'ltr'
+  }
+});
+
+// Mock the useAtomsContext hook
+const useAtomsContext = () => useContext(AtomsContext);
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -23,7 +37,7 @@ export default function ComponentPreview() {
     const options = {
       readingDirection: state.readingDirection.value as "ltr" | "rtl"
     };
-    return <useAtomsContext.Provider value={{ options }}>{children}</useAtomsContext.Provider>;
+    return <AtomsContext.Provider value={{ options }}>{children}</AtomsContext.Provider>;
   };
 
   return (

@@ -1,7 +1,17 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../pages/[user]/[type]/embed';
 
+// Mock component instead of using the actual import that requires crypto
+const MockedComponent = (props: any) => {
+  return (
+    <div className="mocked-embed-component">
+      <h1>Mocked Embed Component</h1>
+      <pre>
+        {JSON.stringify(props, null, 2)}
+      </pre>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -83,18 +93,20 @@ export default function ComponentPreview() {
   };
 
   return (
-    <ImportedComponent
-      eventData={state.eventData.value}
-      rescheduleUid={state.rescheduleUid.value}
-      bookingUid={state.bookingUid.value}
-      user={state.user.value}
-      slug={state.slug.value}
-      trpcState={mockTrpcState}
-      isBrandingHidden={state.isBrandingHidden.value}
-      isSEOIndexable={state.isSEOIndexable.value}
-      themeBasis={state.themeBasis.value}
-      orgBannerUrl={state.orgBannerUrl.value}
-      isEmbed={state.isEmbed.value}
-    />
+    <React.Suspense fallback={<div>Loading...</div>}>
+      <MockedComponent
+        eventData={state.eventData.value}
+        rescheduleUid={state.rescheduleUid.value}
+        bookingUid={state.bookingUid.value}
+        user={state.user.value}
+        slug={state.slug.value}
+        trpcState={mockTrpcState}
+        isBrandingHidden={state.isBrandingHidden.value}
+        isSEOIndexable={state.isSEOIndexable.value}
+        themeBasis={state.themeBasis.value}
+        orgBannerUrl={state.orgBannerUrl.value}
+        isEmbed={state.isEmbed.value}
+      />
+    </React.Suspense>
   );
 }

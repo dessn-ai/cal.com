@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { CommandList } from '../../../../packages/ui/components/command/index';
-
+import { Command, CommandList, CommandItem } from '../../../../packages/ui/components/command/index';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -13,11 +12,12 @@ export default function ComponentPreview() {
   });
 
   return (
-    <CommandList className={state.className.value}>
-      {/* Add some example content for the CommandList */}
-      <div>Example Command List Item 1</div>
-      <div>Example Command List Item 2</div>
-      <div>Example Command List Item 3</div>
-    </CommandList>
+    <Command>
+      <CommandList className={state.className.value}>
+        <CommandItem>Example Command List Item 1</CommandItem>
+        <CommandItem>Example Command List Item 2</CommandItem>
+        <CommandItem>Example Command List Item 3</CommandItem>
+      </CommandList>
+    </Command>
   );
 }

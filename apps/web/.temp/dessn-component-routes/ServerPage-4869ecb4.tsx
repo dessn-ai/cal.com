@@ -1,7 +1,5 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/booking/[uid]/page';
-
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -20,5 +18,12 @@ export default function ComponentPreview() {
   const params = JSON.parse(state.params.value);
   const searchParams = JSON.parse(state.searchParams.value);
 
-  return <ImportedComponent params={params} searchParams={searchParams} />;
+  return (
+    <div className="w-full">
+      <div>Preview Component</div>
+      <pre>
+        {JSON.stringify({ params, searchParams }, null, 2)}
+      </pre>
+    </div>
+  );
 }

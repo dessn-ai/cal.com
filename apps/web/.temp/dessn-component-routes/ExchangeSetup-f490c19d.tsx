@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/exchangecalendar/pages/setup/index';
-
 import { useForm } from 'react-hook-form';
 
 export default function ComponentPreview() {

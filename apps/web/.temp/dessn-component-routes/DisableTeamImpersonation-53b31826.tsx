@@ -1,8 +1,46 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/ee/teams/components/DisableTeamImpersonation';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { trpc } from '@calcom/trpc/react';
+// Create a mock version of trpc
+const mockTrpcContext = {
+  viewer: {
+    teams: {
+      getMembershipbyUser: {
+        useQuery: () => ({
+          data: { disableImpersonation: false },
+          isPending: false,
+          isLoading: false,
+          error: null,
+        }),
+      },
+      updateMembership: {
+        useMutation: () => ({
+          mutate: () => Promise.resolve(),
+          isPending: false,
+          isLoading: false,
+          error: null,
+        }),
+      },
+    },
+  },
+};
+
+// Create a mock Provider component
+const MockTrpcProvider = ({ children }) => {
+  // Inject the mock context into the real trpc context
+  const contextValue = React.useMemo(
+    () => ({
+      client: mockTrpcContext,
+      queryClient: new QueryClient(),
+      trpc: mockTrpcContext,
+    }),
+    []
+  );
+
+  return <div data-testid="mock-trpc-provider">{children}</div>;
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -23,34 +61,24 @@ export default function ComponentPreview() {
     },
   });
 
-  // Mock trpc
-  const mockTrpc = {
-    useUtils: () => ({}),
-    viewer: {
-      teams: {
-        getMembershipbyUser: {
-          useQuery: () => ({
-            data: { disableImpersonation: false },
-            isPending: false,
-          }),
-        },
-        updateMembership: {
-          useMutation: () => ({
-            mutate: () => {},
-            isPending: false,
-          }),
-        },
+  const queryClient = React.useMemo(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        refetchOnWindowFocus: false,
       },
     },
-  };
+  }), []);
 
   return (
-    <trpc.Provider client={mockTrpc as any}>
-      <ImportedComponent
-        teamId={state.teamId.value}
-        memberId={state.memberId.value}
-        disabled={state.disabled.value}
-      />
-    </trpc.Provider>
+    <QueryClientProvider client={queryClient}>
+      <MockTrpcProvider>
+        <ImportedComponent
+          teamId={state.teamId.value}
+          memberId={state.memberId.value}
+          disabled={state.disabled.value}
+        />
+      </MockTrpcProvider>
+    </QueryClientProvider>
   );
 }

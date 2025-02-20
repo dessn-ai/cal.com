@@ -1,7 +1,54 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../pages/[user]/embed';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
+// Mock component for preview
+const MockUserComponent = (props: any) => {
+  return (
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">User Profile Preview</h1>
+      <div className="space-y-4">
+        <div className="flex items-center space-x-4">
+          <img 
+            src={props.profile.image} 
+            alt={props.profile.name}
+            className="w-16 h-16 rounded-full"
+          />
+          <div>
+            <h2 className="text-xl font-semibold">{props.profile.name}</h2>
+            <p className="text-gray-600">@{props.profile.username}</p>
+          </div>
+        </div>
+        <div className="space-y-2">
+          <h3 className="font-medium">Bio</h3>
+          <p>{props.markdownStrippedBio}</p>
+        </div>
+        <div className="space-y-2">
+          <h3 className="font-medium">Event Types</h3>
+          <div className="space-y-2">
+            {props.eventTypes.map((event: any) => (
+              <div key={event.id} className="border p-3 rounded">
+                <h4 className="font-medium">{event.title}</h4>
+                <p className="text-sm text-gray-600">{event.length} minutes</p>
+                <div dangerouslySetInnerHTML={{ __html: event.descriptionAsSafeHTML }} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -121,5 +168,15 @@ export default function ComponentPreview() {
     isEmbed: state.isEmbed.value,
   };
 
-  return <ImportedComponent {...props} />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Suspense fallback={
+        <div className="flex h-full items-center justify-center">
+          <p>Loading...</p>
+        </div>
+      }>
+        <MockUserComponent {...props} />
+      </Suspense>
+    </QueryClientProvider>
+  );
 }

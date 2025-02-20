@@ -1,7 +1,45 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { OrgBanner } from '../../../../packages/ui/components/organization-banner/OrgBanner';
 
+// Simple classNames utility for preview
+const classNames = (...classes: (string | undefined | null | false)[]) => {
+  return classes.filter(Boolean).join(' ');
+};
+
+// Preview-specific version of OrgBanner that uses regular img tag
+function PreviewOrgBanner({
+  alt,
+  width = 1500,
+  height = 500,
+  imageSrc,
+  className,
+  fallback,
+  "data-testid": dataTestId
+}: {
+  alt: string;
+  width?: number;
+  height?: number;
+  imageSrc?: string | null;
+  className?: string;
+  fallback?: React.ReactNode;
+  "data-testid"?: string;
+}) {
+  if (!imageSrc) {
+    return <div className={classNames("bg-gray-200", className)}>{fallback}</div>;
+  }
+  
+  return (
+    <img
+      data-testid={dataTestId}
+      src={imageSrc}
+      alt={alt}
+      className={className}
+      width={width}
+      height={height}
+      style={{ maxWidth: '100%', height: 'auto' }}
+    />
+  );
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -22,7 +60,7 @@ export default function ComponentPreview() {
     },
     imageSrc: {
       type: "string",
-      value: "https://example.com/banner.jpg",
+      value: "https://images.unsplash.com/photo-1500964757637-c85e8a162699",
       label: "Image Source",
     },
     className: {
@@ -33,7 +71,7 @@ export default function ComponentPreview() {
   });
 
   return (
-    <OrgBanner
+    <PreviewOrgBanner
       alt={state.alt.value}
       width={state.width.value}
       height={state.height.value}

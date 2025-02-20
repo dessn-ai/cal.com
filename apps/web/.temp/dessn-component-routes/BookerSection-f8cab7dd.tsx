@@ -1,8 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { BookerSection } from '../../../../packages/features/bookings/Booker/components/Section';
-
-import { BookerProvider } from '../../../../packages/features/bookings/Booker/store';
+import { useBookerStore, useInitializeBookerStore } from '../../../../packages/features/bookings/Booker/store';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -24,15 +23,21 @@ export default function ComponentPreview() {
     },
   });
 
+  // Initialize the store with required values
+  useInitializeBookerStore({
+    username: "demo",
+    eventSlug: "demo-event",
+    eventId: 1,
+    layout: "month_view"
+  });
+
   return (
-    <BookerProvider>
-      <BookerSection
-        area={state.area.value}
-        visible={state.visible.value}
-        className={state.className.value}
-      >
-        <div>Sample Content</div>
-      </BookerSection>
-    </BookerProvider>
+    <BookerSection
+      area={state.area.value}
+      visible={state.visible.value}
+      className={state.className.value}
+    >
+      <div>Sample Content</div>
+    </BookerSection>
   );
 }

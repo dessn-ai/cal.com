@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { BookingRedirectEmailNotification } from '../../../../packages/emails/src/templates/BookingRedirectEmailNotification';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     language: {

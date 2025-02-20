@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { DialogOverlay } from '../../../../packages/platform/atoms/src/components/ui/dialog';
-
+import { Dialog, DialogOverlay } from '@radix-ui/react-dialog';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -13,6 +12,8 @@ export default function ComponentPreview() {
   });
 
   return (
-    <DialogOverlay className={state.className.value} />
+    <Dialog open={true}>
+      <DialogOverlay className={state.className.value} />
+    </Dialog>
   );
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/giphy/components/EventTypeAppCardInterface';
-
+import EventTypeAppContext from '@calcom/app-store/EventTypeAppContext';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -31,7 +31,11 @@ export default function ComponentPreview() {
         category: "other",
         url: "https://giphy.com",
         credentialOwner: null,
-        credentialIds: []
+        credentialIds: [],
+        categories: ["other"],
+        isInstalled: true,
+        enabled: true,
+        isSetupAlready: true
       },
       label: "App"
     },
@@ -42,11 +46,22 @@ export default function ComponentPreview() {
     }
   });
 
+  // Mock context values
+  const contextValue = {
+    getAppData: () => ({}),
+    setAppData: () => Promise.resolve(),
+    disabled: state.disabled.value,
+    appUrl: state.app.value.url,
+    LockedIcon: undefined
+  };
+
   return (
-    <ImportedComponent
-      eventType={state.eventType.value}
-      app={state.app.value}
-      disabled={state.disabled.value}
-    />
+    <EventTypeAppContext.Provider value={contextValue}>
+      <ImportedComponent
+        eventType={state.eventType.value}
+        app={state.app.value}
+        disabled={state.disabled.value}
+      />
+    </EventTypeAppContext.Provider>
   );
 }

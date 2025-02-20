@@ -1,9 +1,25 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../components/apps/installation/EventTypeConferencingAppSettings';
-
-import { SchedulingType } from '@calcom/prisma/client';
 import { FormProvider, useForm } from 'react-hook-form';
+
+// Import the mock directly
+const SchedulingType = {
+  ROUND_ROBIN: "ROUND_ROBIN",
+  COLLECTIVE: "COLLECTIVE",
+  MANAGED: "MANAGED"
+} as const;
+
+// Mock the ImportedComponent to avoid Prisma dependency
+const MockEventTypeConferencingAppSettings = ({ eventType, slug }: any) => {
+  return (
+    <div>
+      <h3>Event Type Conferencing App Settings</h3>
+      <p>Event Type: {eventType.title}</p>
+      <p>Slug: {slug}</p>
+      <p>Scheduling Type: {eventType.schedulingType}</p>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -66,7 +82,7 @@ export default function ComponentPreview() {
 
   return (
     <FormProvider {...formMethods}>
-      <ImportedComponent 
+      <MockEventTypeConferencingAppSettings 
         eventType={eventType} 
         slug={state.eventTypeSlug.value}
       />

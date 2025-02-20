@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { DataTableToolbar } from '../../../../packages/features/data-table/components/DataTableToolbar';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     className: {
@@ -12,20 +11,38 @@ export default function ComponentPreview() {
     },
   });
 
-  // Mock table object
   const mockTable = {
-    getColumn: () => ({
+    getState: () => ({
+      columnFilters: [],
+      globalFilter: '',
+    }),
+    setColumnFilters: () => {},
+    setGlobalFilter: () => {},
+    getColumn: (key: string) => ({
       getFilterValue: () => "",
       setFilterValue: () => {},
+      columnDef: { cell: () => null },
+      id: key,
     }),
     resetColumnFilters: () => {},
+    options: {
+      state: {
+        columnFilters: [],
+        globalFilter: '',
+      }
+    }
   };
 
   return (
-    <DataTableToolbar.Root className={state.className.value}>
-      <DataTableToolbar.SearchBar table={mockTable} searchKey="name" />
-      <DataTableToolbar.ClearFiltersButton table={mockTable} />
-      <DataTableToolbar.CTA>Action</DataTableToolbar.CTA>
-    </DataTableToolbar.Root>
+    <div className="p-4">
+      <DataTableToolbar.Root className={state.className.value}>
+        <DataTableToolbar.SearchBar 
+          table={mockTable} 
+          searchKey="name" 
+          onSearch={(value) => console.log('Search:', value)} 
+        />
+        <DataTableToolbar.CTA>Action</DataTableToolbar.CTA>
+      </DataTableToolbar.Root>
+    </div>
   );
 }

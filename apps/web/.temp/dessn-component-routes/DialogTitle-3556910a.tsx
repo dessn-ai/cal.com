@@ -1,7 +1,22 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { DialogTitle } from '../../../../packages/platform/atoms/src/components/ui/dialog';
+import { cn } from '../../../../packages/platform/atoms/src/lib/utils';
 
+// Mock version of DialogTitle for preview purposes
+const PreviewDialogTitle = ({ 
+  className,
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLHeadingElement>) => {
+  return (
+    <h2
+      className={cn("text-lg font-semibold leading-none tracking-tight", className)}
+      {...props}
+    >
+      {children}
+    </h2>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,8 +33,8 @@ export default function ComponentPreview() {
   });
 
   return (
-    <DialogTitle className={state.className.value}>
+    <PreviewDialogTitle className={state.className.value}>
       {state.children.value}
-    </DialogTitle>
+    </PreviewDialogTitle>
   );
 }

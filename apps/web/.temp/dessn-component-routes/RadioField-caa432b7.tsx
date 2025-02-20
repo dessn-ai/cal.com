@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { RadioField } from '../../../../packages/ui/form/radio-area/Radio';
-
+import { RadioField, Group } from '../../../../packages/ui/form/radio-area/Radio';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -38,13 +37,15 @@ export default function ComponentPreview() {
   });
 
   return (
-    <RadioField
-      label={state.label.value}
-      disabled={state.disabled.value}
-      id={state.id.value}
-      value={state.value.value}
-      className={state.className.value}
-      withPadding={state.withPadding.value}
-    />
+    <Group defaultValue={state.value.value} name="radio-group">
+      <RadioField
+        label={state.label.value}
+        disabled={state.disabled.value}
+        id={state.id.value}
+        value={state.value.value}
+        className={state.className.value}
+        withPadding={state.withPadding.value}
+      />
+    </Group>
   );
 }

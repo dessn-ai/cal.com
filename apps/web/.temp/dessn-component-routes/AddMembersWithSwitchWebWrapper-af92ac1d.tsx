@@ -1,7 +1,33 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { AddMembersWithSwitchWebWrapper } from '../../../../packages/platform/atoms/add-members-switch/AddMembersWithSwitchWebWrapper';
+import { FormProvider, useForm } from 'react-hook-form';
 
+// Create a mock wrapper component
+const MockedAddMembersWithSwitchWebWrapper = (props) => {
+  // Mock the TRPC functionality directly in the component
+  const mockUtils = {
+    viewer: {
+      appRoutingForms: {
+        getAttributesForTeam: {
+          prefetch: () => Promise.resolve(null)
+        }
+      }
+    }
+  };
+
+  // Create a component that provides the mocked context
+  const ComponentWithMockedTRPC = () => {
+    try {
+      return <AddMembersWithSwitchWebWrapper {...props} />;
+    } catch (error) {
+      console.error('Error in AddMembersWithSwitchWebWrapper:', error);
+      return <div>Error loading component</div>;
+    }
+  };
+
+  return <ComponentWithMockedTRPC />;
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -58,21 +84,43 @@ export default function ComponentPreview() {
     }
   });
 
+  const methods = useForm({
+    defaultValues: {
+      hosts: JSON.parse(state.value.value)
+    }
+  });
+
+  // Set initial form values when state changes
+  React.useEffect(() => {
+    methods.reset({
+      hosts: JSON.parse(state.value.value)
+    });
+  }, [state.value.value]);
+
   return (
-    <AddMembersWithSwitchWebWrapper
-      teamMembers={JSON.parse(state.teamMembers.value)}
-      value={JSON.parse(state.value.value)}
-      onChange={(hosts) => console.log("Hosts changed:", hosts)}
-      assignAllTeamMembers={state.assignAllTeamMembers.value}
-      setAssignAllTeamMembers={(value) => setState("assignAllTeamMembers", value)}
-      automaticAddAllEnabled={state.automaticAddAllEnabled.value}
-      onActive={() => console.log("Component activated")}
-      isFixed={state.isFixed.value}
-      placeholder={state.placeholder.value}
-      isRRWeightsEnabled={state.isRRWeightsEnabled.value}
-      teamId={state.teamId.value}
-      isSegmentApplicable={state.isSegmentApplicable.value}
-      data-testid="add-members-switch"
-    />
+    <div className="p-6">
+      <FormProvider {...methods}>
+        <form onSubmit={methods.handleSubmit(() => {})}>
+          <MockedAddMembersWithSwitchWebWrapper
+            teamMembers={JSON.parse(state.teamMembers.value)}
+            value={JSON.parse(state.value.value)}
+            onChange={(hosts) => {
+              methods.setValue('hosts', hosts);
+              console.log("Hosts changed:", hosts);
+            }}
+            assignAllTeamMembers={state.assignAllTeamMembers.value}
+            setAssignAllTeamMembers={(value) => setState("assignAllTeamMembers", value)}
+            automaticAddAllEnabled={state.automaticAddAllEnabled.value}
+            onActive={() => console.log("Component activated")}
+            isFixed={state.isFixed.value}
+            placeholder={state.placeholder.value}
+            isRRWeightsEnabled={state.isRRWeightsEnabled.value}
+            teamId={state.teamId.value}
+            isSegmentApplicable={state.isSegmentApplicable.value}
+            data-testid="add-members-switch"
+          />
+        </form>
+      </FormProvider>
+    </div>
   );
 }

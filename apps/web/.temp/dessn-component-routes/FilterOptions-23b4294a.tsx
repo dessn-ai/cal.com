@@ -1,8 +1,66 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParentState } from '../useIframeState';
 import { FilterOptions } from '../../../../packages/features/data-table/components/filters/FilterOptions';
-
 import { ColumnFilterType } from '../../../../packages/features/data-table/lib/types';
+
+// Create a HOC that provides the mocked hooks
+const withDataTableHooks = (WrappedComponent: any) => {
+  return function WithDataTableHooks(props: any) {
+    const [filters, setFilters] = useState<Array<{ f: string; v: any }>>([]);
+
+    // Mock the hooks directly in the component's scope
+    const mockHooks = {
+      useDataTable: () => ({
+        activeFilters: filters,
+        updateFilter: (columnId: string, value: any) => {
+          setFilters(prev => {
+            const existing = prev.findIndex(f => f.f === columnId);
+            if (existing !== -1) {
+              const newFilters = [...prev];
+              newFilters[existing] = { f: columnId, v: value };
+              return newFilters;
+            }
+            return [...prev, { f: columnId, v: value }];
+          });
+        },
+        removeFilter: (columnId: string) => {
+          setFilters(prev => prev.filter(f => f.f !== columnId));
+        },
+        table: {
+          getColumn: () => ({
+            getFilterValue: () => undefined,
+            setFilterValue: () => {},
+          }),
+          getState: () => ({
+            columnFilters: filters,
+          }),
+        }
+      }),
+      useFilterValue: (columnId: string) => {
+        const filter = filters.find(f => f.f === columnId);
+        return filter ? filter.v : undefined;
+      }
+    };
+
+    // Override the hooks in the module
+    const originalUseDataTable = require('../../../../packages/features/data-table/hooks/useDataTable').useDataTable;
+    const originalUseFilterValue = require('../../../../packages/features/data-table/hooks/useFilterValue').useFilterValue;
+
+    try {
+      require('../../../../packages/features/data-table/hooks/useDataTable').useDataTable = mockHooks.useDataTable;
+      require('../../../../packages/features/data-table/hooks/useFilterValue').useFilterValue = mockHooks.useFilterValue;
+
+      return <WrappedComponent {...props} />;
+    } finally {
+      // Restore original hooks
+      require('../../../../packages/features/data-table/hooks/useDataTable').useDataTable = originalUseDataTable;
+      require('../../../../packages/features/data-table/hooks/useFilterValue').useFilterValue = originalUseFilterValue;
+    }
+  };
+};
+
+// Wrap FilterOptions with the HOC
+const FilterOptionsWithHooks = withDataTableHooks(FilterOptions);
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -52,5 +110,5 @@ export default function ComponentPreview() {
     }
   };
 
-  return <FilterOptions column={getColumnData()} />;
+  return <FilterOptionsWithHooks column={getColumnData()} />;
 }

@@ -1,9 +1,18 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/eventtypes/components/tabs/instant/InstantEventController';
-
+import { FormProvider, useForm } from 'react-hook-form';
 
 export default function ComponentPreview() {
+  const methods = useForm({
+    defaultValues: {
+      isInstantEvent: false,
+      instantMeetingParameters: [],
+      instantMeetingExpiryTimeOffsetInSeconds: 300,
+      instantMeetingSchedule: null,
+    }
+  });
+
   const [state, setState] = useParentState({
     eventType: {
       type: "object",
@@ -26,10 +35,12 @@ export default function ComponentPreview() {
   });
 
   return (
-    <ImportedComponent
-      eventType={state.eventType.value}
-      paymentEnabled={state.paymentEnabled.value}
-      isTeamEvent={state.isTeamEvent.value}
-    />
+    <FormProvider {...methods}>
+      <ImportedComponent
+        eventType={state.eventType.value}
+        paymentEnabled={state.paymentEnabled.value}
+        isTeamEvent={state.isTeamEvent.value}
+      />
+    </FormProvider>
   );
 }

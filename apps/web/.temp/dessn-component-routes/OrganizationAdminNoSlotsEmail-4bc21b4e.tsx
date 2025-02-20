@@ -2,14 +2,8 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { OrganizationAdminNoSlotsEmail } from '../../../../packages/emails/src/templates/OrganizationAdminNoSlots';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
-    language: {
-      type: "string",
-      value: (key: string, options?: any) => key,
-      label: "Language Function",
-    },
     to: {
       type: "string",
       value: "admin@example.com",
@@ -47,9 +41,12 @@ export default function ComponentPreview() {
     },
   });
 
+  // Create the translate function directly
+  const translate = (key: string) => key;
+
   return (
     <OrganizationAdminNoSlotsEmail
-      language={state.language.value}
+      language={translate}
       to={{ email: state.to.value }}
       user={state.user.value}
       slug={state.slug.value}

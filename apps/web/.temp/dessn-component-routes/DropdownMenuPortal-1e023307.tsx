@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { DropdownMenuPortal } from '../../../../packages/ui/components/dropdown/Dropdown';
-
+import { Dropdown, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuPortal } from '../../../../packages/ui/components/dropdown/Dropdown';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -25,12 +24,19 @@ export default function ComponentPreview() {
   });
 
   return (
-    <DropdownMenuPortal
-      theme={state.theme.value as "light" | "dark"}
-      align={state.align.value as "start" | "center" | "end"}
-      sideOffset={state.sideOffset.value}
-    >
-      <div>Dropdown Content</div>
-    </DropdownMenuPortal>
+    <Dropdown>
+      <DropdownMenuTrigger>
+        Click to Open
+      </DropdownMenuTrigger>
+      <DropdownMenuPortal>
+        <DropdownMenuContent
+          theme={state.theme.value as "light" | "dark"}
+          align={state.align.value as "start" | "center" | "end"}
+          sideOffset={state.sideOffset.value}
+        >
+          <div>Dropdown Content</div>
+        </DropdownMenuContent>
+      </DropdownMenuPortal>
+    </Dropdown>
   );
 }

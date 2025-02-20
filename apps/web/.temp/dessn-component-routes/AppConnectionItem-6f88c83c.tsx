@@ -2,6 +2,10 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { AppConnectionItem } from '../../components/getting-started/components/AppConnectionItem';
 
+// Mock TRPCProvider since we can't access the real one
+const MockTRPCProvider = ({ children }: { children: React.ReactNode }) => {
+  return <>{children}</>;
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -54,16 +58,18 @@ export default function ComponentPreview() {
   ];
 
   return (
-    <AppConnectionItem
-      title={state.title.value}
-      description={state.description.value}
-      logo={state.logo.value}
-      type={state.type.value as any}
-      installed={state.installed.value}
-      isDefault={state.isDefault.value}
-      defaultInstall={state.defaultInstall.value}
-      slug={state.slug.value}
-      dependencyData={dependencyData}
-    />
+    <MockTRPCProvider>
+      <AppConnectionItem
+        title={state.title.value}
+        description={state.description.value}
+        logo={state.logo.value}
+        type={state.type.value as any}
+        installed={state.installed.value}
+        isDefault={state.isDefault.value}
+        defaultInstall={state.defaultInstall.value}
+        slug={state.slug.value}
+        dependencyData={dependencyData}
+      />
+    </MockTRPCProvider>
   );
 }

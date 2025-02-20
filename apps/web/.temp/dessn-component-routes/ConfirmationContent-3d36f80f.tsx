@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
+import { Dialog, DialogContent } from '../../../../packages/ui/components/dialog/Dialog';
 import { ConfirmationContent } from '../../../../packages/ui/components/dialog/ConfirmationDialogContent';
-
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -39,16 +39,20 @@ export default function ComponentPreview() {
   });
 
   return (
-    <ConfirmationContent
-      title={state.title.value}
-      variety={state.variety.value as "danger" | "warning" | "success"}
-      confirmBtnText={state.confirmBtnText.value}
-      cancelBtnText={state.cancelBtnText.value}
-      loadingText={state.loadingText.value}
-      isPending={state.isPending.value}
-      onConfirm={() => console.log("Confirmed")}
-    >
-      This is the content of the confirmation dialog. Are you sure you want to proceed?
-    </ConfirmationContent>
+    <Dialog defaultOpen={true}>
+      <DialogContent type="confirmation">
+        <ConfirmationContent
+          title={state.title.value}
+          variety={state.variety.value as "danger" | "warning" | "success"}
+          confirmBtnText={state.confirmBtnText.value}
+          cancelBtnText={state.cancelBtnText.value}
+          loadingText={state.loadingText.value}
+          isPending={state.isPending.value}
+          onConfirm={() => console.log("Confirmed")}
+        >
+          This is the content of the confirmation dialog. Are you sure you want to proceed?
+        </ConfirmationContent>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/eventtypes/components/EventTypeDescription';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     eventType: {
@@ -15,7 +14,10 @@ export default function ComponentPreview() {
         schedulingType: "ROUND_ROBIN",
         metadata: {
           multipleDuration: [30, 60, 90],
-          requiresConfirmationThreshold: true
+          requiresConfirmationThreshold: {
+            time: 24,
+            unit: "hours"
+          }
         },
         requiresConfirmation: true,
         seatsPerTimeSlot: 5

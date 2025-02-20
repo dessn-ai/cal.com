@@ -2,7 +2,11 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { AttendeeAddGuestsEmail } from '../../../../packages/emails/src/templates/AttendeeAddGuestsEmail';
 
-import { TimeFormat } from '../../../../packages/types/Calendar';
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({

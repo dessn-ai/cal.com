@@ -1,7 +1,15 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/signup/page';
+import dynamic from 'next/dynamic';
 
+// Use dynamic import with no SSR to avoid server component issues
+const SignupPage = dynamic(() => import('../../app/(use-page-wrapper)/signup/page').then(mod => {
+  // Handle both default and named exports
+  return mod.default || mod;
+}), {
+  ssr: false,
+  loading: () => <div>Loading...</div>
+});
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -22,5 +30,11 @@ export default function ComponentPreview() {
     searchParams: JSON.parse(state.searchParams.value),
   };
 
-  return <ImportedComponent {...pageProps} />;
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <Suspense fallback={<div>Loading...</div>}>
+        <SignupPage {...pageProps} />
+      </Suspense>
+    </div>
+  );
 }

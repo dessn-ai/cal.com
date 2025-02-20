@@ -2,8 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../modules/team/type-view';
 
-import { Booker } from "@calcom/atoms/monorepo";
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     slug: {
@@ -63,19 +61,24 @@ export default function ComponentPreview() {
     length: 60,
   };
 
-  return (
-    <ImportedComponent
-      slug={state.slug.value}
-      user={state.user.value}
-      booking={mockBooking}
-      isBrandingHidden={state.isBrandingHidden.value}
-      eventData={mockEventData}
-      isInstantMeeting={state.isInstantMeeting.value}
-      orgBannerUrl={state.orgBannerUrl.value}
-      teamMemberEmail={state.teamMemberEmail.value}
-      crmOwnerRecordType={state.crmOwnerRecordType.value}
-      crmAppSlug={state.crmAppSlug.value}
-      isEmbed={state.isEmbed.value}
-    />
-  );
+  try {
+    return (
+      <ImportedComponent
+        slug={state.slug.value}
+        user={state.user.value}
+        booking={mockBooking}
+        isBrandingHidden={state.isBrandingHidden.value}
+        eventData={mockEventData}
+        isInstantMeeting={state.isInstantMeeting.value}
+        orgBannerUrl={state.orgBannerUrl.value}
+        teamMemberEmail={state.teamMemberEmail.value}
+        crmOwnerRecordType={state.crmOwnerRecordType.value}
+        crmAppSlug={state.crmAppSlug.value}
+        isEmbed={state.isEmbed.value}
+      />
+    );
+  } catch (error) {
+    console.error('Error rendering component:', error);
+    return <div>Error: Failed to render component</div>;
+  }
 }

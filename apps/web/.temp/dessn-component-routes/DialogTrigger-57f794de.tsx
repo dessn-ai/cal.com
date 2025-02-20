@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { DialogTrigger } from '../../../../packages/ui/components/dialog/Dialog';
-
+import { Dialog, DialogTrigger } from '../../../../packages/ui/components/dialog/Dialog';
 import { Button } from '../../../../packages/ui/components/button';
 
 export default function ComponentPreview() {
@@ -20,10 +19,12 @@ export default function ComponentPreview() {
   });
 
   return (
-    <DialogTrigger>
-      <Button color={state.buttonColor.value as any}>
-        {state.buttonText.value}
-      </Button>
-    </DialogTrigger>
+    <Dialog>
+      <DialogTrigger>
+        <Button color={state.buttonColor.value as any}>
+          {state.buttonText.value}
+        </Button>
+      </DialogTrigger>
+    </Dialog>
   );
 }

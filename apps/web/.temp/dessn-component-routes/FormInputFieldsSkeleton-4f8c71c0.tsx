@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../../../packages/app-store/routing-forms/components/FormInputFields';
-
+import { FormInputFieldsSkeleton } from '../../../../packages/app-store/routing-forms/components/FormInputFields';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -13,6 +12,6 @@ export default function ComponentPreview() {
   });
 
   return (
-    <ImportedComponent numberOfFields={state.numberOfFields.value} />
+    <FormInputFieldsSkeleton />
   );
 }

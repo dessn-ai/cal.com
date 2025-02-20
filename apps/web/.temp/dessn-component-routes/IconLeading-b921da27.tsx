@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { IconLeading } from '../../../../packages/ui/components/form/select/components';
-
-import { components as reactSelectComponents } from 'react-select';
+import { Select } from '../../../../packages/ui/components/form/select/Select';
+import { Icon } from '../../../../packages/ui/components/icon';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -14,12 +14,19 @@ export default function ComponentPreview() {
   });
 
   return (
-    <IconLeading
-      icon={<div dangerouslySetInnerHTML={{ __html: state.icon.value }} />}
-    >
-      <reactSelectComponents.Control>
-        {/* Add any children components here if needed */}
-      </reactSelectComponents.Control>
-    </IconLeading>
+    <Select
+      options={[
+        { value: '1', label: 'Option 1' },
+        { value: '2', label: 'Option 2' },
+      ]}
+      components={{
+        Control: (props) => (
+          <IconLeading
+            {...props}
+            icon={<Icon name="user" className="ml-3 h-4 w-4 text-gray-500" />}
+          />
+        ),
+      }}
+    />
   );
 }

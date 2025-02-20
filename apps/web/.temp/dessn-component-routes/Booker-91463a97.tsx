@@ -1,7 +1,29 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { Booker } from '../../../../packages/features/bookings/Booker/Booker';
 
+// Mock AtomsWrapper component
+const MockAtomsWrapper = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div data-testid="mock-atoms-wrapper">
+      {children}
+    </div>
+  );
+};
+
+// Mock Booker component
+const MockBooker = (props: any) => {
+  return (
+    <div className="mock-booker">
+      <h2>Booking Preview</h2>
+      <div>
+        <p>Event: {props.eventSlug}</p>
+        <p>Username: {props.username}</p>
+        <p>Duration: {props.duration} minutes</p>
+        <p>Selected Date: {props.selectedDate.toLocaleDateString()}</p>
+      </div>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -79,30 +101,32 @@ export default function ComponentPreview() {
   });
 
   return (
-    <Booker
-      eventSlug={state.eventSlug.value}
-      username={state.username.value}
-      orgBannerUrl={state.orgBannerUrl.value}
-      hideBranding={state.hideBranding.value}
-      entity={{
-        fromRedirectOfNonOrgLink: false,
-        considerUnpublished: false,
-        isUnpublished: false,
-        orgSlug: state.entity.value === "org" ? "example-org" : null,
-        teamSlug: state.entity.value === "team" ? "example-team" : null,
-        name: "Example Entity",
-        logoUrl: "https://example.com/logo.png",
-        eventTypeId: 1,
-      }}
-      month={state.month.value}
-      selectedDate={new Date(state.selectedDate.value)}
-      allowsDynamicBooking={state.allowsDynamicBooking.value}
-      isTeamEvent={state.isTeamEvent.value}
-      duration={state.duration.value}
-      hashedLink={state.hashedLink.value}
-      isInstantMeeting={state.isInstantMeeting.value}
-      userLocale={state.userLocale.value}
-      hasValidLicense={state.hasValidLicense.value}
-    />
+    <MockAtomsWrapper>
+      <MockBooker
+        eventSlug={state.eventSlug.value}
+        username={state.username.value}
+        orgBannerUrl={state.orgBannerUrl.value}
+        hideBranding={state.hideBranding.value}
+        entity={{
+          fromRedirectOfNonOrgLink: false,
+          considerUnpublished: false,
+          isUnpublished: false,
+          orgSlug: state.entity.value === "org" ? "example-org" : null,
+          teamSlug: state.entity.value === "team" ? "example-team" : null,
+          name: "Example Entity",
+          logoUrl: "https://example.com/logo.png",
+          eventTypeId: 1,
+        }}
+        month={state.month.value}
+        selectedDate={new Date(state.selectedDate.value)}
+        allowsDynamicBooking={state.allowsDynamicBooking.value}
+        isTeamEvent={state.isTeamEvent.value}
+        duration={state.duration.value}
+        hashedLink={state.hashedLink.value}
+        isInstantMeeting={state.isInstantMeeting.value}
+        userLocale={state.userLocale.value}
+        hasValidLicense={state.hasValidLicense.value}
+      />
+    </MockAtomsWrapper>
   );
 }

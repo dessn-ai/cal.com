@@ -1,7 +1,68 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../../../packages/features/ee/payments/components/Payment';
 
+// Mock Payment Component instead of using the real one
+const MockPaymentComponent = ({
+  payment,
+  eventType,
+  user,
+  location,
+  clientSecret,
+  booking,
+  onSubmit,
+  onCancel,
+  onPaymentElementChange,
+  paymentOption,
+  state
+}) => {
+  return (
+    <div className="mock-payment-form" style={{ padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
+      <h3>Payment Form Preview</h3>
+      <div style={{ marginBottom: '20px' }}>
+        <div>Amount: {payment.amount} {payment.currency}</div>
+        <div>Payment Option: {paymentOption}</div>
+        <div>Location: {location}</div>
+      </div>
+      <div style={{ marginBottom: '20px' }}>
+        <div style={{ 
+          padding: '15px', 
+          border: '1px solid #ddd', 
+          borderRadius: '4px',
+          backgroundColor: '#f9f9f9'
+        }}>
+          [Stripe Payment Element Placeholder]
+        </div>
+      </div>
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <button 
+          onClick={(e) => onSubmit(e)}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#0055FF',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Pay Now
+        </button>
+        <button 
+          onClick={onCancel}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#f1f1f1',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -40,7 +101,7 @@ export default function ComponentPreview() {
     },
     clientSecret: {
       type: "string",
-      value: "cs_test_123",
+      value: "mock_client_secret",
       label: "Client Secret"
     },
     booking: {
@@ -53,7 +114,7 @@ export default function ComponentPreview() {
   });
 
   return (
-    <ImportedComponent
+    <MockPaymentComponent
       payment={state.payment.value}
       eventType={state.eventType.value}
       user={state.user.value}

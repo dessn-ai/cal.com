@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParentState } from '../useIframeState';
 import { SchedulerHeading } from '../../../../packages/features/calendars/weeklyview/components/heading/SchedulerHeading';
-
-import { CalendarStoreProvider } from '../../../../packages/features/calendars/weeklyview/state/store';
+import { useCalendarStore } from '../../../../packages/features/calendars/weeklyview/state/store';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,19 +17,21 @@ export default function ComponentPreview() {
     },
   });
 
-  const mockCalendarStore = {
-    startDate: new Date(state.startDate.value),
-    endDate: new Date(state.endDate.value),
-    handleDateChange: (direction: 'INCREMENT' | 'DECREMENT') => {
-      const change = direction === 'INCREMENT' ? 7 : -7;
-      setState('startDate', new Date(new Date(state.startDate.value).getTime() + change * 24 * 60 * 60 * 1000).toISOString());
-      setState('endDate', new Date(new Date(state.endDate.value).getTime() + change * 24 * 60 * 60 * 1000).toISOString());
-    },
-  };
+  const initState = useCalendarStore((state) => state.initState);
 
-  return (
-    <CalendarStoreProvider initialState={mockCalendarStore}>
-      <SchedulerHeading />
-    </CalendarStoreProvider>
-  );
+  useEffect(() => {
+    initState({
+      startDate: new Date(state.startDate.value),
+      endDate: new Date(state.endDate.value),
+      events: [],
+      view: 'week',
+      handleDateChange: (direction: 'INCREMENT' | 'DECREMENT') => {
+        const change = direction === 'INCREMENT' ? 7 : -7;
+        setState('startDate', new Date(new Date(state.startDate.value).getTime() + change * 24 * 60 * 60 * 1000).toISOString());
+        setState('endDate', new Date(new Date(state.endDate.value).getTime() + change * 24 * 60 * 60 * 1000).toISOString());
+      },
+    });
+  }, [state.startDate.value, state.endDate.value]);
+
+  return <SchedulerHeading />;
 }

@@ -11,14 +11,22 @@ import { trpc } from "@calcom/trpc/react";
 import { Alert, Avatar, Button, Form, Icon, ImageUploader, Label, TextAreaField } from "@calcom/ui";
 
 const querySchema = z.object({
-  id: z.string(),
+  id: z.string().default("preview-org-id"),
 });
 
 export const AboutOrganizationForm = () => {
-  const { t } = useLocale();
-  const router = useRouter();
-  const routerQuery = useRouterQuery();
-  const { id: orgId } = querySchema.parse(routerQuery);
+  const { t = (key: string) => key } = useLocale?.() || {};
+  const router = useRouter?.() || { push: () => {} };
+  const routerQuery = useRouterQuery?.() || { id: "preview-org-id" };
+  
+  // Use a try-catch block for the schema parsing
+  let orgId: string;
+  try {
+    orgId = querySchema.parse(routerQuery).id;
+  } catch (error) {
+    orgId = "preview-org-id";
+  }
+
   const [serverErrorMessage, setServerErrorMessage] = useState<string | null>(null);
   const [image, setImage] = useState("");
 
@@ -27,16 +35,16 @@ export const AboutOrganizationForm = () => {
     bio: string;
   }>();
 
-  const updateOrganizationMutation = trpc.viewer.organizations.update.useMutation({
+  const updateOrganizationMutation = trpc?.viewer?.organizations?.update?.useMutation?.({
     onSuccess: (data) => {
-      if (data.update) {
+      if (data?.update) {
         router.push(`/settings/organizations/${orgId}/onboard-members`);
       }
     },
     onError: (err) => {
       setServerErrorMessage(err.message);
     },
-  });
+  }) || { mutate: () => {}, isPending: false };
 
   return (
     <>

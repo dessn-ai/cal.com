@@ -1,38 +1,57 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { MostBookedTeamMembersTable } from '../../../../packages/features/insights/components/MostBookedTeamMembersTable';
+import { InsightsOrgTeamsContext } from '../../../../packages/features/insights/context/InsightsOrgTeamsProvider';
 
-import { trpc } from '@calcom/trpc';
+// Mock data for the table
+const mockData = [
+  { name: 'John Doe', bookings: 50 },
+  { name: 'Jane Smith', bookings: 45 },
+  { name: 'Bob Johnson', bookings: 40 },
+];
 
-// Mock the trpc.viewer.insights.membersWithMostBookings.useQuery
-const mockUseQuery = () => ({
-  data: [
-    { name: 'John Doe', bookings: 50 },
-    { name: 'Jane Smith', bookings: 45 },
-    { name: 'Bob Johnson', bookings: 40 },
-  ],
-  isSuccess: true,
-  isPending: false,
-});
+// Create a wrapper component that provides all necessary mocks
+const MockProvider = ({ children }) => {
+  const mockQueryResult = {
+    data: mockData,
+    isSuccess: true,
+    isPending: false,
+  };
 
-// Mock the trpc object
-const mockTrpc = {
-  viewer: {
-    insights: {
-      membersWithMostBookings: {
-        useQuery: mockUseQuery,
+  // Mock TRPC provider
+  const MockTRPCProvider = ({ children }) => {
+    const mockTrpc = {
+      viewer: {
+        insights: {
+          membersWithMostBookings: {
+            useQuery: () => mockQueryResult,
+          },
+        },
       },
-    },
-  },
+    };
+
+    return React.createElement(React.Fragment, null, children);
+  };
+
+  // Mock InsightsOrgTeams value
+  const insightsOrgTeamsValue = {
+    orgTeamsType: "org" as const,
+    setOrgTeamsType: (type: "org" | "team" | "yours") => {},
+    selectedTeamId: 1,
+    setSelectedTeamId: (id: number | undefined) => {},
+  };
+
+  return (
+    <InsightsOrgTeamsContext.Provider value={insightsOrgTeamsValue}>
+      <MockTRPCProvider>
+        {children}
+      </MockTRPCProvider>
+    </InsightsOrgTeamsContext.Provider>
+  );
 };
 
-// Mock the useLocale hook
-const mockUseLocale = () => ({
-  t: (key: string) => key,
-});
-
-// Mock the useInsightsParameters hook
-const mockUseInsightsParameters = () => ({
+// Create InsightsParameters Context
+const InsightsParametersContext = React.createContext({
   isAll: true,
   teamId: 1,
   startDate: new Date('2023-01-01'),
@@ -40,15 +59,46 @@ const mockUseInsightsParameters = () => ({
   eventTypeId: null,
 });
 
+// Mock next-auth session
+const mockSession = {
+  data: {
+    user: {
+      id: 1,
+      org: {
+        id: 1,
+        role: "ADMIN"
+      }
+    }
+  },
+  status: "authenticated"
+};
+
+// Create a mock next-auth module
+const mockNextAuth = {
+  useSession: () => mockSession
+};
+
+// Add mock modules to window
+Object.defineProperty(window, 'next-auth/react', {
+  value: mockNextAuth
+});
+
 export default function ComponentPreview() {
-  const [state, setState] = useParentState({
-    // No props to control for this component
-  });
+  const [state, setState] = useParentState({});
 
-  // Provide the mocked dependencies
-  (trpc as any) = mockTrpc;
-  (useLocale as any) = mockUseLocale;
-  (useInsightsParameters as any) = mockUseInsightsParameters;
-
-  return <MostBookedTeamMembersTable />;
+  return (
+    <InsightsParametersContext.Provider
+      value={{
+        isAll: true,
+        teamId: 1,
+        startDate: new Date('2023-01-01'),
+        endDate: new Date('2023-12-31'),
+        eventTypeId: null,
+      }}
+    >
+      <MockProvider>
+        <MostBookedTeamMembersTable />
+      </MockProvider>
+    </InsightsParametersContext.Provider>
+  );
 }

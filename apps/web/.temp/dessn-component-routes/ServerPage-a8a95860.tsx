@@ -1,10 +1,35 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/organizations/new/page';
 
+// Lazy load the component
+const ImportedComponent = React.lazy(() => import('../../app/(use-page-wrapper)/settings/organizations/new/page')
+  .catch(err => {
+    console.error('Failed to load component:', err);
+    return { default: () => <div>Failed to load component</div> };
+  })
+);
+
+// Simple error boundary component
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong loading the component.</div>;
+    }
+    return this.props.children;
+  }
+}
 
 export default function ComponentPreview() {
-  const [state, setState] = useParentState({
+  const [state] = useParentState({
     params: {
       type: "string",
       value: JSON.stringify({}),
@@ -17,8 +42,26 @@ export default function ComponentPreview() {
     },
   });
 
-  const params = JSON.parse(state.params.value);
-  const searchParams = JSON.parse(state.searchParams.value);
+  let params = {};
+  let searchParams = {};
 
-  return <ImportedComponent params={params} searchParams={searchParams} />;
+  try {
+    params = JSON.parse(state.params.value);
+    searchParams = JSON.parse(state.searchParams.value);
+  } catch (error) {
+    console.error('Error parsing params:', error);
+  }
+
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<div>Loading...</div>}>
+        <div style={{ padding: '20px' }}>
+          <ImportedComponent 
+            params={params} 
+            searchParams={searchParams}
+          />
+        </div>
+      </Suspense>
+    </ErrorBoundary>
+  );
 }

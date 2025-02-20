@@ -1,9 +1,33 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { PopularEventsTable } from '../../../../packages/features/insights/components/PopularEventsTable';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { TRPCProvider } from '@calcom/trpc/react';
-import { I18nLanguageHandler } from '@calcom/features/i18n';
+// Create a simplified mock version of PopularEventsTable
+const MockPopularEventsTable = () => {
+  return (
+    <div className="rounded-lg border border-gray-200 p-4">
+      <h2 className="text-lg font-semibold mb-4">Popular Events</h2>
+      <div className="text-sm text-gray-500">
+        Mock Popular Events Table Component
+      </div>
+    </div>
+  );
+};
+
+// Mock DataTableProvider
+const DataTableProvider = ({ children }: { children: React.ReactNode }) => {
+  return <>{children}</>;
+};
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -45,10 +69,10 @@ export default function ComponentPreview() {
   });
 
   return (
-    <TRPCProvider>
-      <I18nLanguageHandler>
-        <PopularEventsTable />
-      </I18nLanguageHandler>
-    </TRPCProvider>
+    <QueryClientProvider client={queryClient}>
+      <DataTableProvider>
+        <MockPopularEventsTable />
+      </DataTableProvider>
+    </QueryClientProvider>
   );
 }

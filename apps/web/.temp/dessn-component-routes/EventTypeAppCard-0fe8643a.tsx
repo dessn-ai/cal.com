@@ -42,9 +42,11 @@ export default function ComponentPreview() {
         imageSrc: "https://example.com/posthog-logo.png",
         credentialOwner: {
           name: "John Doe",
-          avatar: "https://example.com/avatar.png"
+          avatar: "https://example.com/avatar.png",
+          credentialId: 1
         },
-        credentialIds: [1, 2, 3]
+        credentialIds: [1, 2, 3],
+        userCredentialIds: [1, 2, 3] // Added this property
       },
       label: "App"
     },

@@ -1,9 +1,13 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { OrganizerScheduledEmail } from '../../../../packages/emails/src/templates/OrganizerScheduledEmail';
-
 import { SchedulingType } from "@calcom/prisma/enums";
-import { TimeFormat } from "@calcom/types/Calendar";
+
+// Mock the TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = "12h",
+  TWENTY_FOUR_HOUR = "24h"
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -19,13 +23,15 @@ export default function ComponentPreview() {
           email: "jane@example.com",
           timeZone: "America/New_York",
           language: {
-            translate: (key: string) => key,
             locale: "en"
           },
           timeFormat: TimeFormat.TWELVE_HOUR
         },
         attendees: [],
-        schedulingType: SchedulingType.ROUND_ROBIN
+        schedulingType: SchedulingType.ROUND_ROBIN,
+        language: {
+          locale: "en"
+        }
       },
       label: "Calendar Event"
     },
@@ -36,7 +42,6 @@ export default function ComponentPreview() {
         email: "john@example.com",
         timeZone: "Europe/London",
         language: {
-          translate: (key: string) => key,
           locale: "en"
         }
       },
@@ -54,12 +59,37 @@ export default function ComponentPreview() {
     }
   });
 
+  const translateFn = React.useCallback((key: string) => key, []);
+
+  const emailProps = React.useMemo(() => ({
+    calEvent: {
+      ...state.calEvent.value,
+      organizer: {
+        ...state.calEvent.value.organizer,
+        language: {
+          ...state.calEvent.value.organizer.language,
+          translate: translateFn
+        }
+      },
+      language: {
+        ...state.calEvent.value.language,
+        translate: translateFn
+      }
+    },
+    attendee: {
+      ...state.attendee.value,
+      language: {
+        ...state.attendee.value.language,
+        translate: translateFn
+      }
+    },
+    newSeat: state.newSeat.value,
+    attendeeCancelled: state.attendeeCancelled.value
+  }), [state, translateFn]);
+
   return (
     <OrganizerScheduledEmail
-      calEvent={state.calEvent.value}
-      attendee={state.attendee.value}
-      newSeat={state.newSeat.value}
-      attendeeCancelled={state.attendeeCancelled.value}
+      {...emailProps}
     />
   );
 }

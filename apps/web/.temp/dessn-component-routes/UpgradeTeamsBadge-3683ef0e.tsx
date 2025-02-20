@@ -2,27 +2,32 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { UpgradeTeamsBadge } from '../../../../packages/ui/components/badge/UpgradeTeamsBadge';
 
+// Mock modules directly
+const mockT = (key: string) => key;
 
-// Mock the necessary hooks and components
-const mockUseLocale = () => ({
-  t: (key: string) => key,
-});
+// Mock the locale module
+const actualUseLocale = {
+  useLocale: () => ({
+    t: mockT
+  })
+};
 
-const mockUseHasPaidPlan = () => ({
-  hasPaidPlan: false,
-});
+// Mock the paid plan hook
+const actualUseHasPaidPlan = {
+  useHasPaidPlan: () => ({
+    hasPaidPlan: false
+  })
+};
 
-jest.mock('@calcom/lib/hooks/useLocale', () => ({
-  useLocale: mockUseLocale,
-}));
+// Mock next/link
+const MockLink = ({ children }: { children: React.ReactNode }) => <>{children}</>;
 
-jest.mock('@calcom/lib/hooks/useHasPaidPlan', () => ({
-  useHasPaidPlan: mockUseHasPaidPlan,
-}));
-
-jest.mock('next/link', () => {
-  return ({ children }: { children: React.ReactNode }) => <>{children}</>;
-});
+// Override the imports
+globalThis.__mockModules = {
+  '@calcom/lib/hooks/useLocale': actualUseLocale,
+  '@calcom/lib/hooks/useHasPaidPlan': actualUseHasPaidPlan,
+  'next/link': { default: MockLink }
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({

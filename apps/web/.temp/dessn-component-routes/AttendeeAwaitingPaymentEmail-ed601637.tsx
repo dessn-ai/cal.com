@@ -2,7 +2,11 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { AttendeeAwaitingPaymentEmail } from '../../../../packages/emails/src/templates/AttendeeAwaitingPaymentEmail';
 
-import { TimeFormat } from '../../../../packages/types/Calendar';
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,9 +22,8 @@ export default function ComponentPreview() {
           email: 'jane@example.com',
           timeZone: 'America/New_York',
           language: {
-            translate: (key: string) => key,
-            locale: 'en',
-          },
+            locale: 'en'
+          }
         },
         attendees: [
           {
@@ -28,17 +31,16 @@ export default function ComponentPreview() {
             email: 'john@example.com',
             timeZone: 'America/Los_Angeles',
             language: {
-              translate: (key: string) => key,
-              locale: 'en',
-            },
-          },
+              locale: 'en'
+            }
+          }
         ],
         paymentInfo: {
           link: 'https://example.com/payment',
-          paymentOption: 'HOLD',
-        },
+          paymentOption: 'HOLD'
+        }
       }),
-      label: 'Calendar Event',
+      label: 'Calendar Event'
     },
     attendee: {
       type: 'string',
@@ -47,52 +49,70 @@ export default function ComponentPreview() {
         email: 'john@example.com',
         timeZone: 'America/Los_Angeles',
         language: {
-          translate: (key: string) => key,
-          locale: 'en',
-        },
+          locale: 'en'
+        }
       }),
-      label: 'Attendee',
+      label: 'Attendee'
     },
     timeZone: {
       type: 'string',
       value: 'America/New_York',
-      label: 'Time Zone',
+      label: 'Time Zone'
     },
     includeAppsStatus: {
       type: 'boolean',
       value: false,
-      label: 'Include Apps Status',
+      label: 'Include Apps Status'
     },
     locale: {
       type: 'string',
       value: 'en',
-      label: 'Locale',
+      label: 'Locale'
     },
     timeFormat: {
       type: 'dropdown',
       value: TimeFormat.TWELVE_HOUR,
       options: Object.values(TimeFormat),
-      label: 'Time Format',
+      label: 'Time Format'
     },
     isOrganizer: {
       type: 'boolean',
       value: false,
-      label: 'Is Organizer',
-    },
+      label: 'Is Organizer'
+    }
   });
 
-  const t = (key: string) => key;
+  // Create translate function at render time
+  const translate = React.useCallback((key: string) => key, []);
 
-  return (
-    <AttendeeAwaitingPaymentEmail
-      calEvent={JSON.parse(state.calEvent.value)}
-      attendee={JSON.parse(state.attendee.value)}
-      timeZone={state.timeZone.value}
-      includeAppsStatus={state.includeAppsStatus.value}
-      t={t}
-      locale={state.locale.value}
-      timeFormat={state.timeFormat.value as TimeFormat}
-      isOrganizer={state.isOrganizer.value}
-    />
-  );
+  // Parse stored JSON and add translate function
+  const parsedCalEvent = JSON.parse(state.calEvent.value);
+  const parsedAttendee = JSON.parse(state.attendee.value);
+
+  // Prepare the final props
+  const emailProps = {
+    calEvent: {
+      ...parsedCalEvent,
+      organizer: {
+        ...parsedCalEvent.organizer,
+        language: { ...parsedCalEvent.organizer.language, translate }
+      },
+      attendees: parsedCalEvent.attendees.map((attendee: any) => ({
+        ...attendee,
+        language: { ...attendee.language, translate }
+      }))
+    },
+    attendee: {
+      ...parsedAttendee,
+      language: { ...parsedAttendee.language, translate }
+    },
+    timeZone: state.timeZone.value,
+    includeAppsStatus: state.includeAppsStatus.value,
+    t: translate,
+    locale: state.locale.value,
+    timeFormat: state.timeFormat.value as TimeFormat,
+    isOrganizer: state.isOrganizer.value
+  };
+
+  return <AttendeeAwaitingPaymentEmail {...emailProps} />;
 }

@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/zoho-bigin/components/EventTypeAppCardInterface';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     eventType: {
@@ -40,7 +39,11 @@ export default function ComponentPreview() {
         category: "other",
         slug: "zoho-bigin",
         trending: false,
-        email: "help@cal.com"
+        email: "help@cal.com",
+        categories: ["calendar"], // Added categories array
+        isInstalled: true,
+        enabled: true,
+        isSetupAlready: true
       },
       label: "App"
     },

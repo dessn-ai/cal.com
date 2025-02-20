@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { CreateANewLicenseKeyForm } from '../../../../packages/features/ee/deployment/licensekey/CreateLicenseKeyForm';
-
 import { SessionProvider } from 'next-auth/react';
 
 export default function ComponentPreview() {
@@ -13,18 +12,26 @@ export default function ComponentPreview() {
     },
   });
 
+  // Create a properly structured mock session
   const mockSession = {
     data: {
       user: {
-        role: state.mockSession.value ? 'ADMIN' : 'USER',
+        id: 1,
+        name: 'Admin User',
+        email: 'admin@example.com',
+        role: 'ADMIN',
+        username: 'admin',
       },
+      expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
     },
     status: 'authenticated',
   };
 
   return (
-    <SessionProvider session={mockSession as any}>
-      <CreateANewLicenseKeyForm />
-    </SessionProvider>
+    <div className="m-4">
+      <SessionProvider session={mockSession}>
+        <CreateANewLicenseKeyForm />
+      </SessionProvider>
+    </div>
   );
 }

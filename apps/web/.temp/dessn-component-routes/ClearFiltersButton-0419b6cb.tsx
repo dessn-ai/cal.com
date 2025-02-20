@@ -1,8 +1,9 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { ClearFiltersButton } from '../../../../packages/features/data-table/components/filters/ClearFiltersButton';
-
 import { DataTableProvider } from '@calcom/features/data-table';
+
+// Import ClearFiltersButton after other imports
+import { ClearFiltersButton } from '@calcom/features/data-table/components/filters/ClearFiltersButton';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -19,8 +20,13 @@ export default function ComponentPreview() {
     <DataTableProvider
       data={[]}
       columns={[]}
-      initialState={{}}
-      meta={{}}
+      initialState={{
+        columnFilters: [],
+        sorting: [],
+      }}
+      meta={{
+        skipFetchCount: true,
+      }}
     >
       <ClearFiltersButton exclude={excludeArray} />
     </DataTableProvider>

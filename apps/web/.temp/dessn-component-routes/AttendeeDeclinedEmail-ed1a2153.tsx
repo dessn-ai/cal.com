@@ -2,9 +2,36 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { AttendeeDeclinedEmail } from '../../../../packages/emails/src/templates/AttendeeDeclinedEmail';
 
-import { TimeFormat } from '../../../../packages/types/Calendar';
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
 
 export default function ComponentPreview() {
+  // Translation function that handles recurring strings
+  const t = (key: string, vars?: Record<string, string | number>) => {
+    const translations: Record<string, string> = {
+      'every_day': 'Every day',
+      'every_week': 'Every week',
+      'every_month': 'Every month',
+      'every_year': 'Every year',
+      'every_freq': 'Every {0}',
+      'weekly': 'Weekly',
+      'monthly': 'Monthly',
+      'yearly': 'Yearly',
+      'daily': 'Daily',
+      'recurring_event_count': '{0} times',
+    };
+    let translation = translations[key] || key;
+    if (vars) {
+      Object.entries(vars).forEach(([k, v]) => {
+        translation = translation.replace(`{${k}}`, String(v));
+      });
+    }
+    return translation;
+  };
+
   const [state, setState] = useParentState({
     calEvent: {
       type: 'string',
@@ -17,17 +44,17 @@ export default function ComponentPreview() {
           name: 'John Doe',
           email: 'john@example.com',
           timeZone: 'America/New_York',
-          language: { translate: (key: string) => key, locale: 'en' },
+          language: { translate: t, locale: 'en' },
         },
         attendees: [
           {
             name: 'Jane Smith',
             email: 'jane@example.com',
             timeZone: 'America/Los_Angeles',
-            language: { translate: (key: string) => key, locale: 'en' },
+            language: { translate: t, locale: 'en' },
           },
         ],
-        recurringEvent: { count: 1, interval: 1, freq: 2 },
+        // Remove recurringEvent completely
       }),
       label: 'Calendar Event',
     },
@@ -37,7 +64,7 @@ export default function ComponentPreview() {
         name: 'Jane Smith',
         email: 'jane@example.com',
         timeZone: 'America/Los_Angeles',
-        language: { translate: (key: string) => key, locale: 'en' },
+        language: { translate: t, locale: 'en' },
       }),
       label: 'Attendee',
     },
@@ -72,16 +99,21 @@ export default function ComponentPreview() {
   const parsedCalEvent = JSON.parse(state.calEvent.value);
   const parsedAttendee = JSON.parse(state.attendee.value);
 
-  return (
-    <AttendeeDeclinedEmail
-      calEvent={parsedCalEvent}
-      attendee={parsedAttendee}
-      timeZone={state.timeZone.value}
-      includeAppsStatus={state.includeAppsStatus.value}
-      t={(key: string) => key}
-      locale={state.locale.value}
-      timeFormat={state.timeFormat.value as TimeFormat}
-      isOrganizer={state.isOrganizer.value}
-    />
-  );
+  try {
+    return (
+      <AttendeeDeclinedEmail
+        calEvent={parsedCalEvent}
+        attendee={parsedAttendee}
+        timeZone={state.timeZone.value}
+        includeAppsStatus={state.includeAppsStatus.value}
+        t={t}
+        locale={state.locale.value}
+        timeFormat={state.timeFormat.value as TimeFormat}
+        isOrganizer={state.isOrganizer.value}
+      />
+    );
+  } catch (error) {
+    console.error('Error rendering email:', error);
+    return <div>Error rendering email template</div>;
+  }
 }

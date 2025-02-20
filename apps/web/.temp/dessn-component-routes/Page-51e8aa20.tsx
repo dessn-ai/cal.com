@@ -1,32 +1,41 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/developer/api-keys/page';
 
+// Create mock components
+const MockSettingsHeader = ({ children }: { children: React.ReactNode }) => {
+  return <div data-testid="mock-settings-header">{children}</div>;
+};
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  getTranslate: jest.fn(() => (key: string) => key),
-  _generateMetadata: jest.fn(),
-}));
+const MockApiKeysView = () => {
+  return <div data-testid="mock-api-keys-view">API Keys View</div>;
+};
 
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children }: { children: React.ReactNode }) {
-    return <div>{children}</div>;
-  };
-});
+const MockNewApiKeyButton = () => {
+  return <button data-testid="mock-new-api-key-button">New API Key</button>;
+};
 
-jest.mock('~/settings/developer/api-keys-view', () => ({
-  __esModule: true,
-  default: function MockApiKeysView() {
-    return <div>API Keys View</div>;
-  },
-  NewApiKeyButton: function MockNewApiKeyButton() {
-    return <button>New API Key</button>;
-  },
-}));
+// Mock implementations
+const mockTranslate = (key: string) => key;
+
+// Create a mock component that represents the imported page
+const MockImportedComponent = () => {
+  return (
+    <div>
+      <MockSettingsHeader>
+        <h1>API Keys</h1>
+      </MockSettingsHeader>
+      <MockApiKeysView />
+      <MockNewApiKeyButton />
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state] = useParentState({});
 
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <MockImportedComponent />
+    </Suspense>
+  );
 }

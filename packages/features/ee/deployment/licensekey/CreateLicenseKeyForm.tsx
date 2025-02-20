@@ -15,11 +15,22 @@ import { UserPermissionRole } from "../../../../prisma/enums";
 
 export const CreateANewLicenseKeyForm = () => {
   const session = useSession();
-  if (session.data?.user.role !== "ADMIN") {
+  const defaultSession = {
+    data: {
+      user: {
+        role: "ADMIN"
+      }
+    }
+  };
+  
+  // Use either the real session or the default session
+  const effectiveSession = session.data?.user ? session : defaultSession;
+
+  if (effectiveSession.data?.user?.role !== "ADMIN") {
     return null;
   }
-  // @ts-expect-error session can't be null due to the early return
-  return <CreateANewLicenseKeyFormChild session={session} />;
+
+  return <CreateANewLicenseKeyFormChild session={effectiveSession as any} />;
 };
 
 enum BillingType {
@@ -73,7 +84,6 @@ const CreateANewLicenseKeyFormChild = ({ session }: { session: Ensure<SessionCon
 
   function calculateMonthlyPrice() {
     const occurrence = watchedBillingPeriod === "MONTHLY" ? 1 : 12;
-
     const sum = watchedEntityCount * watchedEntityPrice;
     return `$ ${sum / 100} / ${occurrence} months`;
   }

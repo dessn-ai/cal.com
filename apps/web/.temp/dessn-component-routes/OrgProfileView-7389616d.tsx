@@ -1,8 +1,9 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/ee/organizations/pages/settings/profile';
-
+import { OrgBrandingProvider } from '../../../../packages/features/ee/organizations/context/provider';
 import { useForm } from 'react-hook-form';
+import { MembershipRole } from '@calcom/prisma/enums';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -49,5 +50,25 @@ export default function ComponentPreview() {
     },
   });
 
-  return <ImportedComponent />;
+  const mockOrgBrand = {
+    orgBrand: {
+      id: 1,
+      name: state.name.value,
+      slug: state.slug.value,
+      logoUrl: state.logoUrl.value,
+      fullDomain: `${state.slug.value}.cal.com`,
+      domainSuffix: 'cal.com',
+      role: MembershipRole.OWNER,
+      theme: null,
+      brandColor: '#292929',
+      darkBrandColor: '#fafafa',
+      metadata: {},
+    }
+  };
+
+  return (
+    <OrgBrandingProvider value={mockOrgBrand}>
+      <ImportedComponent />
+    </OrgBrandingProvider>
+  );
 }

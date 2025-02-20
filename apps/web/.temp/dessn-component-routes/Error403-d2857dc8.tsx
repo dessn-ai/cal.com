@@ -1,7 +1,18 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/403/page';
+import dynamic from 'next/dynamic';
 
+// Dynamically import the component with error handling
+const ImportedComponent = dynamic(
+  () => import('../../app/(use-page-wrapper)/403/page').catch(() => {
+    // Return a fallback component if import fails
+    return () => <div>Error loading component</div>;
+  }),
+  {
+    ssr: false,
+    loading: () => <div>Loading...</div>
+  }
+);
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -9,17 +20,16 @@ export default function ComponentPreview() {
   });
 
   // Mock the getTranslate function
-  const mockGetTranslate = async () => (key: string) => key;
+  const mockGetTranslate = () => (key: string) => key;
 
   // Mock the WEBAPP_URL constant
   const WEBAPP_URL = '/';
 
   return (
-    <React.Suspense fallback={<div>Loading...</div>}>
-      <ImportedComponent 
-        getTranslate={mockGetTranslate}
-        WEBAPP_URL={WEBAPP_URL}
-      />
-    </React.Suspense>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="w-full">
+        <ImportedComponent />
+      </div>
+    </Suspense>
   );
 }

@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/layout';
-
+import PageWrapper from "@components/PageWrapperAppDir";
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -13,8 +12,8 @@ export default function ComponentPreview() {
   });
 
   return (
-    <ImportedComponent>
+    <PageWrapper requiresLicense={false} nonce={undefined} themeBasis={null} dehydratedState={null}>
       {React.createElement('div', { dangerouslySetInnerHTML: { __html: state.children.value } })}
-    </ImportedComponent>
+    </PageWrapper>
   );
 }

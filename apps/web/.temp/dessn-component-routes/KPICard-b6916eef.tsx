@@ -2,6 +2,9 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { KPICard } from '../../../../packages/features/insights/components/KPICard';
 
+// Mock i18n functionality
+const I18nextProvider = ({ children }) => children;
+const I18nLanguageHandler = ({ children }) => children;
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -38,17 +41,21 @@ export default function ComponentPreview() {
   });
 
   return (
-    <KPICard
-      title={state.title.value}
-      value={state.value.value}
-      previousMetricData={{
-        count: state.previousCount.value,
-        deltaPrevious: state.deltaPrevious.value,
-      }}
-      previousDateRange={{
-        startDate: state.startDate.value,
-        endDate: state.endDate.value,
-      }}
-    />
+    <I18nextProvider>
+      <I18nLanguageHandler>
+        <KPICard
+          title={state.title.value}
+          value={state.value.value}
+          previousMetricData={{
+            count: state.previousCount.value,
+            deltaPrevious: state.deltaPrevious.value,
+          }}
+          previousDateRange={{
+            startDate: state.startDate.value,
+            endDate: state.endDate.value,
+          }}
+        />
+      </I18nLanguageHandler>
+    </I18nextProvider>
   );
 }

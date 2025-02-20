@@ -2,6 +2,28 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { UserFieldsResponses } from '../../../../packages/emails/src/components/UserFieldsResponses';
 
+type CalendarEvent = {
+  type: string;
+  title: string;
+  startTime: string;
+  endTime: string;
+  organizer: {
+    name: string;
+    email: string;
+    timeZone: string;
+    language: {
+      translate: (key: string) => string;
+      locale: string;
+    };
+  };
+  attendees: any[];
+  userFieldsResponses: {
+    [key: string]: {
+      label: string;
+      value: string;
+    };
+  };
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -12,7 +34,7 @@ export default function ComponentPreview() {
     },
   });
 
-  const mockCalEvent = {
+  const mockCalEvent: CalendarEvent = {
     type: "default",
     title: "Mock Event",
     startTime: new Date().toISOString(),

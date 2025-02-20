@@ -2,6 +2,36 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { OrganizerRequestEmail } from '../../../../packages/emails/src/templates/OrganizerRequestEmail';
 
+// Create a wrapper component that provides translation functionality
+const TranslationWrapper = ({ children }) => {
+  const translate = (key: string) => key;
+  
+  // Recursively inject translate function into all language objects
+  const injectTranslate = (obj: any): any => {
+    if (!obj || typeof obj !== 'object') return obj;
+    
+    const newObj = { ...obj };
+    if (newObj.language) {
+      newObj.language = {
+        ...newObj.language,
+        translate,
+      };
+    }
+    
+    Object.keys(newObj).forEach(key => {
+      if (typeof newObj[key] === 'object') {
+        newObj[key] = injectTranslate(newObj[key]);
+      }
+    });
+    
+    return newObj;
+  };
+  
+  return React.cloneElement(children, {
+    calEvent: injectTranslate(children.props.calEvent),
+    attendee: injectTranslate(children.props.attendee),
+  });
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,8 +48,7 @@ export default function ComponentPreview() {
           email: 'jane@example.com',
           timeZone: 'America/New_York',
           language: {
-            translate: (key: string) => key,
-            locale: 'en',
+            locale: 'en'
           },
         },
         attendees: [
@@ -28,8 +57,7 @@ export default function ComponentPreview() {
             email: 'john@example.com',
             timeZone: 'America/Los_Angeles',
             language: {
-              translate: (key: string) => key,
-              locale: 'en',
+              locale: 'en'
             },
           },
         ],
@@ -43,8 +71,7 @@ export default function ComponentPreview() {
         email: 'john@example.com',
         timeZone: 'America/Los_Angeles',
         language: {
-          translate: (key: string) => key,
-          locale: 'en',
+          locale: 'en'
         },
       },
       label: 'Attendee',
@@ -62,11 +89,13 @@ export default function ComponentPreview() {
   });
 
   return (
-    <OrganizerRequestEmail
-      calEvent={state.calEvent.value}
-      attendee={state.attendee.value}
-      newSeat={state.newSeat.value}
-      attendeeCancelled={state.attendeeCancelled.value}
-    />
+    <TranslationWrapper>
+      <OrganizerRequestEmail
+        calEvent={state.calEvent.value}
+        attendee={state.attendee.value}
+        newSeat={state.newSeat.value}
+        attendeeCancelled={state.attendeeCancelled.value}
+      />
+    </TranslationWrapper>
   );
 }

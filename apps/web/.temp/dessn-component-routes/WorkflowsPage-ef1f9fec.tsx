@@ -1,10 +1,25 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/ee/workflows/pages/index';
-
+import { SessionProvider } from 'next-auth/react';
 import { trpc } from '@calcom/trpc/react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { OrgBrandingProvider } from '@calcom/features/ee/organizations/context/provider';
+
+const mockSession = {
+  user: {
+    id: 1,
+    name: 'John Doe',
+    username: 'johndoe',
+    email: 'john@example.com',
+    organization: {
+      id: 1,
+      name: 'Default Organization',
+      slug: 'default-org',
+    },
+  },
+  hasValidLicense: true,
+  expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -46,22 +61,26 @@ export default function ComponentPreview() {
     isPending: false,
   });
 
-  // Mock useSession
-  useSession.mockReturnValue({
-    data: {
-      user: {
-        id: 1,
-        name: 'John Doe',
-        username: 'johndoe',
-      },
-      hasValidLicense: true,
+  // Mock organization branding data
+  const orgBrandingValue = {
+    orgBranding: {
+      theme: null,
+      orgSlug: mockSession.user.organization.slug,
+      hideBranding: false,
+      logo: '',
+      name: mockSession.user.organization.name,
+      isLoading: false,
     },
-  });
+    setOrgBranding: () => {},
+  };
 
-  // Mock useRouter
-  useRouter.mockReturnValue({
-    replace: () => Promise.resolve(),
-  });
-
-  return <ImportedComponent filteredList={parsedFilteredList} />;
+  return (
+    <SessionProvider session={mockSession}>
+      <OrgBrandingProvider value={orgBrandingValue}>
+        <div className="min-h-screen">
+          <ImportedComponent filteredList={parsedFilteredList} />
+        </div>
+      </OrgBrandingProvider>
+    </SessionProvider>
+  );
 }

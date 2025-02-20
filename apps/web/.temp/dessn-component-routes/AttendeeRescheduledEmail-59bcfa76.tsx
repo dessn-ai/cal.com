@@ -2,7 +2,11 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { AttendeeRescheduledEmail } from '../../../../packages/emails/src/templates/AttendeeRescheduledEmail';
 
-import { TimeFormat } from '../../../../packages/types/Calendar';
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -27,6 +31,16 @@ export default function ComponentPreview() {
             language: { translate: (key: string) => key, locale: 'en' },
           },
         ],
+        uid: 'unique-calendar-event-id',
+        recurringEventId: null,
+        destinationCalendar: null,
+        cancellationReason: null,
+        rejectionReason: null,
+        location: 'Online',
+        bookingUid: 'booking-uid-123',
+        additionalNotes: '',
+        customInputs: {},
+        responses: {},
       }),
       label: 'Calendar Event',
     },
@@ -71,13 +85,43 @@ export default function ComponentPreview() {
   const parsedCalEvent = JSON.parse(state.calEvent.value);
   const parsedAttendee = JSON.parse(state.attendee.value);
 
+  // Create a more robust translation function
+  const t = React.useCallback((key: string, vars?: Record<string, string | number>) => {
+    try {
+      if (!key) return '';
+      let translated = key;
+      if (vars) {
+        Object.entries(vars).forEach(([k, v]) => {
+          const regex = new RegExp(`{${k}}|{{${k}}}`, 'g');
+          translated = translated.replace(regex, String(v));
+        });
+      }
+      return translated;
+    } catch (error) {
+      console.error('Translation error:', error);
+      return key;
+    }
+  }, []);
+
+  // Ensure t function has necessary properties
+  Object.assign(t, {
+    language: { locale: state.locale.value },
+    locale: state.locale.value,
+  });
+
   return (
     <AttendeeRescheduledEmail
-      calEvent={parsedCalEvent}
-      attendee={parsedAttendee}
+      calEvent={{
+        ...parsedCalEvent,
+        language: { translate: t, locale: state.locale.value },
+      }}
+      attendee={{
+        ...parsedAttendee,
+        language: { translate: t, locale: state.locale.value },
+      }}
       timeZone={state.timeZone.value}
       includeAppsStatus={state.includeAppsStatus.value}
-      t={(key: string) => key}
+      t={t}
       locale={state.locale.value}
       timeFormat={state.timeFormat.value as TimeFormat}
       isOrganizer={state.isOrganizer.value}

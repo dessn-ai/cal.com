@@ -1,7 +1,48 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../modules/apps/installation/[[...step]]/step-view';
 
+// Create a dynamic import for the component to allow for error handling
+const ImportedComponent = React.lazy(() => {
+  // Mock the Prisma types before importing the component
+  const mockPrisma = {
+    SchedulingType: {
+      ROUND_ROBIN: 'ROUND_ROBIN',
+      COLLECTIVE: 'COLLECTIVE',
+      MANAGED: 'MANAGED'
+    }
+  };
+
+  // Mock the Prisma module
+  if (typeof window !== 'undefined') {
+    window.prismaClient = mockPrisma;
+    // Mock the module system
+    const originalImport = window.require || (() => {});
+    window.require = (modulePath: string) => {
+      if (modulePath.includes('@calcom/prisma')) {
+        return mockPrisma;
+      }
+      return originalImport(modulePath);
+    };
+  }
+
+  return import('../../modules/apps/installation/[[...step]]/step-view').catch(() => ({
+    default: () => <div>Failed to load component</div>
+  }));
+});
+
+const ErrorBoundary = ({ children }: { children: React.ReactNode }) => {
+  const [hasError, setHasError] = React.useState(false);
+
+  if (hasError) {
+    return <div>Something went wrong. Please try again.</div>;
+  }
+
+  return (
+    <React.Fragment>
+      {children}
+    </React.Fragment>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -59,7 +100,36 @@ export default function ComponentPreview() {
       name: "Personal Account",
       alreadyInstalled: false
     },
-    eventTypeGroups: [],
+    eventTypeGroups: [{
+      teamId: null,
+      profiles: [{
+        id: 1,
+        name: "Personal Account",
+        slug: "personal",
+        image: "",
+        eventTypes: [{
+          id: 1,
+          title: "Default Event",
+          slug: "default-event",
+          length: 30,
+          description: "",
+          schedulingType: "ROUND_ROBIN",
+          hidden: false,
+          position: 0,
+          metadata: {},
+          locations: [],
+          bookingFields: [],
+          selected: false,
+          requiresConfirmation: false,
+          destinationCalendar: null,
+          seatsPerTimeSlot: null
+        }]
+      }],
+      metadata: {
+        membershipCount: 1,
+        readOnly: false
+      }
+    }],
     userName: state.userName.value,
     credentialId: 1,
     showEventTypesStep: state.showEventTypesStep.value,
@@ -68,5 +138,13 @@ export default function ComponentPreview() {
     isOrg: state.isOrg.value
   };
 
-  return <ImportedComponent {...props} />;
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<div>Loading...</div>}>
+        <div className="h-full dark:bg-gray-900">
+          <ImportedComponent {...props} />
+        </div>
+      </Suspense>
+    </ErrorBoundary>
+  );
 }

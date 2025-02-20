@@ -1,28 +1,32 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/organizations/sso/page';
 
+// Mock components
+const MockOrgSSOView = () => <div>Mock OrgSSOView</div>;
+const MockSettingsHeader = ({ children }: { children: React.ReactNode }) => (
+  <div>Settings Header {children}</div>
+);
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  _generateMetadata: jest.fn(),
-  getTranslate: jest.fn(() => (key: string) => key),
-}));
-
-jest.mock('@calcom/features/ee/sso/page/orgs-sso-view', () => {
-  return function MockOrgSSOView() {
-    return <div>Mock OrgSSOView</div>;
-  };
-});
-
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children }: { children: React.ReactNode }) {
-    return <div>Mock SettingsHeader {children}</div>;
-  };
-});
+// Create a simplified version of the imported component
+const SimplifiedImportedComponent = () => {
+  return (
+    <div className="mx-auto max-w-4xl py-8">
+      <MockSettingsHeader>
+        <h2>SSO Configuration</h2>
+      </MockSettingsHeader>
+      <MockOrgSSOView />
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({});
 
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="preview-wrapper">
+        <SimplifiedImportedComponent />
+      </div>
+    </Suspense>
+  );
 }

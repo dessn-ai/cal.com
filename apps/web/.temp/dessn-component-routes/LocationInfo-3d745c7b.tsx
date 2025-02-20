@@ -2,6 +2,26 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { LocationInfo } from '../../../../packages/emails/src/components/LocationInfo';
 
+// Mock the Calendar types that would normally come from @calcom/types/Calendar
+type Person = {
+  name: string;
+  email: string;
+  timeZone: string;
+  language: {
+    translate: (key: string) => string;
+    locale: string;
+  };
+};
+
+type CalendarEvent = {
+  type: string;
+  title: string;
+  startTime: string;
+  endTime: string;
+  organizer: Person;
+  attendees: Person[];
+  location: string;
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -32,7 +52,7 @@ export default function ComponentPreview() {
 
   return (
     <LocationInfo
-      calEvent={JSON.parse(state.calEvent.value)}
+      calEvent={JSON.parse(state.calEvent.value) as CalendarEvent}
       t={mockT}
     />
   );

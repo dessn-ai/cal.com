@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/ee/sso/page/orgs-sso-view';
-
 import { SessionProvider } from 'next-auth/react';
+import { MembershipRole } from '@calcom/prisma/enums';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -19,19 +19,22 @@ export default function ComponentPreview() {
   });
 
   const mockSession = {
-    data: {
-      user: {
-        org: {
-          id: state.orgId.value,
-          role: state.isAdminOrOwner.value ? "ADMIN" : "MEMBER",
-        },
+    user: {
+      id: 1,
+      name: "Test User",
+      email: "test@example.com",
+      org: {
+        id: state.orgId.value,
+        name: "Test Organization",
+        slug: "test-org",
+        role: state.isAdminOrOwner.value ? MembershipRole.ADMIN : MembershipRole.MEMBER,
       },
     },
-    status: "authenticated",
+    expires: "2024-01-01",
   };
 
   return (
-    <SessionProvider session={mockSession as any}>
+    <SessionProvider session={mockSession}>
       <ImportedComponent />
     </SessionProvider>
   );

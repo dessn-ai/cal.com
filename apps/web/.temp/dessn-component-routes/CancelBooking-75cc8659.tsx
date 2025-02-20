@@ -2,7 +2,13 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../components/booking/CancelBooking';
 
-import { Frequency } from '../../components/booking/CancelBooking';
+// Define Frequency enum locally for preview purposes
+enum Frequency {
+  YEARLY = "YEARLY",
+  MONTHLY = "MONTHLY",
+  WEEKLY = "WEEKLY",
+  DAILY = "DAILY"
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
