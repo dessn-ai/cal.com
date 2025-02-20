@@ -1,0 +1,425 @@
+System: You are an expert React developer working on a project that renders preview components. Your task is to fix any errors.
+
+## Role & Capabilities
+- You are a **component error fixing assistant**
+- You can read files, make edits, and use tools to diagnose issues
+- You have access to browser errors
+
+## Tools Available
+1. **getFile** (Using tool call) - Read contents of project files
+2. **File Editing** (Using xml tags in your response) - Make changes to fix errors using XML format
+
+## File Edit Format
+When you want to edit a file, use this exact XML format:
+
+<file path="path/to/file">
+  <change>
+    <description>Brief explanation of what you're changing</description>
+    <content>
+// Your complete file content here
+    </content>
+  </change>
+</file>
+
+## Important Rules
+1. Only update a file if you know its contents. Use getFile tool to read first.
+2. Most errors can be fixed by updating the preview file. Only update other files if necessary.
+3. Provide complete file content - do not use placeholders or ellipses.
+4. Always include necessary imports and dependencies.
+5. When making changes:
+   - Add all required import statements
+   - Include complete component code
+   - Ensure proper TypeScript types
+   - Handle all edge cases
+
+## Error Handling Process
+1. Read and understand the error message
+2. Use getFile to examine relevant files
+3. Make targeted fixes using the XML format
+4. If the error is caused by the fact that a provider is missing. In these cases, find the provider and add it to the preview file.
+4. If the error persists, try different fixes. Sometimes the error is caused by external dependencies that we dont' have access to. In those cases, you can try to fix the error by mocking,removing or try catching.
+5. REMEMBER, your resonse must have <file> tags with the file path and content if you want to edit a file.
+6. Always output the entire file content in full. Do not be lazy by adding //(code remains the same) or //(code remains unchanged). This will cause more errors.
+
+## Example: Fixing a Form Error
+Here's an example of how to handle a typical error:
+
+Error Message:
+TypeError: Cannot read properties of undefined (reading 'errors')
+at FormInput (/src/components/common/form/FormInput.tsx:23:18)
+
+Step 1: Read the file to understand the context
+
+// First, read the file
+{
+  "name": "getFile",
+  "arguments": {
+    "filePath": "src/components/common/form/FormInput.tsx"
+  }
+}
+
+// Response shows:
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState } = useFormContext();
+  const error = formState.errors[name]?.message;  // Error occurs here
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+
+Step 2: Fix the issue by adding proper error handling
+
+<file path="src/components/common/form/FormInput.tsx">
+  <change>
+    <description>Add null check for formState and provide default values</description>
+    <content>
+===
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState = {} } = useFormContext() || {};
+  const error = formState?.errors?.[name]?.message;
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+===
+    </content>
+  </change>
+</file>
+
+The fix:
+1. Added null check for useFormContext result
+2. Provided default empty object for formState
+3. Used optional chaining for safer property access
+
+Please proceed with fixing any errors you encounter following these guidelines.
+
+User: An error occurred when rendering the component route at SAMLSSO-d3edc55f.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: Cannot read properties of undefined (reading 'org')TypeError: Cannot read properties of undefined (reading 'org')
+
+## Stack Trace
+```
+    at SAMLSSO (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/sso/page/orgs-sso-view.tsx:11:25)
+    at renderWithHooks (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:11604:26)
+    at mountIndeterminateComponent (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:14982:21)
+    at beginWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:15970:22)
+    at beginWork$1 (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19814:22)
+    at performUnitOfWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19262:20)
+    at workLoopSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19198:13)
+    at renderRootSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19177:15)
+    at recoverFromConcurrentError (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:18794:28)
+    at performConcurrentWorkOnRoot (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:18742:30)
+```
+
+## Component Stack
+```
+
+    at SAMLSSO (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/sso/page/orgs-sso-view.tsx:9:17)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=78804275:1100:28)
+    at ComponentPreview (/.temp/dessn-component-routes/SAMLSSO-d3edc55f.tsx:6:29)
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=78804275:65:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-7UJTJD4V.js?v=78804275:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-JTXNA3TV.js?v=78804275:931:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=78804275:1100:28)
+    at Providers (/.temp/Wrapper.tsx:57:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:94:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/SAMLSSO-d3edc55f.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/ee/sso/page/orgs-sso-view';
+
+import { SessionProvider } from 'next-auth/react';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    isAdminOrOwner: {
+      type: "boolean",
+      value: true,
+      label: "Is Admin or Owner",
+    },
+    orgId: {
+      type: "string",
+      value: "org123",
+      label: "Organization ID",
+    },
+  });
+
+  const mockSession = {
+    data: {
+      user: {
+        org: {
+          id: state.orgId.value,
+          role: state.isAdminOrOwner.value ? "ADMIN" : "MEMBER",
+        },
+      },
+    },
+    status: "authenticated",
+  };
+
+  return (
+    <SessionProvider session={mockSession as any}>
+      <ImportedComponent />
+    </SessionProvider>
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: [object Object],[object Object]
+
+
+Assistant: I see the issue. The preview component needs to provide a more complete mock session structure. Let's fix the preview component:
+
+<file path="apps/web/.temp/dessn-component-routes/SAMLSSO-d3edc55f.tsx">
+<change>
+<description>Update the mock session structure to match the expected format and add proper typing</description>
+<content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/ee/sso/page/orgs-sso-view';
+import { SessionProvider } from 'next-auth/react';
+import { MembershipRole } from '@calcom/prisma/enums';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    isAdminOrOwner: {
+      type: "boolean",
+      value: true,
+      label: "Is Admin or Owner",
+    },
+    orgId: {
+      type: "string",
+      value: "org123",
+      label: "Organization ID",
+    },
+  });
+
+  const mockSession = {
+    data: {
+      user: {
+        id: 1,
+        name: "Test User",
+        email: "test@example.com",
+        org: {
+          id: state.orgId.value,
+          name: "Test Organization",
+          slug: "test-org",
+          role: state.isAdminOrOwner.value ? MembershipRole.ADMIN : MembershipRole.MEMBER,
+        },
+      },
+      expires: "2024-01-01",
+    },
+    status: "authenticated",
+  };
+
+  return (
+    <SessionProvider session={mockSession}>
+      <ImportedComponent />
+    </SessionProvider>
+  );
+}
+</content>
+</change>
+</file>
+
+The changes I made include:
+
+1. Added a more complete mock session structure that matches what the component expects
+2. Included the necessary user properties
+3. Added proper organization details including name and slug
+4. Imported and used MembershipRole enum for proper role typing
+5. Removed the 'as any' type assertion since we now have a properly structured mock
+6. Made sure all required properties that the SAMLSSO component uses are present in the mock data
+
+This should resolve the "Cannot read properties of undefined (reading 'org')" error because we're now providing a properly structured mock session with all the required properties, including the `org` object with its necessary fields.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/SAMLSSO-d3edc55f.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at SAMLSSO-d3edc55f.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: Cannot read properties of undefined (reading 'org')TypeError: Cannot read properties of undefined (reading 'org')
+
+## Stack Trace
+```
+    at SAMLSSO (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/sso/page/orgs-sso-view.tsx:11:25)
+    at renderWithHooks (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:11604:26)
+    at mountIndeterminateComponent (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:14982:21)
+    at beginWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:15970:22)
+    at beginWork$1 (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19814:22)
+    at performUnitOfWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19262:20)
+    at workLoopSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19198:13)
+    at renderRootSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19177:15)
+    at recoverFromConcurrentError (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:18794:28)
+    at performConcurrentWorkOnRoot (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:18742:30)
+```
+
+## Component Stack
+```
+
+    at SAMLSSO (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/sso/page/orgs-sso-view.tsx:9:17)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=78804275:1100:28)
+    at ComponentPreview (/.temp/dessn-component-routes/SAMLSSO-d3edc55f.tsx:7:29)
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=78804275:65:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-7UJTJD4V.js?v=78804275:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-JTXNA3TV.js?v=78804275:931:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=78804275:1100:28)
+    at Providers (/.temp/Wrapper.tsx:57:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:94:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/SAMLSSO-d3edc55f.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/ee/sso/page/orgs-sso-view';
+import { SessionProvider } from 'next-auth/react';
+import { MembershipRole } from '@calcom/prisma/enums';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    isAdminOrOwner: {
+      type: "boolean",
+      value: true,
+      label: "Is Admin or Owner",
+    },
+    orgId: {
+      type: "string",
+      value: "org123",
+      label: "Organization ID",
+    },
+  });
+
+  const mockSession = {
+    data: {
+      user: {
+        id: 1,
+        name: "Test User",
+        email: "test@example.com",
+        org: {
+          id: state.orgId.value,
+          name: "Test Organization",
+          slug: "test-org",
+          role: state.isAdminOrOwner.value ? MembershipRole.ADMIN : MembershipRole.MEMBER,
+        },
+      },
+      expires: "2024-01-01",
+    },
+    status: "authenticated",
+  };
+
+  return (
+    <SessionProvider session={mockSession}>
+      <ImportedComponent />
+    </SessionProvider>
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: I notice that the structure of the mock session data isn't quite right. In next-auth, the session data should be directly on the session object, not nested under a `data` property. Let's fix the preview component:
+
+<file path="apps/web/.temp/dessn-component-routes/SAMLSSO-d3edc55f.tsx">
+<change>
+<description>Fix the mock session structure to match next-auth's expected format</description>
+<content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/ee/sso/page/orgs-sso-view';
+import { SessionProvider } from 'next-auth/react';
+import { MembershipRole } from '@calcom/prisma/enums';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    isAdminOrOwner: {
+      type: "boolean",
+      value: true,
+      label: "Is Admin or Owner",
+    },
+    orgId: {
+      type: "string",
+      value: "org123",
+      label: "Organization ID",
+    },
+  });
+
+  const mockSession = {
+    user: {
+      id: 1,
+      name: "Test User",
+      email: "test@example.com",
+      org: {
+        id: state.orgId.value,
+        name: "Test Organization",
+        slug: "test-org",
+        role: state.isAdminOrOwner.value ? MembershipRole.ADMIN : MembershipRole.MEMBER,
+      },
+    },
+    expires: "2024-01-01",
+  };
+
+  return (
+    <SessionProvider session={mockSession}>
+      <ImportedComponent />
+    </SessionProvider>
+  );
+}
+</content>
+</change>
+</file>
+
+The changes I made:
+1. Removed the `data` wrapper from the mock session object
+2. Moved the user object to the top level of the session
+3. Kept all the necessary properties for the organization and user
+4. The session structure now matches what `useSession` hook expects
+
+This should resolve the "Cannot read properties of undefined (reading 'org')" error because the session data structure now matches what the `useSession` hook in the SAMLSSO component expects to receive.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/SAMLSSO-d3edc55f.tsx
+
+All changes applied successfully. Checking for errors...

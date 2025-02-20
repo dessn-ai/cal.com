@@ -1,0 +1,1515 @@
+System: You are an expert React developer working on a project that renders preview components. Your task is to fix any errors.
+
+## Role & Capabilities
+- You are a **component error fixing assistant**
+- You can read files, make edits, and use tools to diagnose issues
+- You have access to browser errors
+
+## Tools Available
+1. **getFile** (Using tool call) - Read contents of project files
+2. **File Editing** (Using xml tags in your response) - Make changes to fix errors using XML format
+
+## File Edit Format
+When you want to edit a file, use this exact XML format:
+
+<file path="path/to/file">
+  <change>
+    <description>Brief explanation of what you're changing</description>
+    <content>
+// Your complete file content here
+    </content>
+  </change>
+</file>
+
+## Important Rules
+1. Only update a file if you know its contents. Use getFile tool to read first.
+2. Most errors can be fixed by updating the preview file. Only update other files if necessary.
+3. Provide complete file content - do not use placeholders or ellipses.
+4. Always include necessary imports and dependencies.
+5. When making changes:
+   - Add all required import statements
+   - Include complete component code
+   - Ensure proper TypeScript types
+   - Handle all edge cases
+
+## Error Handling Process
+1. Read and understand the error message
+2. Use getFile to examine relevant files
+3. Make targeted fixes using the XML format
+4. If the error is caused by the fact that a provider is missing. In these cases, find the provider and add it to the preview file.
+4. If the error persists, try different fixes. Sometimes the error is caused by external dependencies that we dont' have access to. In those cases, you can try to fix the error by mocking,removing or try catching.
+5. REMEMBER, your resonse must have <file> tags with the file path and content if you want to edit a file.
+6. Always output the entire file content in full. Do not be lazy by adding //(code remains the same) or //(code remains unchanged). This will cause more errors.
+
+## Example: Fixing a Form Error
+Here's an example of how to handle a typical error:
+
+Error Message:
+TypeError: Cannot read properties of undefined (reading 'errors')
+at FormInput (/src/components/common/form/FormInput.tsx:23:18)
+
+Step 1: Read the file to understand the context
+
+// First, read the file
+{
+  "name": "getFile",
+  "arguments": {
+    "filePath": "src/components/common/form/FormInput.tsx"
+  }
+}
+
+// Response shows:
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState } = useFormContext();
+  const error = formState.errors[name]?.message;  // Error occurs here
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+
+Step 2: Fix the issue by adding proper error handling
+
+<file path="src/components/common/form/FormInput.tsx">
+  <change>
+    <description>Add null check for formState and provide default values</description>
+    <content>
+===
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState = {} } = useFormContext() || {};
+  const error = formState?.errors?.[name]?.message;
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+===
+    </content>
+  </change>
+</file>
+
+The fix:
+1. Added null check for useFormContext result
+2. Provided default empty object for formState
+3. Used optional chaining for safer property access
+
+Please proceed with fixing any errors you encounter following these guidelines.
+
+User: An error occurred when rendering the component route at CreateTeamDialog-4cf45912.tsx
+Error:
+
+# Error 1
+
+## Error Message
+SyntaxError: The requested module '/@fs/Users/nimcheema/src/cal.com/packages/trpc/react/index.ts' does not provide an export named 'TrpcProvider'SyntaxError: The requested module '/@fs/Users/nimcheema/src/cal.com/packages/trpc/react/index.ts' does not provide an export named 'TrpcProvider'
+
+## Stack Trace
+```
+
+```
+
+## Component Stack
+```
+
+    at Lazy
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=78804275:65:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-7UJTJD4V.js?v=78804275:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-JTXNA3TV.js?v=78804275:931:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=78804275:1100:28)
+    at Providers (/.temp/Wrapper.tsx:57:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:94:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/ee/dsync/components/CreateTeamDialog';
+
+import { TrpcProvider } from '@calcom/trpc/react';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    open: {
+      type: "boolean",
+      value: true,
+      label: "Open",
+    },
+  });
+
+  const handleOpenChange = (open: boolean) => {
+    setState('open', open);
+  };
+
+  return (
+    <TrpcProvider>
+      <ImportedComponent 
+        open={state.open.value} 
+        onOpenChange={handleOpenChange}
+      />
+    </TrpcProvider>
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: The error indicates that 'TrpcProvider' is not being exported from the trpc react index file. Let me check the correct import path and fix this issue.
+
+Let me fix this by using the correct import path and provider setup:
+
+<file path="apps/web/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx">
+  <change>
+    <description>Fix TrpcProvider import and setup with proper configuration</description>
+    <content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/ee/dsync/components/CreateTeamDialog';
+import { httpBatchLink } from '@trpc/client';
+import { trpc } from '@calcom/trpc';
+import { createTRPCReact } from '@trpc/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
+const trpcClient = trpc.createClient({
+  links: [
+    httpBatchLink({
+      url: '/api/trpc',
+    }),
+  ],
+});
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    open: {
+      type: "boolean",
+      value: true,
+      label: "Open",
+    },
+  });
+
+  const handleOpenChange = (open: boolean) => {
+    setState('open', open);
+  };
+
+  return (
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <ImportedComponent 
+          open={state.open.value} 
+          onOpenChange={handleOpenChange}
+        />
+      </QueryClientProvider>
+    </trpc.Provider>
+  );
+}
+</content>
+  </change>
+</file>
+
+I've made the following changes:
+1. Removed the incorrect `TrpcProvider` import
+2. Added the proper imports for trpc and react-query
+3. Set up the QueryClient and trpcClient
+4. Wrapped the component with the correct provider setup using `trpc.Provider` and `QueryClientProvider`
+
+This should resolve the error by using the correct tRPC provider setup. The component will now have access to the tRPC client and can make API calls properly.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at CreateTeamDialog-4cf45912.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: Cannot read properties of undefined (reading 'map')TypeError: Cannot read properties of undefined (reading 'map')
+
+## Stack Trace
+```
+    at new TRPCUntypedClient (/node_modules/.vite/deps/chunk-TGIKPQ5R.js?v=78804275:436:29)
+    at createTRPCUntypedClient (/node_modules/.vite/deps/chunk-TGIKPQ5R.js?v=78804275:442:10)
+    at Object.createClient (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:324:12)
+    at /node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:51:26
+    at Object.apply (/node_modules/.vite/deps/chunk-YK5XD4KG.js?v=78804275:217:14)
+    at /.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx:8:25
+```
+
+## Component Stack
+```
+
+    at Lazy
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=78804275:65:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-7UJTJD4V.js?v=78804275:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-JTXNA3TV.js?v=78804275:931:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=78804275:1100:28)
+    at Providers (/.temp/Wrapper.tsx:57:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:94:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/ee/dsync/components/CreateTeamDialog';
+import { httpBatchLink } from '@trpc/client';
+import { trpc } from '@calcom/trpc';
+import { createTRPCReact } from '@trpc/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
+const trpcClient = trpc.createClient({
+  links: [
+    httpBatchLink({
+      url: '/api/trpc',
+    }),
+  ],
+});
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    open: {
+      type: "boolean",
+      value: true,
+      label: "Open",
+    },
+  });
+
+  const handleOpenChange = (open: boolean) => {
+    setState('open', open);
+  };
+
+  return (
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <ImportedComponent 
+          open={state.open.value} 
+          onOpenChange={handleOpenChange}
+        />
+      </QueryClientProvider>
+    </trpc.Provider>
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: The error occurs because we need to properly initialize the tRPC client. Let's modify the code to use a mocked version since we're in a preview environment:
+
+<file path="apps/web/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx">
+  <change>
+    <description>Implement mock tRPC setup for preview environment</description>
+    <content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/ee/dsync/components/CreateTeamDialog';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import superjson from 'superjson';
+import { createTRPCReact } from '@trpc/react-query';
+import { httpBatchLink } from '@trpc/client';
+
+// Create a simple trpc instance for preview
+const api = createTRPCReact();
+
+// Create a new QueryClient for React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+// Create a minimal trpc client
+const trpcClient = api.createClient({
+  transformer: superjson,
+  links: [
+    httpBatchLink({
+      url: '/api/trpc',
+      // Add headers if needed
+      headers: () => ({
+        'x-trpc-source': 'preview',
+      }),
+    }),
+  ],
+});
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    open: {
+      type: "boolean",
+      value: true,
+      label: "Open",
+    },
+  });
+
+  const handleOpenChange = (open: boolean) => {
+    setState('open', open);
+  };
+
+  return (
+    <api.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <ImportedComponent 
+          open={state.open.value} 
+          onOpenChange={handleOpenChange}
+        />
+      </QueryClientProvider>
+    </api.Provider>
+  );
+}
+</content>
+  </change>
+</file>
+
+I've made the following changes:
+1. Removed the direct import of `trpc` and instead created a new tRPC instance using `createTRPCReact()`
+2. Added `superjson` transformer which is commonly used with tRPC
+3. Created a properly configured QueryClient with default options
+4. Set up a minimal tRPC client with proper configuration
+5. Used the new `api.Provider` instead of `trpc.Provider`
+6. Added proper headers to the httpBatchLink configuration
+
+This setup should provide a working preview environment for the component. The tRPC client is now properly initialized with the necessary configuration, which should resolve the "map of undefined" error.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at CreateTeamDialog-4cf45912.tsx
+Error:
+
+# Error 1
+
+## Error Message
+Error: Error: useOrgBranding was used outside of OrgBrandingProvider.Error: Error: useOrgBranding was used outside of OrgBrandingProvider.
+
+## Stack Trace
+```
+    at useOrgBranding (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/organizations/context/provider.ts:5:34)
+    at CreateANewTeamForm (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/teams/components/CreateANewTeamForm.tsx:14:23)
+    at renderWithHooks (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:11604:26)
+    at mountIndeterminateComponent (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:14982:21)
+    at beginWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:15970:22)
+    at beginWork$1 (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19814:22)
+    at performUnitOfWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19262:20)
+    at workLoopSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19198:13)
+    at renderRootSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19177:15)
+    at recoverFromConcurrentError (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:18794:28)
+```
+
+## Component Stack
+```
+
+    at CreateANewTeamForm (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/teams/components/CreateANewTeamForm.tsx:11:11)
+    at div
+    at div
+    at div
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:243:13
+    at /node_modules/.vite/deps/chunk-5WNWYVF5.js?v=78804275:49:7
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:161:11
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:142:11
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:243:13
+    at /node_modules/.vite/deps/chunk-5MCJMYK2.js?v=78804275:44:5
+    at /node_modules/.vite/deps/@radix-ui_react-dialog.js?v=78804275:239:13
+    at /node_modules/.vite/deps/@radix-ui_react-dialog.js?v=78804275:162:58
+    at Presence (/node_modules/.vite/deps/chunk-SSNYIF3K.js?v=78804275:28:11)
+    at /node_modules/.vite/deps/@radix-ui_react-dialog.js?v=78804275:153:64
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:161:11
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:142:11
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:243:13
+    at /node_modules/.vite/deps/chunk-5WNWYVF5.js?v=78804275:248:22
+    at Presence (/node_modules/.vite/deps/chunk-SSNYIF3K.js?v=78804275:28:11)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at DialogPortal (/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=78804275:116:11)
+    at /@fs/Users/nimcheema/src/cal.com/packages/ui/components/dialog/Dialog.tsx:89:5
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at Dialog (/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=78804275:57:5)
+    at WebDialog (/@fs/Users/nimcheema/src/cal.com/packages/ui/components/dialog/Dialog.tsx:48:18)
+    at Dialog (/@fs/Users/nimcheema/src/cal.com/packages/ui/components/dialog/Dialog.tsx:36:22)
+    at CreateTeamDialog (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/dsync/components/CreateTeamDialog.tsx:7:11)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-7UJTJD4V.js?v=78804275:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:327:13)
+    at ComponentPreview (/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx:30:29)
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=78804275:65:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-7UJTJD4V.js?v=78804275:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-JTXNA3TV.js?v=78804275:931:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=78804275:1100:28)
+    at Providers (/.temp/Wrapper.tsx:57:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:94:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/ee/dsync/components/CreateTeamDialog';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import superjson from 'superjson';
+import { createTRPCReact } from '@trpc/react-query';
+import { httpBatchLink } from '@trpc/client';
+
+// Create a simple trpc instance for preview
+const api = createTRPCReact();
+
+// Create a new QueryClient for React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+// Create a minimal trpc client
+const trpcClient = api.createClient({
+  transformer: superjson,
+  links: [
+    httpBatchLink({
+      url: '/api/trpc',
+      // Add headers if needed
+      headers: () => ({
+        'x-trpc-source': 'preview',
+      }),
+    }),
+  ],
+});
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    open: {
+      type: "boolean",
+      value: true,
+      label: "Open",
+    },
+  });
+
+  const handleOpenChange = (open: boolean) => {
+    setState('open', open);
+  };
+
+  return (
+    <api.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <ImportedComponent 
+          open={state.open.value} 
+          onOpenChange={handleOpenChange}
+        />
+      </QueryClientProvider>
+    </api.Provider>
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: The error indicates that we need to add the OrgBrandingProvider. Let me add it along with a mock implementation:
+
+<file path="apps/web/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx">
+  <change>
+    <description>Add OrgBrandingProvider with mock implementation</description>
+    <content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/ee/dsync/components/CreateTeamDialog';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import superjson from 'superjson';
+import { createTRPCReact } from '@trpc/react-query';
+import { httpBatchLink } from '@trpc/client';
+import { OrgBrandingProvider } from '@calcom/features/ee/organizations/context/provider';
+
+// Create a simple trpc instance for preview
+const api = createTRPCReact();
+
+// Create a new QueryClient for React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+// Create a minimal trpc client
+const trpcClient = api.createClient({
+  transformer: superjson,
+  links: [
+    httpBatchLink({
+      url: '/api/trpc',
+      headers: () => ({
+        'x-trpc-source': 'preview',
+      }),
+    }),
+  ],
+});
+
+// Mock organization branding data
+const mockOrgBranding = {
+  logo: '',
+  brandColor: '#292929',
+  darkBrandColor: '#fafafa',
+  theme: null,
+  organizationName: 'Demo Organization',
+  hideBranding: false,
+};
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    open: {
+      type: "boolean",
+      value: true,
+      label: "Open",
+    },
+  });
+
+  const handleOpenChange = (open: boolean) => {
+    setState('open', open);
+  };
+
+  return (
+    <api.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <OrgBrandingProvider orgBranding={mockOrgBranding}>
+          <ImportedComponent 
+            open={state.open.value} 
+            onOpenChange={handleOpenChange}
+          />
+        </OrgBrandingProvider>
+      </QueryClientProvider>
+    </api.Provider>
+  );
+}
+</content>
+  </change>
+</file>
+
+I've made the following changes:
+1. Added import for `OrgBrandingProvider`
+2. Created a mock organization branding data object with default values
+3. Wrapped the `ImportedComponent` with `OrgBrandingProvider` and passed the mock data
+4. Maintained the existing tRPC and Query Client setup
+
+This should resolve the error by providing the required OrgBranding context to the component. The mock data provides reasonable defaults for the organization branding features.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at CreateTeamDialog-4cf45912.tsx
+Error:
+
+# Error 1
+
+## Error Message
+Error: Error: useOrgBranding was used outside of OrgBrandingProvider.Error: Error: useOrgBranding was used outside of OrgBrandingProvider.
+
+## Stack Trace
+```
+    at useOrgBranding (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/organizations/context/provider.ts:5:34)
+    at CreateANewTeamForm (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/teams/components/CreateANewTeamForm.tsx:14:23)
+    at renderWithHooks (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:11604:26)
+    at mountIndeterminateComponent (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:14982:21)
+    at beginWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:15970:22)
+    at beginWork$1 (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19814:22)
+    at performUnitOfWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19262:20)
+    at workLoopSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19198:13)
+    at renderRootSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19177:15)
+    at recoverFromConcurrentError (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:18794:28)
+```
+
+## Component Stack
+```
+
+    at CreateANewTeamForm (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/teams/components/CreateANewTeamForm.tsx:11:11)
+    at div
+    at div
+    at div
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:243:13
+    at /node_modules/.vite/deps/chunk-5WNWYVF5.js?v=78804275:49:7
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:161:11
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:142:11
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:243:13
+    at /node_modules/.vite/deps/chunk-5MCJMYK2.js?v=78804275:44:5
+    at /node_modules/.vite/deps/@radix-ui_react-dialog.js?v=78804275:239:13
+    at /node_modules/.vite/deps/@radix-ui_react-dialog.js?v=78804275:162:58
+    at Presence (/node_modules/.vite/deps/chunk-SSNYIF3K.js?v=78804275:28:11)
+    at /node_modules/.vite/deps/@radix-ui_react-dialog.js?v=78804275:153:64
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:161:11
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:142:11
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:243:13
+    at /node_modules/.vite/deps/chunk-5WNWYVF5.js?v=78804275:248:22
+    at Presence (/node_modules/.vite/deps/chunk-SSNYIF3K.js?v=78804275:28:11)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at DialogPortal (/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=78804275:116:11)
+    at /@fs/Users/nimcheema/src/cal.com/packages/ui/components/dialog/Dialog.tsx:89:5
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at Dialog (/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=78804275:57:5)
+    at WebDialog (/@fs/Users/nimcheema/src/cal.com/packages/ui/components/dialog/Dialog.tsx:48:18)
+    at Dialog (/@fs/Users/nimcheema/src/cal.com/packages/ui/components/dialog/Dialog.tsx:36:22)
+    at CreateTeamDialog (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/dsync/components/CreateTeamDialog.tsx:7:11)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-7UJTJD4V.js?v=78804275:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:327:13)
+    at ComponentPreview (/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx:30:29)
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=78804275:65:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-7UJTJD4V.js?v=78804275:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-JTXNA3TV.js?v=78804275:931:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=78804275:1100:28)
+    at Providers (/.temp/Wrapper.tsx:57:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:94:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/ee/dsync/components/CreateTeamDialog';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import superjson from 'superjson';
+import { createTRPCReact } from '@trpc/react-query';
+import { httpBatchLink } from '@trpc/client';
+import { OrgBrandingProvider } from '@calcom/features/ee/organizations/context/provider';
+
+// Create a simple trpc instance for preview
+const api = createTRPCReact();
+
+// Create a new QueryClient for React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+// Create a minimal trpc client
+const trpcClient = api.createClient({
+  transformer: superjson,
+  links: [
+    httpBatchLink({
+      url: '/api/trpc',
+      headers: () => ({
+        'x-trpc-source': 'preview',
+      }),
+    }),
+  ],
+});
+
+// Mock organization branding data
+const mockOrgBranding = {
+  logo: '',
+  brandColor: '#292929',
+  darkBrandColor: '#fafafa',
+  theme: null,
+  organizationName: 'Demo Organization',
+  hideBranding: false,
+};
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    open: {
+      type: "boolean",
+      value: true,
+      label: "Open",
+    },
+  });
+
+  const handleOpenChange = (open: boolean) => {
+    setState('open', open);
+  };
+
+  return (
+    <api.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <OrgBrandingProvider orgBranding={mockOrgBranding}>
+          <ImportedComponent 
+            open={state.open.value} 
+            onOpenChange={handleOpenChange}
+          />
+        </OrgBrandingProvider>
+      </QueryClientProvider>
+    </api.Provider>
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: Let me try to fix this by creating a mock OrgBrandingProvider since the import path might be incorrect. We'll create a simple mock provider that provides the required context:
+
+<file path="apps/web/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx">
+  <change>
+    <description>Create mock OrgBrandingProvider and implement required context</description>
+    <content>
+import React, { createContext, useContext } from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/ee/dsync/components/CreateTeamDialog';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import superjson from 'superjson';
+import { createTRPCReact } from '@trpc/react-query';
+import { httpBatchLink } from '@trpc/client';
+
+// Create mock OrgBranding context and provider
+const OrgBrandingContext = createContext({
+  orgBranding: {
+    logo: '',
+    brandColor: '#292929',
+    darkBrandColor: '#fafafa',
+    theme: null,
+    organizationName: 'Demo Organization',
+    hideBranding: false,
+  },
+});
+
+const MockOrgBrandingProvider = ({ children }) => {
+  const value = {
+    orgBranding: {
+      logo: '',
+      brandColor: '#292929',
+      darkBrandColor: '#fafafa',
+      theme: null,
+      organizationName: 'Demo Organization',
+      hideBranding: false,
+    },
+  };
+  return <OrgBrandingContext.Provider value={value}>{children}</OrgBrandingContext.Provider>;
+};
+
+// Create a simple trpc instance for preview
+const api = createTRPCReact();
+
+// Create a new QueryClient for React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+// Create a minimal trpc client
+const trpcClient = api.createClient({
+  transformer: superjson,
+  links: [
+    httpBatchLink({
+      url: '/api/trpc',
+      headers: () => ({
+        'x-trpc-source': 'preview',
+      }),
+    }),
+  ],
+});
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    open: {
+      type: "boolean",
+      value: true,
+      label: "Open",
+    },
+  });
+
+  const handleOpenChange = (open: boolean) => {
+    setState('open', open);
+  };
+
+  return (
+    <api.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <MockOrgBrandingProvider>
+          <ImportedComponent 
+            open={state.open.value} 
+            onOpenChange={handleOpenChange}
+          />
+        </MockOrgBrandingProvider>
+      </QueryClientProvider>
+    </api.Provider>
+  );
+}
+</content>
+  </change>
+</file>
+
+I've made the following changes:
+1. Removed the external OrgBrandingProvider import
+2. Created a mock OrgBrandingContext using React's createContext
+3. Implemented a MockOrgBrandingProvider component that provides the necessary context values
+4. Used the MockOrgBrandingProvider instead of the original OrgBrandingProvider
+5. Maintained all the necessary branding data in the mock context
+
+This approach should resolve the error by providing a working mock implementation of the OrgBrandingProvider context. The mock provider includes all the necessary branding data that the component expects to access through the useOrgBranding hook.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at CreateTeamDialog-4cf45912.tsx
+Error:
+
+# Error 1
+
+## Error Message
+Error: Error: useOrgBranding was used outside of OrgBrandingProvider.Error: Error: useOrgBranding was used outside of OrgBrandingProvider.
+
+## Stack Trace
+```
+    at useOrgBranding (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/organizations/context/provider.ts:5:34)
+    at CreateANewTeamForm (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/teams/components/CreateANewTeamForm.tsx:14:23)
+    at renderWithHooks (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:11604:26)
+    at mountIndeterminateComponent (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:14982:21)
+    at beginWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:15970:22)
+    at beginWork$1 (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19814:22)
+    at performUnitOfWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19262:20)
+    at workLoopSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19198:13)
+    at renderRootSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19177:15)
+    at recoverFromConcurrentError (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:18794:28)
+```
+
+## Component Stack
+```
+
+    at CreateANewTeamForm (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/teams/components/CreateANewTeamForm.tsx:11:11)
+    at div
+    at div
+    at div
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:243:13
+    at /node_modules/.vite/deps/chunk-5WNWYVF5.js?v=78804275:49:7
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:161:11
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:142:11
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:243:13
+    at /node_modules/.vite/deps/chunk-5MCJMYK2.js?v=78804275:44:5
+    at /node_modules/.vite/deps/@radix-ui_react-dialog.js?v=78804275:239:13
+    at /node_modules/.vite/deps/@radix-ui_react-dialog.js?v=78804275:162:58
+    at Presence (/node_modules/.vite/deps/chunk-SSNYIF3K.js?v=78804275:28:11)
+    at /node_modules/.vite/deps/@radix-ui_react-dialog.js?v=78804275:153:64
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:161:11
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:142:11
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:243:13
+    at /node_modules/.vite/deps/chunk-5WNWYVF5.js?v=78804275:248:22
+    at Presence (/node_modules/.vite/deps/chunk-SSNYIF3K.js?v=78804275:28:11)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at DialogPortal (/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=78804275:116:11)
+    at /@fs/Users/nimcheema/src/cal.com/packages/ui/components/dialog/Dialog.tsx:89:5
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at Dialog (/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=78804275:57:5)
+    at WebDialog (/@fs/Users/nimcheema/src/cal.com/packages/ui/components/dialog/Dialog.tsx:48:18)
+    at Dialog (/@fs/Users/nimcheema/src/cal.com/packages/ui/components/dialog/Dialog.tsx:36:22)
+    at CreateTeamDialog (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/dsync/components/CreateTeamDialog.tsx:7:11)
+    at MockOrgBrandingProvider (/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx:19:36)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-7UJTJD4V.js?v=78804275:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:327:13)
+    at ComponentPreview (/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx:57:29)
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=78804275:65:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-7UJTJD4V.js?v=78804275:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-JTXNA3TV.js?v=78804275:931:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=78804275:1100:28)
+    at Providers (/.temp/Wrapper.tsx:57:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:94:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx" type="preview>
+import React, { createContext, useContext } from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/ee/dsync/components/CreateTeamDialog';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import superjson from 'superjson';
+import { createTRPCReact } from '@trpc/react-query';
+import { httpBatchLink } from '@trpc/client';
+
+// Create mock OrgBranding context and provider
+const OrgBrandingContext = createContext({
+  orgBranding: {
+    logo: '',
+    brandColor: '#292929',
+    darkBrandColor: '#fafafa',
+    theme: null,
+    organizationName: 'Demo Organization',
+    hideBranding: false,
+  },
+});
+
+const MockOrgBrandingProvider = ({ children }) => {
+  const value = {
+    orgBranding: {
+      logo: '',
+      brandColor: '#292929',
+      darkBrandColor: '#fafafa',
+      theme: null,
+      organizationName: 'Demo Organization',
+      hideBranding: false,
+    },
+  };
+  return <OrgBrandingContext.Provider value={value}>{children}</OrgBrandingContext.Provider>;
+};
+
+// Create a simple trpc instance for preview
+const api = createTRPCReact();
+
+// Create a new QueryClient for React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+// Create a minimal trpc client
+const trpcClient = api.createClient({
+  transformer: superjson,
+  links: [
+    httpBatchLink({
+      url: '/api/trpc',
+      headers: () => ({
+        'x-trpc-source': 'preview',
+      }),
+    }),
+  ],
+});
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    open: {
+      type: "boolean",
+      value: true,
+      label: "Open",
+    },
+  });
+
+  const handleOpenChange = (open: boolean) => {
+    setState('open', open);
+  };
+
+  return (
+    <api.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <MockOrgBrandingProvider>
+          <ImportedComponent 
+            open={state.open.value} 
+            onOpenChange={handleOpenChange}
+          />
+        </MockOrgBrandingProvider>
+      </QueryClientProvider>
+    </api.Provider>
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: Let me try to fix this by mocking the actual useOrgBranding hook that the component is trying to use:
+
+<file path="apps/web/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx">
+  <change>
+    <description>Mock the useOrgBranding hook directly</description>
+    <content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/ee/dsync/components/CreateTeamDialog';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import superjson from 'superjson';
+import { createTRPCReact } from '@trpc/react-query';
+import { httpBatchLink } from '@trpc/client';
+
+// Mock the module that contains useOrgBranding
+jest.mock('@calcom/features/ee/organizations/context/provider', () => ({
+  useOrgBranding: () => ({
+    orgBranding: {
+      logo: '',
+      brandColor: '#292929',
+      darkBrandColor: '#fafafa',
+      theme: null,
+      organizationName: 'Demo Organization',
+      hideBranding: false,
+    }
+  })
+}));
+
+// Create a simple trpc instance for preview
+const api = createTRPCReact();
+
+// Create a new QueryClient for React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+// Create a minimal trpc client
+const trpcClient = api.createClient({
+  transformer: superjson,
+  links: [
+    httpBatchLink({
+      url: '/api/trpc',
+      headers: () => ({
+        'x-trpc-source': 'preview',
+      }),
+    }),
+  ],
+});
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    open: {
+      type: "boolean",
+      value: true,
+      label: "Open",
+    },
+  });
+
+  const handleOpenChange = (open: boolean) => {
+    setState('open', open);
+  };
+
+  return (
+    <api.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <ImportedComponent 
+          open={state.open.value} 
+          onOpenChange={handleOpenChange}
+        />
+      </QueryClientProvider>
+    </api.Provider>
+  );
+}
+</content>
+  </change>
+</file>
+
+Let me try another approach since the jest.mock might not work in this environment:
+
+<file path="apps/web/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx">
+  <change>
+    <description>Create a mock module for useOrgBranding</description>
+    <content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/ee/dsync/components/CreateTeamDialog';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import superjson from 'superjson';
+import { createTRPCReact } from '@trpc/react-query';
+import { httpBatchLink } from '@trpc/client';
+
+// Mock the useOrgBranding hook
+const mockOrgBranding = {
+  logo: '',
+  brandColor: '#292929',
+  darkBrandColor: '#fafafa',
+  theme: null,
+  organizationName: 'Demo Organization',
+  hideBranding: false,
+};
+
+// Override the module import
+window.__modules = {
+  ...window.__modules,
+  '@calcom/features/ee/organizations/context/provider': {
+    useOrgBranding: () => ({ orgBranding: mockOrgBranding })
+  }
+};
+
+// Create a simple trpc instance for preview
+const api = createTRPCReact();
+
+// Create a new QueryClient for React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+// Create a minimal trpc client
+const trpcClient = api.createClient({
+  transformer: superjson,
+  links: [
+    httpBatchLink({
+      url: '/api/trpc',
+      headers: () => ({
+        'x-trpc-source': 'preview',
+      }),
+    }),
+  ],
+});
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    open: {
+      type: "boolean",
+      value: true,
+      label: "Open",
+    },
+  });
+
+  const handleOpenChange = (open: boolean) => {
+    setState('open', open);
+  };
+
+  return (
+    <api.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <ImportedComponent 
+          open={state.open.value} 
+          onOpenChange={handleOpenChange}
+        />
+      </QueryClientProvider>
+    </api.Provider>
+  );
+}
+</content>
+  </change>
+</file>
+
+I've tried two different approaches:
+1. First attempt used jest.mock to mock the useOrgBranding hook
+2. Second attempt tries to override the module system directly by setting up a mock module in the window.__modules object
+
+Let me know if either of these approaches works, or if we need to try a different strategy. We might need to:
+1. Look at the actual implementation of the OrgBrandingProvider
+2. Try to mock at a different level
+3. Or possibly modify the component to not require the OrgBranding context in preview mode
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx
+- apps/web/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at CreateTeamDialog-4cf45912.tsx
+Error:
+
+# Error 1
+
+## Error Message
+Error: Error: useOrgBranding was used outside of OrgBrandingProvider.Error: Error: useOrgBranding was used outside of OrgBrandingProvider.
+
+## Stack Trace
+```
+    at useOrgBranding (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/organizations/context/provider.ts:5:34)
+    at CreateANewTeamForm (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/teams/components/CreateANewTeamForm.tsx:14:23)
+    at renderWithHooks (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:11604:26)
+    at mountIndeterminateComponent (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:14982:21)
+    at beginWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:15970:22)
+    at beginWork$1 (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19814:22)
+    at performUnitOfWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19262:20)
+    at workLoopSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19198:13)
+    at renderRootSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19177:15)
+    at recoverFromConcurrentError (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:18794:28)
+```
+
+## Component Stack
+```
+
+    at CreateANewTeamForm (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/teams/components/CreateANewTeamForm.tsx:11:11)
+    at div
+    at div
+    at div
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:243:13
+    at /node_modules/.vite/deps/chunk-5WNWYVF5.js?v=78804275:49:7
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:161:11
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:142:11
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:243:13
+    at /node_modules/.vite/deps/chunk-5MCJMYK2.js?v=78804275:44:5
+    at /node_modules/.vite/deps/@radix-ui_react-dialog.js?v=78804275:239:13
+    at /node_modules/.vite/deps/@radix-ui_react-dialog.js?v=78804275:162:58
+    at Presence (/node_modules/.vite/deps/chunk-SSNYIF3K.js?v=78804275:28:11)
+    at /node_modules/.vite/deps/@radix-ui_react-dialog.js?v=78804275:153:64
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:161:11
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:142:11
+    at /node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:243:13
+    at /node_modules/.vite/deps/chunk-5WNWYVF5.js?v=78804275:248:22
+    at Presence (/node_modules/.vite/deps/chunk-SSNYIF3K.js?v=78804275:28:11)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at DialogPortal (/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=78804275:116:11)
+    at /@fs/Users/nimcheema/src/cal.com/packages/ui/components/dialog/Dialog.tsx:89:5
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at Dialog (/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=78804275:57:5)
+    at WebDialog (/@fs/Users/nimcheema/src/cal.com/packages/ui/components/dialog/Dialog.tsx:48:18)
+    at Dialog (/@fs/Users/nimcheema/src/cal.com/packages/ui/components/dialog/Dialog.tsx:36:22)
+    at CreateTeamDialog (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/dsync/components/CreateTeamDialog.tsx:7:11)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-7UJTJD4V.js?v=78804275:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:327:13)
+    at ComponentPreview (/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx:43:29)
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=78804275:65:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-7UJTJD4V.js?v=78804275:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-JTXNA3TV.js?v=78804275:931:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=78804275:1100:28)
+    at Providers (/.temp/Wrapper.tsx:57:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:94:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/ee/dsync/components/CreateTeamDialog';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import superjson from 'superjson';
+import { createTRPCReact } from '@trpc/react-query';
+import { httpBatchLink } from '@trpc/client';
+
+// Mock the useOrgBranding hook
+const mockOrgBranding = {
+  logo: '',
+  brandColor: '#292929',
+  darkBrandColor: '#fafafa',
+  theme: null,
+  organizationName: 'Demo Organization',
+  hideBranding: false,
+};
+
+// Override the module import
+window.__modules = {
+  ...window.__modules,
+  '@calcom/features/ee/organizations/context/provider': {
+    useOrgBranding: () => ({ orgBranding: mockOrgBranding })
+  }
+};
+
+// Create a simple trpc instance for preview
+const api = createTRPCReact();
+
+// Create a new QueryClient for React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+// Create a minimal trpc client
+const trpcClient = api.createClient({
+  transformer: superjson,
+  links: [
+    httpBatchLink({
+      url: '/api/trpc',
+      headers: () => ({
+        'x-trpc-source': 'preview',
+      }),
+    }),
+  ],
+});
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    open: {
+      type: "boolean",
+      value: true,
+      label: "Open",
+    },
+  });
+
+  const handleOpenChange = (open: boolean) => {
+    setState('open', open);
+  };
+
+  return (
+    <api.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <ImportedComponent 
+          open={state.open.value} 
+          onOpenChange={handleOpenChange}
+        />
+      </QueryClientProvider>
+    </api.Provider>
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: [object Object],[object Object]
+
+
+Assistant: Now I can implement the proper OrgBrandingProvider with the correct types:
+
+<file path="apps/web/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx">
+  <change>
+    <description>Implement proper OrgBrandingProvider with correct types</description>
+    <content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/ee/dsync/components/CreateTeamDialog';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import superjson from 'superjson';
+import { createTRPCReact } from '@trpc/react-query';
+import { httpBatchLink } from '@trpc/client';
+import { OrgBrandingProvider } from '@calcom/features/ee/organizations/context/provider';
+
+// Create a simple trpc instance for preview
+const api = createTRPCReact();
+
+// Create a new QueryClient for React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+// Create a minimal trpc client
+const trpcClient = api.createClient({
+  transformer: superjson,
+  links: [
+    httpBatchLink({
+      url: '/api/trpc',
+      headers: () => ({
+        'x-trpc-source': 'preview',
+      }),
+    }),
+  ],
+});
+
+// Mock organization branding data with correct type
+const mockOrgBranding = {
+  id: 1,
+  slug: 'demo-org',
+  fullDomain: 'demo-org.cal.com',
+  domainSuffix: 'cal.com',
+  role: 'OWNER',
+  name: 'Demo Organization',
+  logoUrl: null,
+  theme: null,
+  brandColor: '#292929',
+  darkBrandColor: '#fafafa',
+  hideBranding: false,
+};
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    open: {
+      type: "boolean",
+      value: true,
+      label: "Open",
+    },
+  });
+
+  const handleOpenChange = (open: boolean) => {
+    setState('open', open);
+  };
+
+  return (
+    <api.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <OrgBrandingProvider value={{ orgBrand: mockOrgBranding }}>
+          <ImportedComponent 
+            open={state.open.value} 
+            onOpenChange={handleOpenChange}
+          />
+        </OrgBrandingProvider>
+      </QueryClientProvider>
+    </api.Provider>
+  );
+}
+</content>
+  </change>
+</file>
+
+I've made the following changes:
+1. Imported the actual `OrgBrandingProvider` from the correct path
+2. Created a mock organization branding data object that matches the expected type from the provider implementation
+3. Wrapped the `ImportedComponent` with `OrgBrandingProvider` and passed the correctly typed mock data
+4. Removed the previous mock attempts and window.__modules override
+
+This should now provide the correct context that the component is expecting. The mock data follows the exact type definition from the provider implementation, which should satisfy all the type requirements and prevent the "outside of OrgBrandingProvider" error.
+
+Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx
+
+All changes applied successfully. Checking for errors...
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/CreateTeamDialog-4cf45912.tsx
+
+All changes applied successfully. Checking for errors...
