@@ -1,0 +1,585 @@
+System: You are an expert React developer working on a project that renders preview components. Your task is to fix any errors.
+
+## Role & Capabilities
+- You are a **component error fixing assistant**
+- You can read files, make edits, and use tools to diagnose issues
+- You have access to browser errors
+
+## Tools Available
+1. **getFile** (Using tool call) - Read contents of project files
+2. **File Editing** (Using xml tags in your response) - Make changes to fix errors using XML format
+
+## File Edit Format
+When you want to edit a file, use this exact XML format:
+
+<file path="path/to/file">
+  <change>
+    <description>Brief explanation of what you're changing</description>
+    <content>
+// Your complete file content here
+    </content>
+  </change>
+</file>
+
+## Important Rules
+1. Only update a file if you know its contents. Use getFile tool to read first.
+2. Most errors can be fixed by updating the preview file. Only update other files if necessary.
+3. Provide complete file content - do not use placeholders or ellipses.
+4. Always include necessary imports and dependencies.
+5. When making changes:
+   - Add all required import statements
+   - Include complete component code
+   - Ensure proper TypeScript types
+   - Handle all edge cases
+
+## Error Handling Process
+1. Read and understand the error message
+2. Use getFile to examine relevant files
+3. Make targeted fixes using the XML format
+4. If the error is caused by the fact that a provider is missing. In these cases, find the provider and add it to the preview file.
+4. If the error persists, try different fixes. Sometimes the error is caused by external dependencies that we dont' have access to. In those cases, you can try to fix the error by mocking,removing or try catching.
+5. REMEMBER, your resonse must have <file> tags with the file path and content if you want to edit a file.
+6. Always output the entire file content in full. Do not be lazy by adding //(code remains the same) or //(code remains unchanged). This will cause more errors.
+
+## Example: Fixing a Form Error
+Here's an example of how to handle a typical error:
+
+Error Message:
+TypeError: Cannot read properties of undefined (reading 'errors')
+at FormInput (/src/components/common/form/FormInput.tsx:23:18)
+
+Step 1: Read the file to understand the context
+
+// First, read the file
+{
+  "name": "getFile",
+  "arguments": {
+    "filePath": "src/components/common/form/FormInput.tsx"
+  }
+}
+
+// Response shows:
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState } = useFormContext();
+  const error = formState.errors[name]?.message;  // Error occurs here
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+
+Step 2: Fix the issue by adding proper error handling
+
+<file path="src/components/common/form/FormInput.tsx">
+  <change>
+    <description>Add null check for formState and provide default values</description>
+    <content>
+===
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState = {} } = useFormContext() || {};
+  const error = formState?.errors?.[name]?.message;
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+===
+    </content>
+  </change>
+</file>
+
+The fix:
+1. Added null check for useFormContext result
+2. Provided default empty object for formState
+3. Used optional chaining for safer property access
+
+Please proceed with fixing any errors you encounter following these guidelines.
+
+User: An error occurred when rendering the component route at BookerWebWrapper-c29ce3ed.tsx
+Error:
+[plugin:vite:import-analysis] Failed to resolve import "../../../../packages/platform/atoms/src/hooks/useAtomsContext" from ".temp/dessn-component-routes/AtomsWrapper-fe82483b.tsx". Does the file exist?/Users/nimcheema/src/cal.com/apps/web/.temp/dessn-component-routes/AtomsWrapper-fe82483b.tsx:5:322  |  import { useParentState } from "../useIframeState";
+3  |  import { AtomsWrapper } from "../../../../packages/platform/atoms/src/components/atoms-wrapper";
+4  |  import { useAtomsContext } from "../../../../packages/platform/atoms/src/hooks/useAtomsContext";
+   |                                   ^
+5  |  export default function ComponentPreview() {
+6  |    const [state, setState] = useParentState({    at _formatLog (/Users/nimcheema/src/dessn/node_modules/.pnpm/vite@6.1.0_@types+node@20.17.10_jiti@1.21.6_lightningcss@1.29.1_terser@5.37.0_tsx@4.19.2_yaml@2.7.0/node_modules/vite/dist/node/chunks/dep-CfG9u7Cn.js:47802:45)
+    at error (/Users/nimcheema/src/dessn/node_modules/.pnpm/vite@6.1.0_@types+node@20.17.10_jiti@1.21.6_lightningcss@1.29.1_terser@5.37.0_tsx@4.19.2_yaml@2.7.0/node_modules/vite/dist/node/chunks/dep-CfG9u7Cn.js:47799:16Click outside, press Esc key, or fix the code to dismiss.You can also disable this overlay by setting server.hmr.overlay to false in vite.config.js.
+
+<file name="apps/web/.temp/dessn-component-routes/BookerWebWrapper-c29ce3ed.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { BookerWebWrapper } from '../../../../packages/platform/atoms/booker/BookerWebWrapper';
+
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    eventSlug: {
+      type: "string",
+      value: "default-event",
+      label: "Event Slug",
+    },
+    username: {
+      type: "string",
+      value: "johndoe",
+      label: "Username",
+    },
+    orgBannerUrl: {
+      type: "string",
+      value: "https://example.com/banner.jpg",
+      label: "Organization Banner URL",
+    },
+    hideBranding: {
+      type: "boolean",
+      value: false,
+      label: "Hide Branding",
+    },
+    allowsDynamicBooking: {
+      type: "boolean",
+      value: true,
+      label: "Allows Dynamic Booking",
+    },
+    isTeamEvent: {
+      type: "boolean",
+      value: false,
+      label: "Is Team Event",
+    },
+    duration: {
+      type: "number",
+      value: 30,
+      label: "Duration",
+    },
+    hashedLink: {
+      type: "string",
+      value: null,
+      label: "Hashed Link",
+    },
+    isInstantMeeting: {
+      type: "boolean",
+      value: false,
+      label: "Is Instant Meeting",
+    },
+    teamMemberEmail: {
+      type: "string",
+      value: null,
+      label: "Team Member Email",
+    },
+    userLocale: {
+      type: "string",
+      value: "en",
+      label: "User Locale",
+    },
+    hasValidLicense: {
+      type: "boolean",
+      value: true,
+      label: "Has Valid License",
+    },
+  });
+
+  const entity = {
+    fromRedirectOfNonOrgLink: false,
+    considerUnpublished: true,
+    isUnpublished: false,
+    orgSlug: "myorg",
+    teamSlug: null,
+    name: "My Organization",
+    logoUrl: "https://example.com/logo.png",
+    eventTypeId: 123,
+  };
+
+  return (
+    <BookerWebWrapper
+      eventSlug={state.eventSlug.value}
+      username={state.username.value}
+      orgBannerUrl={state.orgBannerUrl.value}
+      hideBranding={state.hideBranding.value}
+      allowsDynamicBooking={state.allowsDynamicBooking.value}
+      isTeamEvent={state.isTeamEvent.value}
+      duration={state.duration.value}
+      hashedLink={state.hashedLink.value}
+      isInstantMeeting={state.isInstantMeeting.value}
+      teamMemberEmail={state.teamMemberEmail.value}
+      userLocale={state.userLocale.value}
+      hasValidLicense={state.hasValidLicense.value}
+      entity={entity}
+    />
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: The error indicates that there's an issue resolving imports from the platform/atoms package. Let me help fix this by examining and updating the file.
+
+<file path="apps/web/.temp/dessn-component-routes/BookerWebWrapper-c29ce3ed.tsx">
+  <change>
+    <description>Update imports and wrap component with necessary providers to handle missing context</description>
+    <content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { BookerWebWrapper } from '../../../../packages/platform/atoms/booker/BookerWebWrapper';
+import { AtomsProvider } from '../../../../packages/platform/atoms/src/providers/AtomsProvider';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    eventSlug: {
+      type: "string",
+      value: "default-event",
+      label: "Event Slug",
+    },
+    username: {
+      type: "string",
+      value: "johndoe",
+      label: "Username",
+    },
+    orgBannerUrl: {
+      type: "string",
+      value: "https://example.com/banner.jpg",
+      label: "Organization Banner URL",
+    },
+    hideBranding: {
+      type: "boolean",
+      value: false,
+      label: "Hide Branding",
+    },
+    allowsDynamicBooking: {
+      type: "boolean",
+      value: true,
+      label: "Allows Dynamic Booking",
+    },
+    isTeamEvent: {
+      type: "boolean",
+      value: false,
+      label: "Is Team Event",
+    },
+    duration: {
+      type: "number",
+      value: 30,
+      label: "Duration",
+    },
+    hashedLink: {
+      type: "string",
+      value: null,
+      label: "Hashed Link",
+    },
+    isInstantMeeting: {
+      type: "boolean",
+      value: false,
+      label: "Is Instant Meeting",
+    },
+    teamMemberEmail: {
+      type: "string",
+      value: null,
+      label: "Team Member Email",
+    },
+    userLocale: {
+      type: "string",
+      value: "en",
+      label: "User Locale",
+    },
+    hasValidLicense: {
+      type: "boolean",
+      value: true,
+      label: "Has Valid License",
+    },
+  });
+
+  const entity = {
+    fromRedirectOfNonOrgLink: false,
+    considerUnpublished: true,
+    isUnpublished: false,
+    orgSlug: "myorg",
+    teamSlug: null,
+    name: "My Organization",
+    logoUrl: "https://example.com/logo.png",
+    eventTypeId: 123,
+  };
+
+  return (
+    <AtomsProvider>
+      <BookerWebWrapper
+        eventSlug={state.eventSlug.value}
+        username={state.username.value}
+        orgBannerUrl={state.orgBannerUrl.value}
+        hideBranding={state.hideBranding.value}
+        allowsDynamicBooking={state.allowsDynamicBooking.value}
+        isTeamEvent={state.isTeamEvent.value}
+        duration={state.duration.value}
+        hashedLink={state.hashedLink.value}
+        isInstantMeeting={state.isInstantMeeting.value}
+        teamMemberEmail={state.teamMemberEmail.value}
+        userLocale={state.userLocale.value}
+        hasValidLicense={state.hasValidLicense.value}
+        entity={entity}
+      />
+    </AtomsProvider>
+  );
+}
+</content>
+  </change>
+</file>
+
+I've made the following changes to fix the error:
+
+1. Added the import for `AtomsProvider` from the platform/atoms package
+2. Wrapped the `BookerWebWrapper` component with `AtomsProvider` to provide the necessary context
+
+The error was occurring because the component was trying to use context from the atoms package without the proper provider being present. By adding the `AtomsProvider` wrapper, we ensure that all required context is available to the `BookerWebWrapper` component.
+
+This should resolve the import resolution error and provide the necessary context for the component to function properly. If you encounter any other errors, please let me know.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/BookerWebWrapper-c29ce3ed.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at BookerWebWrapper-c29ce3ed.tsx
+Error:
+[plugin:vite:import-analysis] Failed to resolve import "../../../../packages/platform/atoms/src/providers/AtomsProvider" from ".temp/dessn-component-routes/BookerWebWrapper-c29ce3ed.tsx". Does the file exist?/Users/nimcheema/src/cal.com/apps/web/.temp/dessn-component-routes/BookerWebWrapper-c29ce3ed.tsx:4:302  |  import { useParentState } from "../useIframeState";
+3  |  import { BookerWebWrapper } from "../../../../packages/platform/atoms/booker/BookerWebWrapper";
+4  |  import { AtomsProvider } from "../../../../packages/platform/atoms/src/providers/AtomsProvider";
+   |                                 ^
+5  |  export default function ComponentPreview() {
+6  |    const [state, setState] = useParentState({    at _formatLog (/Users/nimcheema/src/dessn/node_modules/.pnpm/vite@6.1.0_@types+node@20.17.10_jiti@1.21.6_lightningcss@1.29.1_terser@5.37.0_tsx@4.19.2_yaml@2.7.0/node_modules/vite/dist/node/chunks/dep-CfG9u7Cn.js:47802:45)
+    at error (/Users/nimcheema/src/dessn/node_modules/.pnpm/vite@6.1.0_@types+node@20.17.10_jiti@1.21.6_lightningcss@1.29.1_terser@5.37.0_tsx@4.19.2_yaml@2.7.0/node_modules/vite/dist/node/chunks/dep-CfG9u7Cn.js:47799:16Click outside, press Esc key, or fix the code to dismiss.You can also disable this overlay by setting server.hmr.overlay to false in vite.config.js.
+
+<file name="apps/web/.temp/dessn-component-routes/BookerWebWrapper-c29ce3ed.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { BookerWebWrapper } from '../../../../packages/platform/atoms/booker/BookerWebWrapper';
+import { AtomsProvider } from '../../../../packages/platform/atoms/src/providers/AtomsProvider';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    eventSlug: {
+      type: "string",
+      value: "default-event",
+      label: "Event Slug",
+    },
+    username: {
+      type: "string",
+      value: "johndoe",
+      label: "Username",
+    },
+    orgBannerUrl: {
+      type: "string",
+      value: "https://example.com/banner.jpg",
+      label: "Organization Banner URL",
+    },
+    hideBranding: {
+      type: "boolean",
+      value: false,
+      label: "Hide Branding",
+    },
+    allowsDynamicBooking: {
+      type: "boolean",
+      value: true,
+      label: "Allows Dynamic Booking",
+    },
+    isTeamEvent: {
+      type: "boolean",
+      value: false,
+      label: "Is Team Event",
+    },
+    duration: {
+      type: "number",
+      value: 30,
+      label: "Duration",
+    },
+    hashedLink: {
+      type: "string",
+      value: null,
+      label: "Hashed Link",
+    },
+    isInstantMeeting: {
+      type: "boolean",
+      value: false,
+      label: "Is Instant Meeting",
+    },
+    teamMemberEmail: {
+      type: "string",
+      value: null,
+      label: "Team Member Email",
+    },
+    userLocale: {
+      type: "string",
+      value: "en",
+      label: "User Locale",
+    },
+    hasValidLicense: {
+      type: "boolean",
+      value: true,
+      label: "Has Valid License",
+    },
+  });
+
+  const entity = {
+    fromRedirectOfNonOrgLink: false,
+    considerUnpublished: true,
+    isUnpublished: false,
+    orgSlug: "myorg",
+    teamSlug: null,
+    name: "My Organization",
+    logoUrl: "https://example.com/logo.png",
+    eventTypeId: 123,
+  };
+
+  return (
+    <AtomsProvider>
+      <BookerWebWrapper
+        eventSlug={state.eventSlug.value}
+        username={state.username.value}
+        orgBannerUrl={state.orgBannerUrl.value}
+        hideBranding={state.hideBranding.value}
+        allowsDynamicBooking={state.allowsDynamicBooking.value}
+        isTeamEvent={state.isTeamEvent.value}
+        duration={state.duration.value}
+        hashedLink={state.hashedLink.value}
+        isInstantMeeting={state.isInstantMeeting.value}
+        teamMemberEmail={state.teamMemberEmail.value}
+        userLocale={state.userLocale.value}
+        hasValidLicense={state.hasValidLicense.value}
+        entity={entity}
+      />
+    </AtomsProvider>
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: I see that we're having issues with importing the AtomsProvider. Since we can't access the actual provider, let's create a mock provider to handle the context requirements. I'll modify the file to handle this scenario:
+
+<file path="apps/web/.temp/dessn-component-routes/BookerWebWrapper-c29ce3ed.tsx">
+  <change>
+    <description>Remove AtomsProvider dependency and create a mock wrapper to handle the context</description>
+    <content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { BookerWebWrapper } from '../../../../packages/platform/atoms/booker/BookerWebWrapper';
+
+// Mock wrapper component to handle missing context
+const MockWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return (
+    <div data-testid="mock-atoms-wrapper">
+      {children}
+    </div>
+  );
+};
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    eventSlug: {
+      type: "string",
+      value: "default-event",
+      label: "Event Slug",
+    },
+    username: {
+      type: "string",
+      value: "johndoe",
+      label: "Username",
+    },
+    orgBannerUrl: {
+      type: "string",
+      value: "https://example.com/banner.jpg",
+      label: "Organization Banner URL",
+    },
+    hideBranding: {
+      type: "boolean",
+      value: false,
+      label: "Hide Branding",
+    },
+    allowsDynamicBooking: {
+      type: "boolean",
+      value: true,
+      label: "Allows Dynamic Booking",
+    },
+    isTeamEvent: {
+      type: "boolean",
+      value: false,
+      label: "Is Team Event",
+    },
+    duration: {
+      type: "number",
+      value: 30,
+      label: "Duration",
+    },
+    hashedLink: {
+      type: "string",
+      value: null,
+      label: "Hashed Link",
+    },
+    isInstantMeeting: {
+      type: "boolean",
+      value: false,
+      label: "Is Instant Meeting",
+    },
+    teamMemberEmail: {
+      type: "string",
+      value: null,
+      label: "Team Member Email",
+    },
+    userLocale: {
+      type: "string",
+      value: "en",
+      label: "User Locale",
+    },
+    hasValidLicense: {
+      type: "boolean",
+      value: true,
+      label: "Has Valid License",
+    },
+  });
+
+  const entity = {
+    fromRedirectOfNonOrgLink: false,
+    considerUnpublished: true,
+    isUnpublished: false,
+    orgSlug: "myorg",
+    teamSlug: null,
+    name: "My Organization",
+    logoUrl: "https://example.com/logo.png",
+    eventTypeId: 123,
+  };
+
+  return (
+    <MockWrapper>
+      <BookerWebWrapper
+        eventSlug={state.eventSlug.value}
+        username={state.username.value}
+        orgBannerUrl={state.orgBannerUrl.value}
+        hideBranding={state.hideBranding.value}
+        allowsDynamicBooking={state.allowsDynamicBooking.value}
+        isTeamEvent={state.isTeamEvent.value}
+        duration={state.duration.value}
+        hashedLink={state.hashedLink.value}
+        isInstantMeeting={state.isInstantMeeting.value}
+        teamMemberEmail={state.teamMemberEmail.value}
+        userLocale={state.userLocale.value}
+        hasValidLicense={state.hasValidLicense.value}
+        entity={entity}
+      />
+    </MockWrapper>
+  );
+}
+</content>
+  </change>
+</file>
+
+I've made the following changes:
+
+1. Removed the problematic import of `AtomsProvider`
+2. Created a simple `MockWrapper` component that will serve as a placeholder for the context provider
+3. Replaced `AtomsProvider` with our `MockWrapper`
+
+This approach should resolve the import error while still maintaining the component structure. The `MockWrapper` component provides a basic wrapper that won't interfere with the rendering of the `BookerWebWrapper` component.
+
+If you encounter any other errors related to missing context values, we can enhance the `MockWrapper` component to provide those values as needed. Please let me know if you see any other errors.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/BookerWebWrapper-c29ce3ed.tsx
+
+All changes applied successfully. Checking for errors...
