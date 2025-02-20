@@ -1,0 +1,32 @@
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { DropdownMenuCheckboxItem } from '../../../../packages/ui/components/dropdown/Dropdown';
+
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    checked: {
+      type: "boolean",
+      value: false,
+      label: "Checked",
+    },
+    children: {
+      type: "string",
+      value: "Checkbox Item",
+      label: "Children",
+    },
+  });
+
+  const handleCheckedChange = (checked: boolean) => {
+    setState("checked", checked);
+  };
+
+  return (
+    <DropdownMenuCheckboxItem
+      checked={state.checked.value}
+      onCheckedChange={handleCheckedChange}
+    >
+      {state.children.value}
+    </DropdownMenuCheckboxItem>
+  );
+}

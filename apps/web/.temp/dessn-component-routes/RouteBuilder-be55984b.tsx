@@ -1,0 +1,38 @@
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/app-store/routing-forms/pages/route-builder/[...appPages]';
+
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    trpcState: {
+      type: "string",
+      value: "{}",
+      label: "TRPC State",
+    },
+    form: {
+      type: "string",
+      value: "{}",
+      label: "Form",
+    },
+    enrichedWithUserProfileForm: {
+      type: "string",
+      value: "{}",
+      label: "Enriched With User Profile Form",
+    },
+    appUrl: {
+      type: "string",
+      value: "https://example.com",
+      label: "App URL",
+    },
+  });
+
+  return (
+    <ImportedComponent
+      trpcState={JSON.parse(state.trpcState.value)}
+      form={JSON.parse(state.form.value)}
+      enrichedWithUserProfileForm={JSON.parse(state.enrichedWithUserProfileForm.value)}
+      appUrl={state.appUrl.value}
+    />
+  );
+}
