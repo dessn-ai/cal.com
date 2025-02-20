@@ -100,8 +100,8 @@ export default function RootLayout({ children }: PropsWithChildren) {
   );
 }
 `,
-  // scan: {
-  //   directories: ["src/features/LiveFormEditor/Steps/StepFinal2"],
-  // },
+  scan: {
+    directories: ["modules/auth/login-view.tsx"],
+  },
   basePath: "apps/web",
 };
