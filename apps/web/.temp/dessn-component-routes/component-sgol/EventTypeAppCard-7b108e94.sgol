@@ -1,0 +1,1045 @@
+System: You are an expert React developer working on a project that renders preview components. Your task is to fix any errors.
+
+## Role & Capabilities
+- You are a **component error fixing assistant**
+- You can read files, make edits, and use tools to diagnose issues
+- You have access to browser errors
+
+## Tools Available
+1. **getFile** (Using tool call) - Read contents of project files
+2. **File Editing** (Using xml tags in your response) - Make changes to fix errors using XML format
+
+## File Edit Format
+When you want to edit a file, use this exact XML format:
+
+<file path="path/to/file">
+  <change>
+    <description>Brief explanation of what you're changing</description>
+    <content>
+// Your complete file content here
+    </content>
+  </change>
+</file>
+
+## Important Rules
+1. Only update a file if you know its contents. Use getFile tool to read first.
+2. Most errors can be fixed by updating the preview file. Only update other files if necessary.
+3. Provide complete file content - do not use placeholders or ellipses.
+4. Always include necessary imports and dependencies.
+5. When making changes:
+   - Add all required import statements
+   - Include complete component code
+   - Ensure proper TypeScript types
+   - Handle all edge cases
+
+## Error Handling Process
+1. Read and understand the error message
+2. Use getFile to examine relevant files
+3. Make targeted fixes using the XML format
+4. If the error is caused by the fact that a provider is missing. In these cases, find the provider and add it to the preview file.
+4. If the error persists, try different fixes. Sometimes the error is caused by external dependencies that we dont' have access to. In those cases, you can try to fix the error by mocking,removing or try catching.
+5. REMEMBER, your resonse must have <file> tags with the file path and content if you want to edit a file.
+6. Always output the entire file content in full. Do not be lazy by adding //(code remains the same) or //(code remains unchanged). This will cause more errors.
+
+## Example: Fixing a Form Error
+Here's an example of how to handle a typical error:
+
+Error Message:
+TypeError: Cannot read properties of undefined (reading 'errors')
+at FormInput (/src/components/common/form/FormInput.tsx:23:18)
+
+Step 1: Read the file to understand the context
+
+// First, read the file
+{
+  "name": "getFile",
+  "arguments": {
+    "filePath": "src/components/common/form/FormInput.tsx"
+  }
+}
+
+// Response shows:
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState } = useFormContext();
+  const error = formState.errors[name]?.message;  // Error occurs here
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+
+Step 2: Fix the issue by adding proper error handling
+
+<file path="src/components/common/form/FormInput.tsx">
+  <change>
+    <description>Add null check for formState and provide default values</description>
+    <content>
+===
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState = {} } = useFormContext() || {};
+  const error = formState?.errors?.[name]?.message;
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+===
+    </content>
+  </change>
+</file>
+
+The fix:
+1. Added null check for useFormContext result
+2. Provided default empty object for formState
+3. Used optional chaining for safer property access
+
+Please proceed with fixing any errors you encounter following these guidelines.
+
+User: An error occurred when rendering the component route at EventTypeAppCard-7b108e94.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: Cannot read properties of undefined (reading '0')TypeError: Cannot read properties of undefined (reading '0')
+
+## Stack Trace
+```
+    at AppCard (/@fs/Users/nimcheema/src/cal.com/packages/app-store/_components/AppCard.tsx:79:193)
+    at renderWithHooks (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:11604:26)
+    at mountIndeterminateComponent (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:14982:21)
+    at beginWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:15970:22)
+    at beginWork$1 (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19814:22)
+    at performUnitOfWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19262:20)
+    at workLoopSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19198:13)
+    at renderRootSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19177:15)
+    at recoverFromConcurrentError (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:18794:28)
+    at performConcurrentWorkOnRoot (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:18742:30)
+```
+
+## Component Stack
+```
+
+    at AppCard (/@fs/Users/nimcheema/src/cal.com/packages/app-store/_components/AppCard.tsx:11:3)
+    at EventTypeAppCard2 (/@fs/Users/nimcheema/src/cal.com/packages/app-store/paypal/components/EventTypeAppCardInterface.tsx:11:3)
+    at ComponentPreview (/.temp/dessn-component-routes/EventTypeAppCard-7b108e94.tsx:5:29)
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=78804275:65:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-7UJTJD4V.js?v=78804275:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-JTXNA3TV.js?v=78804275:931:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=78804275:1100:28)
+    at Providers (/.temp/Wrapper.tsx:57:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:94:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/EventTypeAppCard-7b108e94.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/app-store/paypal/components/EventTypeAppCardInterface';
+
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    eventType: {
+      type: "object",
+      value: {
+        id: 1,
+        title: "Sample Event",
+        description: "This is a sample event description",
+        teamId: null,
+        length: 60,
+        recurringEvent: null,
+        seatsPerTimeSlot: null,
+        team: null,
+        schedulingType: "COLLECTIVE",
+        URL: "https://example.com/event"
+      },
+      label: "Event Type"
+    },
+    app: {
+      type: "object",
+      value: {
+        name: "PayPal",
+        slug: "paypal",
+        logo: "https://example.com/paypal-logo.png",
+        description: "Accept payments via PayPal",
+        credentialOwner: null,
+        credentialIds: []
+      },
+      label: "App"
+    },
+    disabled: {
+      type: "boolean",
+      value: false,
+      label: "Disabled"
+    },
+    eventTypeFormMetadata: {
+      type: "object",
+      value: {},
+      label: "Event Type Form Metadata"
+    }
+  });
+
+  return (
+    <ImportedComponent
+      eventType={state.eventType.value}
+      app={state.app.value}
+      disabled={state.disabled.value}
+      eventTypeFormMetadata={state.eventTypeFormMetadata.value}
+    />
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: [object Object],[object Object]
+
+
+Assistant: [object Object],[object Object]
+
+
+Assistant: I can see that the error is likely occurring because we're trying to access `app.categories[0]` in the AppCard component, but the app object we're passing doesn't have the categories array defined. Let's fix this by updating the preview file to include the missing categories property in the app object.
+
+<file path="apps/web/.temp/dessn-component-routes/EventTypeAppCard-7b108e94.tsx">
+<change>
+<description>Add missing categories array to app object and ensure all required properties are present</description>
+<content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/app-store/paypal/components/EventTypeAppCardInterface';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    eventType: {
+      type: "object",
+      value: {
+        id: 1,
+        title: "Sample Event",
+        description: "This is a sample event description",
+        teamId: null,
+        length: 60,
+        recurringEvent: null,
+        seatsPerTimeSlot: null,
+        team: null,
+        schedulingType: "COLLECTIVE",
+        URL: "https://example.com/event"
+      },
+      label: "Event Type"
+    },
+    app: {
+      type: "object",
+      value: {
+        name: "PayPal",
+        slug: "paypal",
+        logo: "https://example.com/paypal-logo.png",
+        description: "Accept payments via PayPal",
+        categories: ["payment"],
+        isInstalled: true,
+        enabled: true,
+        credentialOwner: null,
+        credentialIds: [],
+        isSetupAlready: true
+      },
+      label: "App"
+    },
+    disabled: {
+      type: "boolean",
+      value: false,
+      label: "Disabled"
+    },
+    eventTypeFormMetadata: {
+      type: "object",
+      value: {},
+      label: "Event Type Form Metadata"
+    }
+  });
+
+  return (
+    <ImportedComponent
+      eventType={state.eventType.value}
+      app={state.app.value}
+      disabled={state.disabled.value}
+      eventTypeFormMetadata={state.eventTypeFormMetadata.value}
+    />
+  );
+}
+</content>
+</change>
+</file>
+
+I've made the following changes to fix the error:
+
+1. Added the missing `categories` array to the app object with "payment" as the category
+2. Added `isInstalled` and `enabled` flags which are required by the AppCard component
+3. Added `isSetupAlready` property which is used in the component's conditional rendering
+4. Ensured all the required properties for the AppCard component are present
+
+These changes should resolve the "Cannot read properties of undefined (reading '0')" error that was occurring when trying to access `app.categories[0]`. The error was happening because the categories array was undefined in the original preview data.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/EventTypeAppCard-7b108e94.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at EventTypeAppCard-7b108e94.tsx
+Error:
+
+# Error 1
+
+## Error Message
+Error: Objects are not valid as a React child (found: object with keys {}). If you meant to render a collection of children, use an array instead.Error: Objects are not valid as a React child (found: object with keys {}). If you meant to render a collection of children, use an array instead.
+
+## Stack Trace
+```
+    at throwOnInvalidObjectType (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:9989:17)
+    at reconcileChildFibers2 (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:10619:15)
+    at reconcileChildren (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:14346:37)
+    at updateHostComponent (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:14863:11)
+    at beginWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:15991:22)
+    at beginWork$1 (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19814:22)
+    at performUnitOfWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19262:20)
+    at workLoopSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19198:13)
+    at renderRootSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19177:15)
+    at recoverFromConcurrentError (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:18794:28)
+```
+
+## Component Stack
+```
+
+    at span
+    at div
+    at Addon (/@fs/Users/nimcheema/src/cal.com/packages/ui/components/form/inputs/TextField.tsx:63:18)
+    at div
+    at div
+    at InputField2 (/@fs/Users/nimcheema/src/cal.com/packages/ui/components/form/inputs/TextField.tsx:101:14)
+    at TextField2
+    at div
+    at EventTypeAppSettingsInterface (/@fs/Users/nimcheema/src/cal.com/packages/app-store/paypal/components/EventTypeAppSettingsInterface.tsx:16:3)
+    at div
+    at div
+    at div
+    at AppCard (/@fs/Users/nimcheema/src/cal.com/packages/app-store/_components/AppCard.tsx:11:3)
+    at EventTypeAppCard2 (/@fs/Users/nimcheema/src/cal.com/packages/app-store/paypal/components/EventTypeAppCardInterface.tsx:11:3)
+    at ComponentPreview (/.temp/dessn-component-routes/EventTypeAppCard-7b108e94.tsx:5:29)
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=78804275:65:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-7UJTJD4V.js?v=78804275:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-JTXNA3TV.js?v=78804275:931:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=78804275:1100:28)
+    at Providers (/.temp/Wrapper.tsx:57:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:94:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/EventTypeAppCard-7b108e94.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/app-store/paypal/components/EventTypeAppCardInterface';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    eventType: {
+      type: "object",
+      value: {
+        id: 1,
+        title: "Sample Event",
+        description: "This is a sample event description",
+        teamId: null,
+        length: 60,
+        recurringEvent: null,
+        seatsPerTimeSlot: null,
+        team: null,
+        schedulingType: "COLLECTIVE",
+        URL: "https://example.com/event"
+      },
+      label: "Event Type"
+    },
+    app: {
+      type: "object",
+      value: {
+        name: "PayPal",
+        slug: "paypal",
+        logo: "https://example.com/paypal-logo.png",
+        description: "Accept payments via PayPal",
+        categories: ["payment"],
+        isInstalled: true,
+        enabled: true,
+        credentialOwner: null,
+        credentialIds: [],
+        isSetupAlready: true
+      },
+      label: "App"
+    },
+    disabled: {
+      type: "boolean",
+      value: false,
+      label: "Disabled"
+    },
+    eventTypeFormMetadata: {
+      type: "object",
+      value: {},
+      label: "Event Type Form Metadata"
+    }
+  });
+
+  return (
+    <ImportedComponent
+      eventType={state.eventType.value}
+      app={state.app.value}
+      disabled={state.disabled.value}
+      eventTypeFormMetadata={state.eventTypeFormMetadata.value}
+    />
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: [object Object],[object Object]
+
+
+Assistant: I see the issue now. The error is occurring because we need to provide proper initial data for the PayPal app settings. Let's update the preview file with the necessary app data:
+
+<file path="apps/web/.temp/dessn-component-routes/EventTypeAppCard-7b108e94.tsx">
+<change>
+<description>Add required PayPal app data with proper initial values</description>
+<content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/app-store/paypal/components/EventTypeAppCardInterface';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    eventType: {
+      type: "object",
+      value: {
+        id: 1,
+        title: "Sample Event",
+        description: "This is a sample event description",
+        teamId: null,
+        length: 60,
+        recurringEvent: null,
+        seatsPerTimeSlot: null,
+        team: null,
+        schedulingType: "COLLECTIVE",
+        URL: "https://example.com/event"
+      },
+      label: "Event Type"
+    },
+    app: {
+      type: "object",
+      value: {
+        name: "PayPal",
+        slug: "paypal",
+        logo: "https://example.com/paypal-logo.png",
+        description: "Accept payments via PayPal",
+        categories: ["payment"],
+        isInstalled: true,
+        enabled: true,
+        credentialOwner: null,
+        credentialIds: [],
+        isSetupAlready: true,
+        price: 1000, // Price in smallest currency unit (e.g., cents)
+        currency: "USD",
+        paymentOption: "HOLD", // or "PAYMENT"
+      },
+      label: "App"
+    },
+    disabled: {
+      type: "boolean",
+      value: false,
+      label: "Disabled"
+    },
+    eventTypeFormMetadata: {
+      type: "object",
+      value: {
+        apps: {
+          paypal: {
+            enabled: true,
+            price: 1000,
+            currency: "USD",
+            paymentOption: "HOLD"
+          }
+        }
+      },
+      label: "Event Type Form Metadata"
+    }
+  });
+
+  return (
+    <ImportedComponent
+      eventType={state.eventType.value}
+      app={state.app.value}
+      disabled={state.disabled.value}
+      eventTypeFormMetadata={state.eventTypeFormMetadata.value}
+    />
+  );
+}
+</content>
+</change>
+</file>
+
+I've made the following changes to fix the error:
+
+1. Added proper PayPal app data with initial values:
+   - Added `price` (in smallest currency unit)
+   - Added `currency` (USD as default)
+   - Added `paymentOption` (HOLD as default)
+
+2. Updated the `eventTypeFormMetadata` with proper PayPal app configuration:
+   - Added apps object with PayPal configuration
+   - Included all necessary payment settings
+
+3. Ensured all values are properly typed and formatted according to the component requirements
+
+These changes should resolve the "Objects are not valid as a React child" error by providing proper initial values for the PayPal app settings interface. The error was occurring because some required data was missing or in an incorrect format when trying to render the payment settings form.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/EventTypeAppCard-7b108e94.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at EventTypeAppCard-7b108e94.tsx
+Error:
+
+# Error 1
+
+## Error Message
+Error: Objects are not valid as a React child (found: object with keys {}). If you meant to render a collection of children, use an array instead.Error: Objects are not valid as a React child (found: object with keys {}). If you meant to render a collection of children, use an array instead.
+
+## Stack Trace
+```
+    at throwOnInvalidObjectType (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:9989:17)
+    at reconcileChildFibers2 (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:10619:15)
+    at reconcileChildren (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:14346:37)
+    at updateHostComponent (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:14863:11)
+    at beginWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:15991:22)
+    at beginWork$1 (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19814:22)
+    at performUnitOfWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19262:20)
+    at workLoopSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19198:13)
+    at renderRootSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:19177:15)
+    at recoverFromConcurrentError (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=78804275:18794:28)
+```
+
+## Component Stack
+```
+
+    at span
+    at div
+    at Addon (/@fs/Users/nimcheema/src/cal.com/packages/ui/components/form/inputs/TextField.tsx:63:18)
+    at div
+    at div
+    at InputField2 (/@fs/Users/nimcheema/src/cal.com/packages/ui/components/form/inputs/TextField.tsx:101:14)
+    at TextField2
+    at div
+    at EventTypeAppSettingsInterface (/@fs/Users/nimcheema/src/cal.com/packages/app-store/paypal/components/EventTypeAppSettingsInterface.tsx:16:3)
+    at div
+    at div
+    at div
+    at AppCard (/@fs/Users/nimcheema/src/cal.com/packages/app-store/_components/AppCard.tsx:11:3)
+    at EventTypeAppCard2 (/@fs/Users/nimcheema/src/cal.com/packages/app-store/paypal/components/EventTypeAppCardInterface.tsx:11:3)
+    at ComponentPreview (/.temp/dessn-component-routes/EventTypeAppCard-7b108e94.tsx:5:29)
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=78804275:65:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-7UJTJD4V.js?v=78804275:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-JTXNA3TV.js?v=78804275:931:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=78804275:1100:28)
+    at Providers (/.temp/Wrapper.tsx:57:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:94:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/EventTypeAppCard-7b108e94.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/app-store/paypal/components/EventTypeAppCardInterface';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    eventType: {
+      type: "object",
+      value: {
+        id: 1,
+        title: "Sample Event",
+        description: "This is a sample event description",
+        teamId: null,
+        length: 60,
+        recurringEvent: null,
+        seatsPerTimeSlot: null,
+        team: null,
+        schedulingType: "COLLECTIVE",
+        URL: "https://example.com/event"
+      },
+      label: "Event Type"
+    },
+    app: {
+      type: "object",
+      value: {
+        name: "PayPal",
+        slug: "paypal",
+        logo: "https://example.com/paypal-logo.png",
+        description: "Accept payments via PayPal",
+        categories: ["payment"],
+        isInstalled: true,
+        enabled: true,
+        credentialOwner: null,
+        credentialIds: [],
+        isSetupAlready: true,
+        price: 1000, // Price in smallest currency unit (e.g., cents)
+        currency: "USD",
+        paymentOption: "HOLD", // or "PAYMENT"
+      },
+      label: "App"
+    },
+    disabled: {
+      type: "boolean",
+      value: false,
+      label: "Disabled"
+    },
+    eventTypeFormMetadata: {
+      type: "object",
+      value: {
+        apps: {
+          paypal: {
+            enabled: true,
+            price: 1000,
+            currency: "USD",
+            paymentOption: "HOLD"
+          }
+        }
+      },
+      label: "Event Type Form Metadata"
+    }
+  });
+
+  return (
+    <ImportedComponent
+      eventType={state.eventType.value}
+      app={state.app.value}
+      disabled={state.disabled.value}
+      eventTypeFormMetadata={state.eventTypeFormMetadata.value}
+    />
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: [object Object],[object Object]
+
+
+Assistant: I see the issue now. The error is occurring because we're trying to render an object as a text in the TextField's addOnLeading or addOnSuffix. Let's modify the preview file to ensure we're providing the correct currency symbol as a string:
+
+<file path="apps/web/.temp/dessn-component-routes/EventTypeAppCard-7b108e94.tsx">
+<change>
+<description>Add AppContext provider with proper schema and initial values</description>
+<content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/app-store/paypal/components/EventTypeAppCardInterface';
+import { EventTypeAppContext } from '../../../../packages/app-store/EventTypeAppContext';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    eventType: {
+      type: "object",
+      value: {
+        id: 1,
+        title: "Sample Event",
+        description: "This is a sample event description",
+        teamId: null,
+        length: 60,
+        recurringEvent: null,
+        seatsPerTimeSlot: null,
+        team: null,
+        schedulingType: "COLLECTIVE",
+        URL: "https://example.com/event"
+      },
+      label: "Event Type"
+    },
+    app: {
+      type: "object",
+      value: {
+        name: "PayPal",
+        slug: "paypal",
+        logo: "https://example.com/paypal-logo.png",
+        description: "Accept payments via PayPal",
+        categories: ["payment"],
+        isInstalled: true,
+        enabled: true,
+        credentialOwner: null,
+        credentialIds: [],
+        isSetupAlready: true
+      },
+      label: "App"
+    },
+    disabled: {
+      type: "boolean",
+      value: false,
+      label: "Disabled"
+    },
+    eventTypeFormMetadata: {
+      type: "object",
+      value: {
+        apps: {
+          paypal: {
+            enabled: true,
+            price: 1000,
+            currency: "USD",
+            paymentOption: "HOLD"
+          }
+        }
+      },
+      label: "Event Type Form Metadata"
+    }
+  });
+
+  // Create the context value with proper app data
+  const contextValue = {
+    getAppData: (key: string) => {
+      if (key === "enabled") return true;
+      if (key === "price") return 1000;
+      if (key === "currency") return "USD";
+      if (key === "paymentOption") return "HOLD";
+      return null;
+    },
+    setAppData: () => {},
+    disabled: false,
+    LockedIcon: null
+  };
+
+  return (
+    <EventTypeAppContext.Provider value={contextValue}>
+      <ImportedComponent
+        eventType={state.eventType.value}
+        app={state.app.value}
+        disabled={state.disabled.value}
+        eventTypeFormMetadata={state.eventTypeFormMetadata.value}
+      />
+    </EventTypeAppContext.Provider>
+  );
+}
+</content>
+</change>
+</file>
+
+I've made the following changes to fix the error:
+
+1. Added the EventTypeAppContext provider which is required for the PayPal component to work properly
+2. Created a proper context value object with getAppData and setAppData functions
+3. Removed the direct app data from the app object and moved it to the context
+4. Implemented getAppData to return the correct values for price, currency, and payment options
+
+The error was occurring because:
+1. The TextField component was trying to render currency symbols without proper context
+2. The app data wasn't properly accessible through the context that the PayPal component expects
+
+The EventTypeAppContext provider will now properly provide the necessary data to the PayPal component and its child components, including the TextField that was causing the error.
+
+Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/EventTypeAppCard-7b108e94.tsx
+
+All changes applied successfully. Checking for errors...
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/EventTypeAppCard-7b108e94.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at EventTypeAppCard-7b108e94.tsx
+Error:
+
+# Error 1
+
+## Error Message
+SyntaxError: The requested module '/@fs/Users/nimcheema/src/cal.com/packages/app-store/EventTypeAppContext.tsx' does not provide an export named 'EventTypeAppContext'SyntaxError: The requested module '/@fs/Users/nimcheema/src/cal.com/packages/app-store/EventTypeAppContext.tsx' does not provide an export named 'EventTypeAppContext'
+
+## Stack Trace
+```
+
+```
+
+## Component Stack
+```
+
+    at Lazy
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=78804275:65:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-7UJTJD4V.js?v=78804275:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-JTXNA3TV.js?v=78804275:931:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=78804275:1100:28)
+    at Providers (/.temp/Wrapper.tsx:57:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:94:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/EventTypeAppCard-7b108e94.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/app-store/paypal/components/EventTypeAppCardInterface';
+import { EventTypeAppContext } from '../../../../packages/app-store/EventTypeAppContext';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    eventType: {
+      type: "object",
+      value: {
+        id: 1,
+        title: "Sample Event",
+        description: "This is a sample event description",
+        teamId: null,
+        length: 60,
+        recurringEvent: null,
+        seatsPerTimeSlot: null,
+        team: null,
+        schedulingType: "COLLECTIVE",
+        URL: "https://example.com/event"
+      },
+      label: "Event Type"
+    },
+    app: {
+      type: "object",
+      value: {
+        name: "PayPal",
+        slug: "paypal",
+        logo: "https://example.com/paypal-logo.png",
+        description: "Accept payments via PayPal",
+        categories: ["payment"],
+        isInstalled: true,
+        enabled: true,
+        credentialOwner: null,
+        credentialIds: [],
+        isSetupAlready: true
+      },
+      label: "App"
+    },
+    disabled: {
+      type: "boolean",
+      value: false,
+      label: "Disabled"
+    },
+    eventTypeFormMetadata: {
+      type: "object",
+      value: {
+        apps: {
+          paypal: {
+            enabled: true,
+            price: 1000,
+            currency: "USD",
+            paymentOption: "HOLD"
+          }
+        }
+      },
+      label: "Event Type Form Metadata"
+    }
+  });
+
+  // Create the context value with proper app data
+  const contextValue = {
+    getAppData: (key: string) => {
+      if (key === "enabled") return true;
+      if (key === "price") return 1000;
+      if (key === "currency") return "USD";
+      if (key === "paymentOption") return "HOLD";
+      return null;
+    },
+    setAppData: () => {},
+    disabled: false,
+    LockedIcon: null
+  };
+
+  return (
+    <EventTypeAppContext.Provider value={contextValue}>
+      <ImportedComponent
+        eventType={state.eventType.value}
+        app={state.app.value}
+        disabled={state.disabled.value}
+        eventTypeFormMetadata={state.eventTypeFormMetadata.value}
+      />
+    </EventTypeAppContext.Provider>
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: [object Object],[object Object]
+
+
+Assistant: [object Object],[object Object]
+
+
+Assistant: I see the issue now. The EventTypeAppContext is a default export, not a named export. Let's fix the import:
+
+<file path="apps/web/.temp/dessn-component-routes/EventTypeAppCard-7b108e94.tsx">
+<change>
+<description>Fix EventTypeAppContext import and improve context implementation</description>
+<content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/app-store/paypal/components/EventTypeAppCardInterface';
+import EventTypeAppContext from '../../../../packages/app-store/EventTypeAppContext';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    eventType: {
+      type: "object",
+      value: {
+        id: 1,
+        title: "Sample Event",
+        description: "This is a sample event description",
+        teamId: null,
+        length: 60,
+        recurringEvent: null,
+        seatsPerTimeSlot: null,
+        team: null,
+        schedulingType: "COLLECTIVE",
+        URL: "https://example.com/event"
+      },
+      label: "Event Type"
+    },
+    app: {
+      type: "object",
+      value: {
+        name: "PayPal",
+        slug: "paypal",
+        logo: "https://example.com/paypal-logo.png",
+        description: "Accept payments via PayPal",
+        categories: ["payment"],
+        isInstalled: true,
+        enabled: true,
+        credentialOwner: null,
+        credentialIds: [],
+        isSetupAlready: true
+      },
+      label: "App"
+    },
+    disabled: {
+      type: "boolean",
+      value: false,
+      label: "Disabled"
+    },
+    eventTypeFormMetadata: {
+      type: "object",
+      value: {
+        apps: {
+          paypal: {
+            enabled: true,
+            price: 1000,
+            currency: "USD",
+            paymentOption: "HOLD"
+          }
+        }
+      },
+      label: "Event Type Form Metadata"
+    }
+  });
+
+  // Create the context value with proper app data
+  const contextValue = {
+    getAppData: (key: string) => {
+      const appData = state.eventTypeFormMetadata.value.apps?.paypal || {};
+      return appData[key as keyof typeof appData] ?? null;
+    },
+    setAppData: (key: string, value: unknown) => {
+      setState((prev) => ({
+        ...prev,
+        eventTypeFormMetadata: {
+          ...prev.eventTypeFormMetadata,
+          value: {
+            apps: {
+              ...prev.eventTypeFormMetadata.value.apps,
+              paypal: {
+                ...prev.eventTypeFormMetadata.value.apps?.paypal,
+                [key]: value,
+              },
+            },
+          },
+        },
+      }));
+    },
+    disabled: state.disabled.value,
+    LockedIcon: null
+  };
+
+  return (
+    <EventTypeAppContext.Provider value={contextValue}>
+      <ImportedComponent
+        eventType={state.eventType.value}
+        app={state.app.value}
+        disabled={state.disabled.value}
+        eventTypeFormMetadata={state.eventTypeFormMetadata.value}
+      />
+    </EventTypeAppContext.Provider>
+  );
+}
+</content>
+</change>
+</file>
+
+I've made the following changes:
+
+1. Fixed the import of EventTypeAppContext to use default import instead of named import
+2. Improved the context implementation:
+   - getAppData now properly reads from the eventTypeFormMetadata state
+   - setAppData now properly updates the state while maintaining the structure
+   - Added proper type handling for the app data
+3. Maintained the state structure while providing the context values
+
+These changes should resolve the import error and provide proper context values to the PayPal component and its children.
+
+Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/EventTypeAppCard-7b108e94.tsx
+
+All changes applied successfully. Checking for errors...
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/EventTypeAppCard-7b108e94.tsx
+
+All changes applied successfully. Checking for errors...
