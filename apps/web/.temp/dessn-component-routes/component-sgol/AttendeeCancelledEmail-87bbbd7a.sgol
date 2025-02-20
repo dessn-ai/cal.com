@@ -1,0 +1,585 @@
+System: You are an expert React developer working on a project that renders preview components. Your task is to fix any errors.
+
+## Role & Capabilities
+- You are a **component error fixing assistant**
+- You can read files, make edits, and use tools to diagnose issues
+- You have access to browser errors
+
+## Tools Available
+1. **getFile** (Using tool call) - Read contents of project files
+2. **File Editing** (Using xml tags in your response) - Make changes to fix errors using XML format
+
+## File Edit Format
+When you want to edit a file, use this exact XML format:
+
+<file path="path/to/file">
+  <change>
+    <description>Brief explanation of what you're changing</description>
+    <content>
+// Your complete file content here
+    </content>
+  </change>
+</file>
+
+## Important Rules
+1. Only update a file if you know its contents. Use getFile tool to read first.
+2. Most errors can be fixed by updating the preview file. Only update other files if necessary.
+3. Provide complete file content - do not use placeholders or ellipses.
+4. Always include necessary imports and dependencies.
+5. When making changes:
+   - Add all required import statements
+   - Include complete component code
+   - Ensure proper TypeScript types
+   - Handle all edge cases
+
+## Error Handling Process
+1. Read and understand the error message
+2. Use getFile to examine relevant files
+3. Make targeted fixes using the XML format
+4. If the error is caused by the fact that a provider is missing. In these cases, find the provider and add it to the preview file.
+4. If the error persists, try different fixes. Sometimes the error is caused by external dependencies that we dont' have access to. In those cases, you can try to fix the error by mocking,removing or try catching.
+5. REMEMBER, your resonse must have <file> tags with the file path and content if you want to edit a file.
+6. Always output the entire file content in full. Do not be lazy by adding //(code remains the same) or //(code remains unchanged). This will cause more errors.
+
+## Example: Fixing a Form Error
+Here's an example of how to handle a typical error:
+
+Error Message:
+TypeError: Cannot read properties of undefined (reading 'errors')
+at FormInput (/src/components/common/form/FormInput.tsx:23:18)
+
+Step 1: Read the file to understand the context
+
+// First, read the file
+{
+  "name": "getFile",
+  "arguments": {
+    "filePath": "src/components/common/form/FormInput.tsx"
+  }
+}
+
+// Response shows:
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState } = useFormContext();
+  const error = formState.errors[name]?.message;  // Error occurs here
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+
+Step 2: Fix the issue by adding proper error handling
+
+<file path="src/components/common/form/FormInput.tsx">
+  <change>
+    <description>Add null check for formState and provide default values</description>
+    <content>
+===
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState = {} } = useFormContext() || {};
+  const error = formState?.errors?.[name]?.message;
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+===
+    </content>
+  </change>
+</file>
+
+The fix:
+1. Added null check for useFormContext result
+2. Provided default empty object for formState
+3. Used optional chaining for safer property access
+
+Please proceed with fixing any errors you encounter following these guidelines.
+
+User: An error occurred when rendering the component route at AttendeeCancelledEmail-87bbbd7a.tsx
+Error:
+
+# Error 1
+
+## Error Message
+SyntaxError: The requested module '/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/AttendeeCancelledEmail.tsx' does not provide an export named 'TimeFormat'SyntaxError: The requested module '/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/AttendeeCancelledEmail.tsx' does not provide an export named 'TimeFormat'
+
+## Stack Trace
+```
+
+```
+
+## Component Stack
+```
+
+    at Lazy
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=78804275:65:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-7UJTJD4V.js?v=78804275:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-JTXNA3TV.js?v=78804275:931:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=78804275:1100:28)
+    at Providers (/.temp/Wrapper.tsx:57:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:94:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/AttendeeCancelledEmail-87bbbd7a.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { AttendeeCancelledEmail } from '../../../../packages/emails/src/templates/AttendeeCancelledEmail';
+
+import { TimeFormat } from '../../../../packages/emails/src/templates/AttendeeCancelledEmail';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    calEvent: {
+      type: 'string',
+      value: JSON.stringify({
+        type: 'default',
+        title: 'Meeting',
+        startTime: new Date().toISOString(),
+        endTime: new Date(Date.now() + 3600000).toISOString(),
+        organizer: {
+          name: 'John Doe',
+          email: 'john@example.com',
+          timeZone: 'America/New_York',
+          language: { translate: (key: string) => key, locale: 'en' },
+        },
+        attendees: [
+          {
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+            timeZone: 'America/Los_Angeles',
+            language: { translate: (key: string) => key, locale: 'en' },
+          },
+        ],
+      }),
+      label: 'Calendar Event',
+    },
+    attendee: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        timeZone: 'America/Los_Angeles',
+        language: { translate: (key: string) => key, locale: 'en' },
+      }),
+      label: 'Attendee',
+    },
+    timeZone: {
+      type: 'string',
+      value: 'America/New_York',
+      label: 'Time Zone',
+    },
+    includeAppsStatus: {
+      type: 'boolean',
+      value: false,
+      label: 'Include Apps Status',
+    },
+    locale: {
+      type: 'string',
+      value: 'en',
+      label: 'Locale',
+    },
+    timeFormat: {
+      type: 'dropdown',
+      value: TimeFormat.TWELVE_HOUR,
+      options: [TimeFormat.TWELVE_HOUR, TimeFormat.TWENTY_FOUR_HOUR],
+      label: 'Time Format',
+    },
+    isOrganizer: {
+      type: 'boolean',
+      value: false,
+      label: 'Is Organizer',
+    },
+  });
+
+  const parsedCalEvent = JSON.parse(state.calEvent.value);
+  const parsedAttendee = JSON.parse(state.attendee.value);
+
+  return (
+    <AttendeeCancelledEmail
+      calEvent={parsedCalEvent}
+      attendee={parsedAttendee}
+      timeZone={state.timeZone.value}
+      includeAppsStatus={state.includeAppsStatus.value}
+      t={(key: string) => key}
+      locale={state.locale.value}
+      timeFormat={state.timeFormat.value as TimeFormat}
+      isOrganizer={state.isOrganizer.value}
+    />
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: [object Object],[object Object]
+
+
+Assistant: I see the issue. The `TimeFormat` enum is not actually exported from the AttendeeCancelledEmail file. It's likely defined in a shared constants or types file. Let's modify the preview file to import TimeFormat from the correct location, which is likely from the AttendeeScheduledEmail component or a shared types file.
+
+<file path="apps/web/.temp/dessn-component-routes/AttendeeCancelledEmail-87bbbd7a.tsx">
+<change>
+<description>Update TimeFormat import to come from a shared location and add type safety</description>
+<content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { AttendeeCancelledEmail } from '../../../../packages/emails/src/templates/AttendeeCancelledEmail';
+
+// Define TimeFormat enum since we can't access it from the original location
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    calEvent: {
+      type: 'string',
+      value: JSON.stringify({
+        type: 'default',
+        title: 'Meeting',
+        startTime: new Date().toISOString(),
+        endTime: new Date(Date.now() + 3600000).toISOString(),
+        organizer: {
+          name: 'John Doe',
+          email: 'john@example.com',
+          timeZone: 'America/New_York',
+          language: { translate: (key: string) => key, locale: 'en' },
+        },
+        attendees: [
+          {
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+            timeZone: 'America/Los_Angeles',
+            language: { translate: (key: string) => key, locale: 'en' },
+          },
+        ],
+      }),
+      label: 'Calendar Event',
+    },
+    attendee: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        timeZone: 'America/Los_Angeles',
+        language: { translate: (key: string) => key, locale: 'en' },
+      }),
+      label: 'Attendee',
+    },
+    timeZone: {
+      type: 'string',
+      value: 'America/New_York',
+      label: 'Time Zone',
+    },
+    includeAppsStatus: {
+      type: 'boolean',
+      value: false,
+      label: 'Include Apps Status',
+    },
+    locale: {
+      type: 'string',
+      value: 'en',
+      label: 'Locale',
+    },
+    timeFormat: {
+      type: 'dropdown',
+      value: TimeFormat.TWELVE_HOUR,
+      options: [TimeFormat.TWELVE_HOUR, TimeFormat.TWENTY_FOUR_HOUR],
+      label: 'Time Format',
+    },
+    isOrganizer: {
+      type: 'boolean',
+      value: false,
+      label: 'Is Organizer',
+    },
+  });
+
+  const parsedCalEvent = JSON.parse(state.calEvent.value);
+  const parsedAttendee = JSON.parse(state.attendee.value);
+
+  return (
+    <AttendeeCancelledEmail
+      calEvent={parsedCalEvent}
+      attendee={parsedAttendee}
+      timeZone={state.timeZone.value}
+      includeAppsStatus={state.includeAppsStatus.value}
+      t={(key: string) => key}
+      locale={state.locale.value}
+      timeFormat={state.timeFormat.value as TimeFormat}
+      isOrganizer={state.isOrganizer.value}
+    />
+  );
+}
+</content>
+</change>
+</file>
+
+I've made the following changes:
+1. Removed the incorrect import of TimeFormat from AttendeeCancelledEmail
+2. Added a local definition of the TimeFormat enum with the expected values
+3. Kept all other functionality the same
+
+This should resolve the error while maintaining the same functionality. The TimeFormat enum is now defined locally in the preview file, which is a common practice when dealing with preview components that need to mock certain types or enums that might be defined elsewhere in the application.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/AttendeeCancelledEmail-87bbbd7a.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at AttendeeCancelledEmail-87bbbd7a.tsx
+Error:
+
+# Error 1
+
+## Error Message
+SyntaxError: The requested module '/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/AttendeeCancelledEmail.tsx' does not provide an export named 'TimeFormat'SyntaxError: The requested module '/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/AttendeeCancelledEmail.tsx' does not provide an export named 'TimeFormat'
+
+## Stack Trace
+```
+
+```
+
+## Component Stack
+```
+
+    at Lazy
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=78804275:65:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-7UJTJD4V.js?v=78804275:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-JTXNA3TV.js?v=78804275:931:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=78804275:1100:28)
+    at Providers (/.temp/Wrapper.tsx:57:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:94:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/AttendeeCancelledEmail-87bbbd7a.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { AttendeeCancelledEmail } from '../../../../packages/emails/src/templates/AttendeeCancelledEmail';
+
+// Define TimeFormat enum since we can't access it from the original location
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    calEvent: {
+      type: 'string',
+      value: JSON.stringify({
+        type: 'default',
+        title: 'Meeting',
+        startTime: new Date().toISOString(),
+        endTime: new Date(Date.now() + 3600000).toISOString(),
+        organizer: {
+          name: 'John Doe',
+          email: 'john@example.com',
+          timeZone: 'America/New_York',
+          language: { translate: (key: string) => key, locale: 'en' },
+        },
+        attendees: [
+          {
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+            timeZone: 'America/Los_Angeles',
+            language: { translate: (key: string) => key, locale: 'en' },
+          },
+        ],
+      }),
+      label: 'Calendar Event',
+    },
+    attendee: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        timeZone: 'America/Los_Angeles',
+        language: { translate: (key: string) => key, locale: 'en' },
+      }),
+      label: 'Attendee',
+    },
+    timeZone: {
+      type: 'string',
+      value: 'America/New_York',
+      label: 'Time Zone',
+    },
+    includeAppsStatus: {
+      type: 'boolean',
+      value: false,
+      label: 'Include Apps Status',
+    },
+    locale: {
+      type: 'string',
+      value: 'en',
+      label: 'Locale',
+    },
+    timeFormat: {
+      type: 'dropdown',
+      value: TimeFormat.TWELVE_HOUR,
+      options: [TimeFormat.TWELVE_HOUR, TimeFormat.TWENTY_FOUR_HOUR],
+      label: 'Time Format',
+    },
+    isOrganizer: {
+      type: 'boolean',
+      value: false,
+      label: 'Is Organizer',
+    },
+  });
+
+  const parsedCalEvent = JSON.parse(state.calEvent.value);
+  const parsedAttendee = JSON.parse(state.attendee.value);
+
+  return (
+    <AttendeeCancelledEmail
+      calEvent={parsedCalEvent}
+      attendee={parsedAttendee}
+      timeZone={state.timeZone.value}
+      includeAppsStatus={state.includeAppsStatus.value}
+      t={(key: string) => key}
+      locale={state.locale.value}
+      timeFormat={state.timeFormat.value as TimeFormat}
+      isOrganizer={state.isOrganizer.value}
+    />
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: [object Object],[object Object]
+
+
+Assistant: I see that the TimeFormat is actually a type from the CalendarEvent type. Let's modify the preview file to handle this differently by treating timeFormat as a string type instead:
+
+<file path="apps/web/.temp/dessn-component-routes/AttendeeCancelledEmail-87bbbd7a.tsx">
+<change>
+<description>Remove TimeFormat enum and handle timeFormat as string type</description>
+<content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { AttendeeCancelledEmail } from '../../../../packages/emails/src/templates/AttendeeCancelledEmail';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    calEvent: {
+      type: 'string',
+      value: JSON.stringify({
+        type: 'default',
+        title: 'Meeting',
+        startTime: new Date().toISOString(),
+        endTime: new Date(Date.now() + 3600000).toISOString(),
+        organizer: {
+          name: 'John Doe',
+          email: 'john@example.com',
+          timeZone: 'America/New_York',
+          language: { translate: (key: string) => key, locale: 'en' },
+        },
+        attendees: [
+          {
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+            timeZone: 'America/Los_Angeles',
+            language: { translate: (key: string) => key, locale: 'en' },
+          },
+        ],
+      }),
+      label: 'Calendar Event',
+    },
+    attendee: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        timeZone: 'America/Los_Angeles',
+        language: { translate: (key: string) => key, locale: 'en' },
+      }),
+      label: 'Attendee',
+    },
+    timeZone: {
+      type: 'string',
+      value: 'America/New_York',
+      label: 'Time Zone',
+    },
+    includeAppsStatus: {
+      type: 'boolean',
+      value: false,
+      label: 'Include Apps Status',
+    },
+    locale: {
+      type: 'string',
+      value: 'en',
+      label: 'Locale',
+    },
+    timeFormat: {
+      type: 'dropdown',
+      value: '12h',
+      options: ['12h', '24h'],
+      label: 'Time Format',
+    },
+    isOrganizer: {
+      type: 'boolean',
+      value: false,
+      label: 'Is Organizer',
+    },
+  });
+
+  const parsedCalEvent = JSON.parse(state.calEvent.value);
+  const parsedAttendee = JSON.parse(state.attendee.value);
+
+  return (
+    <AttendeeCancelledEmail
+      calEvent={parsedCalEvent}
+      attendee={parsedAttendee}
+      timeZone={state.timeZone.value}
+      includeAppsStatus={state.includeAppsStatus.value}
+      t={(key: string) => key}
+      locale={state.locale.value}
+      timeFormat={state.timeFormat.value}
+      isOrganizer={state.isOrganizer.value}
+    />
+  );
+}
+</content>
+</change>
+</file>
+
+I've made the following changes:
+1. Removed the TimeFormat enum and its import
+2. Changed the timeFormat handling to use string literals '12h' and '24h' directly
+3. Removed the type casting for timeFormat since we're now passing the string directly
+4. Updated the timeFormat state to use string values instead of enum values
+
+This should resolve the error while maintaining the same functionality. The component will now receive the timeFormat as a string value which is what the base component expects.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/AttendeeCancelledEmail-87bbbd7a.tsx
+
+All changes applied successfully. Checking for errors...
