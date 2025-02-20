@@ -1,0 +1,1112 @@
+System: You are an expert React developer working on a project that renders preview components. Your task is to fix any errors.
+
+## Role & Capabilities
+- You are a **component error fixing assistant**
+- You can read files, make edits, and use tools to diagnose issues
+- You have access to browser errors
+
+## Tools Available
+1. **getFile** (Using tool call) - Read contents of project files
+2. **File Editing** (Using xml tags in your response) - Make changes to fix errors using XML format
+
+## File Edit Format
+When you want to edit a file, use this exact XML format:
+
+<file path="path/to/file">
+  <change>
+    <description>Brief explanation of what you're changing</description>
+    <content>
+// Your complete file content here
+    </content>
+  </change>
+</file>
+
+## Important Rules
+1. Only update a file if you know its contents. Use getFile tool to read first.
+2. Most errors can be fixed by updating the preview file. Only update other files if necessary.
+3. Provide complete file content - do not use placeholders or ellipses.
+4. Always include necessary imports and dependencies.
+5. When making changes:
+   - Add all required import statements
+   - Include complete component code
+   - Ensure proper TypeScript types
+   - Handle all edge cases
+
+## Error Handling Process
+1. Read and understand the error message
+2. Use getFile to examine relevant files
+3. Make targeted fixes using the XML format
+4. If the error is caused by the fact that a provider is missing. In these cases, find the provider and add it to the preview file.
+4. If the error persists, try different fixes. Sometimes the error is caused by external dependencies that we dont' have access to. In those cases, you can try to fix the error by mocking,removing or try catching.
+5. REMEMBER, your resonse must have <file> tags with the file path and content if you want to edit a file.
+6. Always output the entire file content in full. Do not be lazy by adding //(code remains the same) or //(code remains unchanged). This will cause more errors.
+
+## Example: Fixing a Form Error
+Here's an example of how to handle a typical error:
+
+Error Message:
+TypeError: Cannot read properties of undefined (reading 'errors')
+at FormInput (/src/components/common/form/FormInput.tsx:23:18)
+
+Step 1: Read the file to understand the context
+
+// First, read the file
+{
+  "name": "getFile",
+  "arguments": {
+    "filePath": "src/components/common/form/FormInput.tsx"
+  }
+}
+
+// Response shows:
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState } = useFormContext();
+  const error = formState.errors[name]?.message;  // Error occurs here
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+
+Step 2: Fix the issue by adding proper error handling
+
+<file path="src/components/common/form/FormInput.tsx">
+  <change>
+    <description>Add null check for formState and provide default values</description>
+    <content>
+===
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState = {} } = useFormContext() || {};
+  const error = formState?.errors?.[name]?.message;
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+===
+    </content>
+  </change>
+</file>
+
+The fix:
+1. Added null check for useFormContext result
+2. Provided default empty object for formState
+3. Used optional chaining for safer property access
+
+Please proceed with fixing any errors you encounter following these guidelines.
+
+User: An error occurred when rendering the component route at ServerPage-0df2140a.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: Failed to fetch dynamically imported module: /.temp/dessn-component-routes/ServerPage-0df2140a.tsxTypeError: Failed to fetch dynamically imported module: /.temp/dessn-component-routes/ServerPage-0df2140a.tsx
+
+## Stack Trace
+```
+
+```
+
+## Component Stack
+```
+
+    at Lazy
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=78804275:65:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-7UJTJD4V.js?v=78804275:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-JTXNA3TV.js?v=78804275:931:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=78804275:1100:28)
+    at Providers (/.temp/Wrapper.tsx:57:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:94:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/ServerPage-0df2140a.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../app/(use-page-wrapper)/settings/teams/[id]/event-type/page';
+
+
+export default function ComponentPreview() {
+  // Since the component doesn't have any props, we don't need to use useParentState
+  // However, we'll keep it here in case props are added in the future
+  const [state, setState] = useParentState({});
+
+  return <ImportedComponent />;
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: [object Object],[object Object]
+
+
+Assistant: Now I can see all the necessary providers. Let's update the preview file to include these providers and handle any potential errors:
+
+<file path="apps/web/.temp/dessn-component-routes/ServerPage-0df2140a.tsx">
+<change>
+<description>Add necessary providers and error handling</description>
+<content>
+import React, { Suspense } from 'react';
+import { TooltipProvider } from "@radix-ui/react-tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SessionProvider } from "next-auth/react";
+import { I18nextProvider } from "react-i18next";
+import i18n from "i18next";
+import { FeatureProvider } from "@calcom/features/flags/context/provider";
+import { AppRouterContext } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../app/(use-page-wrapper)/settings/teams/[id]/event-type/page';
+
+// Mock router configuration
+const mockRouter = {
+  basePath: "",
+  pathname: "/",
+  route: "/",
+  asPath: "/",
+  query: {},
+  push: () => Promise.resolve(true),
+  replace: () => Promise.resolve(true),
+  reload: () => Promise.resolve(true),
+  back: () => Promise.resolve(true),
+  forward: () => Promise.resolve(true),
+  prefetch: () => Promise.resolve(),
+  beforePopState: () => {},
+  events: {
+    on: () => {},
+    off: () => {},
+    emit: () => {},
+  },
+  isFallback: false,
+};
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({});
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: Infinity,
+      },
+    },
+  });
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SessionProvider>
+        <I18nextProvider i18n={i18n}>
+          <AppRouterContext.Provider value={mockRouter}>
+            <QueryClientProvider client={queryClient}>
+              <TooltipProvider>
+                <FeatureProvider value={{}}>
+                  <ImportedComponent />
+                </FeatureProvider>
+              </TooltipProvider>
+            </QueryClientProvider>
+          </AppRouterContext.Provider>
+        </I18nextProvider>
+      </SessionProvider>
+    </Suspense>
+  );
+}
+</content>
+</change>
+</file>
+
+I've made the following changes to fix the error:
+
+1. Added all necessary providers from the Wrapper.tsx file:
+   - SessionProvider
+   - I18nextProvider
+   - AppRouterContext.Provider
+   - QueryClientProvider
+   - TooltipProvider
+   - FeatureProvider
+
+2. Added Suspense wrapper with a loading fallback to handle any lazy-loaded components
+
+3. Added mock router configuration to handle any routing-related functionality
+
+4. Added necessary imports for all the providers
+
+5. Created a new QueryClient instance with the same configuration as in the Wrapper
+
+This should resolve the "Failed to fetch dynamically imported module" error by providing all the necessary context providers that the component might need. The error was likely occurring because the component was trying to access these providers but they weren't available in the preview environment.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/ServerPage-0df2140a.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at ServerPage-0df2140a.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: Failed to fetch dynamically imported module: /.temp/dessn-component-routes/ServerPage-0df2140a.tsxTypeError: Failed to fetch dynamically imported module: /.temp/dessn-component-routes/ServerPage-0df2140a.tsx
+
+## Stack Trace
+```
+
+```
+
+## Component Stack
+```
+
+    at Lazy
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=78804275:65:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-7UJTJD4V.js?v=78804275:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-JTXNA3TV.js?v=78804275:931:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=78804275:1100:28)
+    at Providers (/.temp/Wrapper.tsx:57:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:94:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/ServerPage-0df2140a.tsx" type="preview>
+import React, { Suspense } from 'react';
+import { TooltipProvider } from "@radix-ui/react-tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SessionProvider } from "next-auth/react";
+import { I18nextProvider } from "react-i18next";
+import i18n from "i18next";
+import { FeatureProvider } from "@calcom/features/flags/context/provider";
+import { AppRouterContext } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../app/(use-page-wrapper)/settings/teams/[id]/event-type/page';
+
+// Mock router configuration
+const mockRouter = {
+  basePath: "",
+  pathname: "/",
+  route: "/",
+  asPath: "/",
+  query: {},
+  push: () => Promise.resolve(true),
+  replace: () => Promise.resolve(true),
+  reload: () => Promise.resolve(true),
+  back: () => Promise.resolve(true),
+  forward: () => Promise.resolve(true),
+  prefetch: () => Promise.resolve(),
+  beforePopState: () => {},
+  events: {
+    on: () => {},
+    off: () => {},
+    emit: () => {},
+  },
+  isFallback: false,
+};
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({});
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: Infinity,
+      },
+    },
+  });
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SessionProvider>
+        <I18nextProvider i18n={i18n}>
+          <AppRouterContext.Provider value={mockRouter}>
+            <QueryClientProvider client={queryClient}>
+              <TooltipProvider>
+                <FeatureProvider value={{}}>
+                  <ImportedComponent />
+                </FeatureProvider>
+              </TooltipProvider>
+            </QueryClientProvider>
+          </AppRouterContext.Provider>
+        </I18nextProvider>
+      </SessionProvider>
+    </Suspense>
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: I notice that we're missing the TRPC provider from the stack trace, and we need to properly initialize i18n. Let's update the file with these additions:
+
+<file path="apps/web/.temp/dessn-component-routes/ServerPage-0df2140a.tsx">
+<change>
+<description>Add TRPC provider, initialize i18n properly, and handle dynamic imports</description>
+<content>
+import React, { Suspense } from 'react';
+import { TooltipProvider } from "@radix-ui/react-tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SessionProvider } from "next-auth/react";
+import { I18nextProvider } from "react-i18next";
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import { FeatureProvider } from "@calcom/features/flags/context/provider";
+import { AppRouterContext } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { httpBatchLink } from "@calcom/trpc";
+import { createTRPCReact } from "@trpc/react-query";
+import { useParentState } from '../useIframeState';
+
+// Initialize i18n
+const ns = ["common"];
+const supportedLngs = ["en"];
+
+i18n.use(initReactI18next).init({
+  debug: false,
+  fallbackLng: "en",
+  defaultNS: "common",
+  ns,
+  interpolation: {
+    escapeValue: false,
+  },
+  react: { useSuspense: false },
+  resources: {
+    en: {
+      common: {},
+    },
+  },
+});
+
+// Create TRPC
+const mockedTrpc = createTRPCReact();
+
+// Mock router configuration
+const mockRouter = {
+  basePath: "",
+  pathname: "/",
+  route: "/",
+  asPath: "/",
+  query: {},
+  push: () => Promise.resolve(true),
+  replace: () => Promise.resolve(true),
+  reload: () => Promise.resolve(true),
+  back: () => Promise.resolve(true),
+  forward: () => Promise.resolve(true),
+  prefetch: () => Promise.resolve(),
+  beforePopState: () => {},
+  events: {
+    on: () => {},
+    off: () => {},
+    emit: () => {},
+  },
+  isFallback: false,
+};
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({});
+  
+  // Create Query Client
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: Infinity,
+        retry: false,
+      },
+    },
+  });
+
+  // Create TRPC Client
+  const trpcClient = mockedTrpc.createClient({
+    links: [
+      httpBatchLink({
+        url: "",
+      }),
+    ],
+  });
+
+  // Lazy load the component
+  const ImportedComponent = React.lazy(() => import('../../app/(use-page-wrapper)/settings/teams/[id]/event-type/page'));
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SessionProvider>
+        <I18nextProvider i18n={i18n}>
+          <AppRouterContext.Provider value={mockRouter}>
+            <mockedTrpc.Provider client={trpcClient} queryClient={queryClient}>
+              <QueryClientProvider client={queryClient}>
+                <TooltipProvider>
+                  <FeatureProvider value={{}}>
+                    <Suspense fallback={<div>Loading component...</div>}>
+                      <ImportedComponent />
+                    </Suspense>
+                  </FeatureProvider>
+                </TooltipProvider>
+              </QueryClientProvider>
+            </mockedTrpc.Provider>
+          </AppRouterContext.Provider>
+        </I18nextProvider>
+      </SessionProvider>
+    </Suspense>
+  );
+}
+</content>
+</change>
+</file>
+
+I've made several important changes to fix the error:
+
+1. Added proper TRPC setup:
+   - Added createTRPCReact and httpBatchLink imports
+   - Created mockedTrpc instance
+   - Added TRPC Provider with client and queryClient
+
+2. Properly initialized i18n:
+   - Added initReactI18next
+   - Set up proper i18n configuration
+   - Disabled Suspense for i18n to prevent conflicts
+
+3. Changed the component import to use React.lazy:
+   - Moved the import into the component using React.lazy
+   - Added a nested Suspense boundary specifically for the component
+
+4. Added error handling:
+   - Disabled query retries in QueryClient
+   - Added proper fallback components for both Suspense boundaries
+
+5. Ensured all providers are in the correct order matching the stack trace:
+   - SessionProvider
+   - I18nextProvider
+   - TRPC Provider
+   - QueryClientProvider
+   - TooltipProvider
+   - FeatureProvider
+
+These changes should resolve the dynamic import error by:
+1. Properly handling the dynamic import using React.lazy
+2. Providing all necessary context providers
+3. Ensuring proper initialization of i18n and TRPC
+4. Adding proper error boundaries and loading states
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/ServerPage-0df2140a.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at ServerPage-0df2140a.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: Failed to fetch dynamically imported module: /.temp/dessn-component-routes/ServerPage-0df2140a.tsxTypeError: Failed to fetch dynamically imported module: /.temp/dessn-component-routes/ServerPage-0df2140a.tsx
+
+## Stack Trace
+```
+
+```
+
+## Component Stack
+```
+
+    at Lazy
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=78804275:65:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-7UJTJD4V.js?v=78804275:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-JTXNA3TV.js?v=78804275:931:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=78804275:1100:28)
+    at Providers (/.temp/Wrapper.tsx:57:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:94:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/ServerPage-0df2140a.tsx" type="preview>
+import React, { Suspense } from 'react';
+import { TooltipProvider } from "@radix-ui/react-tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SessionProvider } from "next-auth/react";
+import { I18nextProvider } from "react-i18next";
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import { FeatureProvider } from "@calcom/features/flags/context/provider";
+import { AppRouterContext } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { httpBatchLink } from "@calcom/trpc";
+import { createTRPCReact } from "@trpc/react-query";
+import { useParentState } from '../useIframeState';
+
+// Initialize i18n
+const ns = ["common"];
+const supportedLngs = ["en"];
+
+i18n.use(initReactI18next).init({
+  debug: false,
+  fallbackLng: "en",
+  defaultNS: "common",
+  ns,
+  interpolation: {
+    escapeValue: false,
+  },
+  react: { useSuspense: false },
+  resources: {
+    en: {
+      common: {},
+    },
+  },
+});
+
+// Create TRPC
+const mockedTrpc = createTRPCReact();
+
+// Mock router configuration
+const mockRouter = {
+  basePath: "",
+  pathname: "/",
+  route: "/",
+  asPath: "/",
+  query: {},
+  push: () => Promise.resolve(true),
+  replace: () => Promise.resolve(true),
+  reload: () => Promise.resolve(true),
+  back: () => Promise.resolve(true),
+  forward: () => Promise.resolve(true),
+  prefetch: () => Promise.resolve(),
+  beforePopState: () => {},
+  events: {
+    on: () => {},
+    off: () => {},
+    emit: () => {},
+  },
+  isFallback: false,
+};
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({});
+  
+  // Create Query Client
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: Infinity,
+        retry: false,
+      },
+    },
+  });
+
+  // Create TRPC Client
+  const trpcClient = mockedTrpc.createClient({
+    links: [
+      httpBatchLink({
+        url: "",
+      }),
+    ],
+  });
+
+  // Lazy load the component
+  const ImportedComponent = React.lazy(() => import('../../app/(use-page-wrapper)/settings/teams/[id]/event-type/page'));
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SessionProvider>
+        <I18nextProvider i18n={i18n}>
+          <AppRouterContext.Provider value={mockRouter}>
+            <mockedTrpc.Provider client={trpcClient} queryClient={queryClient}>
+              <QueryClientProvider client={queryClient}>
+                <TooltipProvider>
+                  <FeatureProvider value={{}}>
+                    <Suspense fallback={<div>Loading component...</div>}>
+                      <ImportedComponent />
+                    </Suspense>
+                  </FeatureProvider>
+                </TooltipProvider>
+              </QueryClientProvider>
+            </mockedTrpc.Provider>
+          </AppRouterContext.Provider>
+        </I18nextProvider>
+      </SessionProvider>
+    </Suspense>
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: Let's try a different approach. Instead of using React.lazy, let's directly import the component and wrap it in an error boundary to catch any potential errors. We'll also simplify the setup:
+
+<file path="apps/web/.temp/dessn-component-routes/ServerPage-0df2140a.tsx">
+<change>
+<description>Simplify the component and add error boundary</description>
+<content>
+import React, { Suspense, Component } from 'react';
+import { TooltipProvider } from "@radix-ui/react-tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SessionProvider } from "next-auth/react";
+import { I18nextProvider } from "react-i18next";
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import { FeatureProvider } from "@calcom/features/flags/context/provider";
+import { AppRouterContext } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { createTRPCReact } from "@trpc/react-query";
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../app/(use-page-wrapper)/settings/teams/[id]/event-type/page';
+
+// Error Boundary Component
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong. Please try again.</div>;
+    }
+
+    return this.props.children;
+  }
+}
+
+// Initialize i18n
+i18n.use(initReactI18next).init({
+  lng: 'en',
+  fallbackLng: 'en',
+  resources: {
+    en: {
+      common: {}
+    }
+  },
+  react: { 
+    useSuspense: false 
+  }
+});
+
+// Create TRPC
+const mockedTrpc = createTRPCReact();
+
+// Mock router configuration
+const mockRouter = {
+  basePath: "",
+  pathname: "/settings/teams/[id]/event-type",
+  route: "/settings/teams/[id]/event-type",
+  asPath: "/settings/teams/[id]/event-type",
+  query: { id: "default" },
+  push: () => Promise.resolve(true),
+  replace: () => Promise.resolve(true),
+  reload: () => Promise.resolve(true),
+  back: () => Promise.resolve(true),
+  forward: () => Promise.resolve(true),
+  prefetch: () => Promise.resolve(),
+  beforePopState: () => {},
+  events: {
+    on: () => {},
+    off: () => {},
+    emit: () => {},
+  },
+  isFallback: false,
+};
+
+export default function ComponentPreview() {
+  const [state] = useParentState({});
+  
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        refetchOnWindowFocus: false,
+      },
+    },
+  });
+
+  const trpcClient = mockedTrpc.createClient({
+    links: [],
+  });
+
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<div>Loading...</div>}>
+        <SessionProvider session={null}>
+          <I18nextProvider i18n={i18n}>
+            <AppRouterContext.Provider value={mockRouter}>
+              <mockedTrpc.Provider client={trpcClient} queryClient={queryClient}>
+                <QueryClientProvider client={queryClient}>
+                  <TooltipProvider>
+                    <FeatureProvider value={{}}>
+                      <div className="w-full">
+                        <ImportedComponent />
+                      </div>
+                    </FeatureProvider>
+                  </TooltipProvider>
+                </QueryClientProvider>
+              </mockedTrpc.Provider>
+            </AppRouterContext.Provider>
+          </I18nextProvider>
+        </SessionProvider>
+      </Suspense>
+    </ErrorBoundary>
+  );
+}
+</content>
+</change>
+</file>
+
+Key changes made:
+
+1. Added a custom ErrorBoundary component to catch and handle errors gracefully
+
+2. Removed React.lazy and using direct import instead
+
+3. Simplified i18n initialization
+
+4. Updated mock router with more specific paths and query parameters
+
+5. Added proper session handling in SessionProvider
+
+6. Simplified TRPC client setup by removing links that might cause issues
+
+7. Added a wrapper div with w-full class to ensure proper layout
+
+8. Removed unnecessary state updates and simplified the state management
+
+9. Added better query client configuration to prevent unnecessary retries and refetches
+
+10. Wrapped everything in both ErrorBoundary and Suspense for better error handling
+
+These changes should help resolve the dynamic import error by:
+- Using direct imports instead of dynamic imports
+- Adding proper error boundaries
+- Simplifying the provider setup
+- Providing better fallbacks and error handling
+
+The error boundary will catch any rendering errors and display a fallback UI instead of crashing the entire application.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/ServerPage-0df2140a.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at ServerPage-0df2140a.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: Failed to fetch dynamically imported module: /.temp/dessn-component-routes/ServerPage-0df2140a.tsxTypeError: Failed to fetch dynamically imported module: /.temp/dessn-component-routes/ServerPage-0df2140a.tsx
+
+## Stack Trace
+```
+
+```
+
+## Component Stack
+```
+
+    at Lazy
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=78804275:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=78804275:65:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-7UJTJD4V.js?v=78804275:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-W65CNIGR.js?v=78804275:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-JTXNA3TV.js?v=78804275:931:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=78804275:1100:28)
+    at Providers (/.temp/Wrapper.tsx:57:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:94:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/ServerPage-0df2140a.tsx" type="preview>
+import React, { Suspense, Component } from 'react';
+import { TooltipProvider } from "@radix-ui/react-tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SessionProvider } from "next-auth/react";
+import { I18nextProvider } from "react-i18next";
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import { FeatureProvider } from "@calcom/features/flags/context/provider";
+import { AppRouterContext } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { createTRPCReact } from "@trpc/react-query";
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../app/(use-page-wrapper)/settings/teams/[id]/event-type/page';
+
+// Error Boundary Component
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong. Please try again.</div>;
+    }
+
+    return this.props.children;
+  }
+}
+
+// Initialize i18n
+i18n.use(initReactI18next).init({
+  lng: 'en',
+  fallbackLng: 'en',
+  resources: {
+    en: {
+      common: {}
+    }
+  },
+  react: { 
+    useSuspense: false 
+  }
+});
+
+// Create TRPC
+const mockedTrpc = createTRPCReact();
+
+// Mock router configuration
+const mockRouter = {
+  basePath: "",
+  pathname: "/settings/teams/[id]/event-type",
+  route: "/settings/teams/[id]/event-type",
+  asPath: "/settings/teams/[id]/event-type",
+  query: { id: "default" },
+  push: () => Promise.resolve(true),
+  replace: () => Promise.resolve(true),
+  reload: () => Promise.resolve(true),
+  back: () => Promise.resolve(true),
+  forward: () => Promise.resolve(true),
+  prefetch: () => Promise.resolve(),
+  beforePopState: () => {},
+  events: {
+    on: () => {},
+    off: () => {},
+    emit: () => {},
+  },
+  isFallback: false,
+};
+
+export default function ComponentPreview() {
+  const [state] = useParentState({});
+  
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        refetchOnWindowFocus: false,
+      },
+    },
+  });
+
+  const trpcClient = mockedTrpc.createClient({
+    links: [],
+  });
+
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<div>Loading...</div>}>
+        <SessionProvider session={null}>
+          <I18nextProvider i18n={i18n}>
+            <AppRouterContext.Provider value={mockRouter}>
+              <mockedTrpc.Provider client={trpcClient} queryClient={queryClient}>
+                <QueryClientProvider client={queryClient}>
+                  <TooltipProvider>
+                    <FeatureProvider value={{}}>
+                      <div className="w-full">
+                        <ImportedComponent />
+                      </div>
+                    </FeatureProvider>
+                  </TooltipProvider>
+                </QueryClientProvider>
+              </mockedTrpc.Provider>
+            </AppRouterContext.Provider>
+          </I18nextProvider>
+        </SessionProvider>
+      </Suspense>
+    </ErrorBoundary>
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: Let's try a different approach by wrapping the imported component in a try-catch and providing a simpler fallback. We'll also ensure the import path is correct:
+
+<file path="apps/web/.temp/dessn-component-routes/ServerPage-0df2140a.tsx">
+<change>
+<description>Simplify the component and add try-catch for import</description>
+<content>
+import React, { Suspense } from 'react';
+import { TooltipProvider } from "@radix-ui/react-tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SessionProvider } from "next-auth/react";
+import { I18nextProvider } from "react-i18next";
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import { FeatureProvider } from "@calcom/features/flags/context/provider";
+import { AppRouterContext } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { createTRPCReact } from "@trpc/react-query";
+import { useParentState } from '../useIframeState';
+
+// Initialize i18n
+i18n.use(initReactI18next).init({
+  lng: 'en',
+  fallbackLng: 'en',
+  resources: {
+    en: {
+      common: {}
+    }
+  },
+  react: { 
+    useSuspense: false 
+  }
+});
+
+// Create TRPC
+const mockedTrpc = createTRPCReact();
+
+// Mock router configuration
+const mockRouter = {
+  basePath: "",
+  pathname: "/settings/teams/[id]/event-type",
+  route: "/settings/teams/[id]/event-type",
+  asPath: "/settings/teams/[id]/event-type",
+  query: { id: "default" },
+  push: () => Promise.resolve(true),
+  replace: () => Promise.resolve(true),
+  reload: () => Promise.resolve(true),
+  back: () => Promise.resolve(true),
+  forward: () => Promise.resolve(true),
+  prefetch: () => Promise.resolve(),
+  beforePopState: () => {},
+  events: {
+    on: () => {},
+    off: () => {},
+    emit: () => {},
+  },
+  isFallback: false,
+};
+
+const SafeComponent = () => {
+  try {
+    // Using require instead of import
+    const Component = require('../../app/(use-page-wrapper)/settings/teams/[id]/event-type/page').default;
+    return <Component />;
+  } catch (error) {
+    console.error('Failed to load component:', error);
+    return <div>Failed to load component</div>;
+  }
+};
+
+export default function ComponentPreview() {
+  const [state] = useParentState({});
+  
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        refetchOnWindowFocus: false,
+        staleTime: Infinity,
+      },
+    },
+  });
+
+  const trpcClient = mockedTrpc.createClient({
+    links: [],
+  });
+
+  return (
+    <div className="w-full h-full">
+      <Suspense fallback={<div>Loading...</div>}>
+        <SessionProvider session={null}>
+          <I18nextProvider i18n={i18n}>
+            <AppRouterContext.Provider value={mockRouter}>
+              <mockedTrpc.Provider client={trpcClient} queryClient={queryClient}>
+                <QueryClientProvider client={queryClient}>
+                  <TooltipProvider>
+                    <FeatureProvider value={{}}>
+                      <SafeComponent />
+                    </FeatureProvider>
+                  </TooltipProvider>
+                </QueryClientProvider>
+              </mockedTrpc.Provider>
+            </AppRouterContext.Provider>
+          </I18nextProvider>
+        </SessionProvider>
+      </Suspense>
+    </div>
+  );
+}
+</content>
+</change>
+</file>
+
+Key changes made:
+
+1. Created a SafeComponent that wraps the import in a try-catch block
+2. Used require instead of import to handle the module loading
+3. Simplified the error handling approach
+4. Added proper height and width to the wrapper div
+5. Removed custom ErrorBoundary in favor of simpler try-catch
+6. Kept all necessary providers but simplified their setup
+7. Added better query client configuration
+8. Improved error reporting with console.error
+9. Made the component more resilient to loading failures
+
+The main changes focus on:
+- Using require instead of import for better error handling
+- Wrapping the component loading in a try-catch block
+- Simplifying the overall structure while maintaining necessary providers
+- Providing better fallback UI for errors
+
+This approach should help resolve the dynamic import error by:
+- Using a more reliable module loading method
+- Providing better error handling
+- Maintaining a simpler component structure
+
+Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/ServerPage-0df2140a.tsx
+
+All changes applied successfully. Checking for errors...
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/ServerPage-0df2140a.tsx
+
+All changes applied successfully. Checking for errors...
