@@ -1,0 +1,779 @@
+System: You are an expert React developer working on a project that renders preview components. Your task is to fix any errors.
+
+## Role & Capabilities
+- You are a **component error fixing assistant**
+- You can read files, make edits, and use tools to diagnose issues
+- You have access to browser errors
+
+## Tools Available
+1. **getFile** (Using tool call) - Read contents of project files
+2. **File Editing** (Using xml tags in your response) - Make changes to fix errors using XML format
+
+## File Edit Format
+When you want to edit a file, use this exact XML format:
+
+<file path="path/to/file">
+  <change>
+    <description>Brief explanation of what you're changing</description>
+    <content>
+// Your complete file content here
+    </content>
+  </change>
+</file>
+
+## Important Rules
+1. Only update a file if you know its contents. Use getFile tool to read first.
+2. Most errors can be fixed by updating the preview file. Only update other files if necessary.
+3. Provide complete file content - do not use placeholders or ellipses.
+4. Always include necessary imports and dependencies.
+5. When making changes:
+   - Add all required import statements
+   - Include complete component code
+   - Ensure proper TypeScript types
+   - Handle all edge cases
+
+## Error Handling Process
+1. Read and understand the error message
+2. Use getFile to examine relevant files
+3. Make targeted fixes using the XML format
+4. If the error is caused by the fact that a provider is missing. In these cases, find the provider and add it to the preview file.
+4. If the error persists, try different fixes. Sometimes the error is caused by external dependencies that we dont' have access to. In those cases, you can try to fix the error by mocking,removing or try catching.
+5. REMEMBER, your resonse must have <file> tags with the file path and content if you want to edit a file.
+6. Always output the entire file content in full. Do not be lazy by adding //(code remains the same) or //(code remains unchanged). This will cause more errors.
+
+## Example: Fixing a Form Error
+Here's an example of how to handle a typical error:
+
+Error Message:
+TypeError: Cannot read properties of undefined (reading 'errors')
+at FormInput (/src/components/common/form/FormInput.tsx:23:18)
+
+Step 1: Read the file to understand the context
+
+// First, read the file
+{
+  "name": "getFile",
+  "arguments": {
+    "filePath": "src/components/common/form/FormInput.tsx"
+  }
+}
+
+// Response shows:
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState } = useFormContext();
+  const error = formState.errors[name]?.message;  // Error occurs here
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+
+Step 2: Fix the issue by adding proper error handling
+
+<file path="src/components/common/form/FormInput.tsx">
+  <change>
+    <description>Add null check for formState and provide default values</description>
+    <content>
+===
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState = {} } = useFormContext() || {};
+  const error = formState?.errors?.[name]?.message;
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+===
+    </content>
+  </change>
+</file>
+
+The fix:
+1. Added null check for useFormContext result
+2. Provided default empty object for formState
+3. Used optional chaining for safer property access
+
+Please proceed with fixing any errors you encounter following these guidelines.
+
+User: An error occurred when rendering the component route at UserProfile-2b7f371e.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: ctor is not a constructorTypeError: ctor is not a constructor
+
+## Stack Trace
+```
+    at constructClassInstance (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=a139b99b:13735:26)
+    at updateClassComponent (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=a139b99b:14712:13)
+    at beginWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=a139b99b:15986:22)
+    at beginWork$1 (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=a139b99b:19814:22)
+    at performUnitOfWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=a139b99b:19262:20)
+    at workLoopSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=a139b99b:19198:13)
+    at renderRootSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=a139b99b:19177:15)
+    at recoverFromConcurrentError (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=a139b99b:18794:28)
+    at performConcurrentWorkOnRoot (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=a139b99b:18742:30)
+    at workLoop (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=a139b99b:201:42)
+```
+
+## Component Stack
+```
+
+    at [object Object]
+    at ComponentPreview (/.temp/dessn-component-routes/UserProfile-2b7f371e.tsx:6:29)
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-4YH3Z2SG.js?v=a139b99b:45:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=a139b99b:63:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-RIH2XCSY.js?v=a139b99b:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-WLALLQXM.js?v=a139b99b:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-SS6AEBT7.js?v=a139b99b:929:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=a139b99b:1100:28)
+    at Providers (/.temp/Wrapper.tsx:65:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:102:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/UserProfile-2b7f371e.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../components/getting-started/steps-views/UserProfile';
+
+import { trpc } from "@calcom/trpc/react";
+import { useForm } from "react-hook-form";
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    user: {
+      type: "string",
+      value: JSON.stringify({
+        id: 1,
+        name: "John Doe",
+        email: "john@example.com",
+        avatar: "https://example.com/avatar.jpg",
+        bio: "I'm a software developer",
+      }),
+      label: "User Data",
+    },
+    eventTypes: {
+      type: "string",
+      value: JSON.stringify([
+        { id: 1, title: "15min Meeting", slug: "15min", length: 15 },
+        { id: 2, title: "30min Meeting", slug: "30min", length: 30 },
+      ]),
+      label: "Event Types",
+    },
+  });
+
+  const mockTrpc = {
+    viewer: {
+      me: {
+        useSuspenseQuery: () => [JSON.parse(state.user.value)],
+      },
+      eventTypes: {
+        list: {
+          useQuery: () => ({ data: JSON.parse(state.eventTypes.value) }),
+        },
+      },
+      updateProfile: {
+        useMutation: () => ({
+          mutate: () => {},
+          isPending: false,
+        }),
+      },
+      eventTypes: {
+        create: {
+          useMutation: () => ({
+            mutate: () => {},
+          }),
+        },
+      },
+    },
+    useUtils: () => ({
+      viewer: {
+        me: {
+          refetch: async () => {},
+        },
+      },
+    }),
+  };
+
+  return (
+    <trpc.Provider client={mockTrpc as any}>
+      <ImportedComponent />
+    </trpc.Provider>
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: The error "ctor is not a constructor" typically occurs when trying to use a mock object as a Provider. Let me help fix this by properly mocking the TRPC provider and its context.
+
+Let me modify the preview file to correctly handle the TRPC provider setup:
+
+<file path="apps/web/.temp/dessn-component-routes/UserProfile-2b7f371e.tsx">
+  <change>
+    <description>Fix TRPC provider setup and mocking</description>
+    <content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../components/getting-started/steps-views/UserProfile';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createTRPCReact, httpBatchLink } from '@trpc/react-query';
+import { FormProvider, useForm } from "react-hook-form";
+
+// Create a new QueryClient instance
+const queryClient = new QueryClient();
+
+// Create a mock TRPC client
+const mockTrpcClient = {
+  viewer: {
+    me: {
+      useSuspenseQuery: () => [{
+        id: 1,
+        name: "John Doe",
+        email: "john@example.com",
+        avatar: "https://example.com/avatar.jpg",
+        bio: "I'm a software developer"
+      }],
+    },
+    eventTypes: {
+      list: {
+        useQuery: () => ({
+          data: [
+            { id: 1, title: "15min Meeting", slug: "15min", length: 15 },
+            { id: 2, title: "30min Meeting", slug: "30min", length: 30 },
+          ]
+        }),
+      },
+      create: {
+        useMutation: () => ({
+          mutate: async () => {},
+          isLoading: false,
+        }),
+      }
+    },
+    updateProfile: {
+      useMutation: () => ({
+        mutate: async () => {},
+        isPending: false,
+      }),
+    },
+  },
+};
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    user: {
+      type: "string",
+      value: JSON.stringify({
+        id: 1,
+        name: "John Doe",
+        email: "john@example.com",
+        avatar: "https://example.com/avatar.jpg",
+        bio: "I'm a software developer",
+      }),
+      label: "User Data",
+    },
+    eventTypes: {
+      type: "string",
+      value: JSON.stringify([
+        { id: 1, title: "15min Meeting", slug: "15min", length: 15 },
+        { id: 2, title: "30min Meeting", slug: "30min", length: 30 },
+      ]),
+      label: "Event Types",
+    },
+  });
+
+  // Create a form context
+  const methods = useForm();
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <FormProvider {...methods}>
+        <div className="w-full">
+          <ImportedComponent />
+        </div>
+      </FormProvider>
+    </QueryClientProvider>
+  );
+}
+</content>
+  </change>
+</file>
+
+I've made several important changes to fix the error:
+
+1. Removed the problematic `trpc.Provider` and replaced it with proper `QueryClientProvider`
+2. Added `FormProvider` since the component likely needs form context
+3. Simplified the mocking approach
+4. Added necessary imports for React Query and Form Provider
+5. Added proper wrapper div with styling
+6. Removed the problematic TRPC mock setup that was causing the constructor error
+
+The error was occurring because we were trying to use a mock object as a Provider directly, which isn't the correct way to handle TRPC in a preview environment. Instead, we're now using the proper QueryClientProvider and FormProvider setup, which should resolve the constructor error while still providing the necessary context for the component to function.
+
+The component should now render without the constructor error. If you encounter any other specific errors after this change, please let me know and I'll help you resolve them.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/UserProfile-2b7f371e.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at UserProfile-2b7f371e.tsx
+Error:
+[plugin:vite:import-analysis] Failed to resolve import "jotai" from ".temp/dessn-component-routes/ConnectedVideoStep-eff0cdd4.tsx". Does the file exist?/Users/nimcheema/src/cal.com/apps/web/.temp/dessn-component-routes/ConnectedVideoStep-eff0cdd4.tsx:2:421  |  import { jsxDEV } from "react/jsx-dev-runtime";
+2  |  import { Provider as JotaiProvider } from "jotai";
+   |                                             ^
+3  |  import { useParentState } from "../useIframeState";
+4  |  import { ConnectedVideoStep } from "../../components/getting-started/steps-views/ConnectedVideoStep";    at _formatLog (/Users/nimcheema/src/dessn/packages/components/node_modules/vite/dist/node/chunks/dep-Cg8OuIew.js:48670:45)
+    at error (/Users/nimcheema/src/dessn/packages/components/node_modules/vite/dist/node/chunks/dep-Cg8OuIew.js:48667:16Click outside, press Esc key, or fix the code to dismiss.You can also disable this overlay by setting server.hmr.overlay to false in vite.config.js.
+
+<file name="apps/web/.temp/dessn-component-routes/UserProfile-2b7f371e.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../components/getting-started/steps-views/UserProfile';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createTRPCReact, httpBatchLink } from '@trpc/react-query';
+import { FormProvider, useForm } from "react-hook-form";
+
+// Create a new QueryClient instance
+const queryClient = new QueryClient();
+
+// Create a mock TRPC client
+const mockTrpcClient = {
+  viewer: {
+    me: {
+      useSuspenseQuery: () => [{
+        id: 1,
+        name: "John Doe",
+        email: "john@example.com",
+        avatar: "https://example.com/avatar.jpg",
+        bio: "I'm a software developer"
+      }],
+    },
+    eventTypes: {
+      list: {
+        useQuery: () => ({
+          data: [
+            { id: 1, title: "15min Meeting", slug: "15min", length: 15 },
+            { id: 2, title: "30min Meeting", slug: "30min", length: 30 },
+          ]
+        }),
+      },
+      create: {
+        useMutation: () => ({
+          mutate: async () => {},
+          isLoading: false,
+        }),
+      }
+    },
+    updateProfile: {
+      useMutation: () => ({
+        mutate: async () => {},
+        isPending: false,
+      }),
+    },
+  },
+};
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    user: {
+      type: "string",
+      value: JSON.stringify({
+        id: 1,
+        name: "John Doe",
+        email: "john@example.com",
+        avatar: "https://example.com/avatar.jpg",
+        bio: "I'm a software developer",
+      }),
+      label: "User Data",
+    },
+    eventTypes: {
+      type: "string",
+      value: JSON.stringify([
+        { id: 1, title: "15min Meeting", slug: "15min", length: 15 },
+        { id: 2, title: "30min Meeting", slug: "30min", length: 30 },
+      ]),
+      label: "Event Types",
+    },
+  });
+
+  // Create a form context
+  const methods = useForm();
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <FormProvider {...methods}>
+        <div className="w-full">
+          <ImportedComponent />
+        </div>
+      </FormProvider>
+    </QueryClientProvider>
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: The error indicates that the application is trying to use `jotai` but it's not properly imported. We need to add the Jotai Provider to our component since it seems the UserProfile component depends on it. Let's modify the file to include the Jotai Provider:
+
+<file path="apps/web/.temp/dessn-component-routes/UserProfile-2b7f371e.tsx">
+  <change>
+    <description>Add Jotai Provider and necessary imports</description>
+    <content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../components/getting-started/steps-views/UserProfile';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createTRPCReact, httpBatchLink } from '@trpc/react-query';
+import { FormProvider, useForm } from "react-hook-form";
+import { Provider as JotaiProvider } from "jotai";
+
+// Create a new QueryClient instance
+const queryClient = new QueryClient();
+
+// Create a mock TRPC client
+const mockTrpcClient = {
+  viewer: {
+    me: {
+      useSuspenseQuery: () => [{
+        id: 1,
+        name: "John Doe",
+        email: "john@example.com",
+        avatar: "https://example.com/avatar.jpg",
+        bio: "I'm a software developer"
+      }],
+    },
+    eventTypes: {
+      list: {
+        useQuery: () => ({
+          data: [
+            { id: 1, title: "15min Meeting", slug: "15min", length: 15 },
+            { id: 2, title: "30min Meeting", slug: "30min", length: 30 },
+          ]
+        }),
+      },
+      create: {
+        useMutation: () => ({
+          mutate: async () => {},
+          isLoading: false,
+        }),
+      }
+    },
+    updateProfile: {
+      useMutation: () => ({
+        mutate: async () => {},
+        isPending: false,
+      }),
+    },
+  },
+};
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    user: {
+      type: "string",
+      value: JSON.stringify({
+        id: 1,
+        name: "John Doe",
+        email: "john@example.com",
+        avatar: "https://example.com/avatar.jpg",
+        bio: "I'm a software developer",
+      }),
+      label: "User Data",
+    },
+    eventTypes: {
+      type: "string",
+      value: JSON.stringify([
+        { id: 1, title: "15min Meeting", slug: "15min", length: 15 },
+        { id: 2, title: "30min Meeting", slug: "30min", length: 30 },
+      ]),
+      label: "Event Types",
+    },
+  });
+
+  // Create a form context
+  const methods = useForm();
+
+  return (
+    <JotaiProvider>
+      <QueryClientProvider client={queryClient}>
+        <FormProvider {...methods}>
+          <div className="w-full">
+            <ImportedComponent />
+          </div>
+        </FormProvider>
+      </QueryClientProvider>
+    </JotaiProvider>
+  );
+}
+</content>
+  </change>
+</file>
+
+I've made the following changes:
+1. Added import for Jotai Provider: `import { Provider as JotaiProvider } from "jotai"`
+2. Wrapped the entire component tree with `<JotaiProvider>`
+3. Maintained the existing provider hierarchy with QueryClientProvider and FormProvider
+
+This should resolve the Jotai-related error while maintaining all the other necessary context providers. The component should now have access to all required providers: Jotai for state management, React Query for data fetching, and Form Provider for form handling.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/UserProfile-2b7f371e.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at UserProfile-2b7f371e.tsx
+Error:
+[plugin:vite:import-analysis] Failed to resolve import "jotai" from ".temp/dessn-component-routes/UserProfile-2b7f371e.tsx". Does the file exist?/Users/nimcheema/src/cal.com/apps/web/.temp/dessn-component-routes/UserProfile-2b7f371e.tsx:7:424  |  import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+5  |  import { FormProvider, useForm } from "react-hook-form";
+6  |  import { Provider as JotaiProvider } from "jotai";
+   |                                             ^
+7  |  const queryClient = new QueryClient();
+8  |  const mockTrpcClient = {    at _formatLog (/Users/nimcheema/src/dessn/packages/components/node_modules/vite/dist/node/chunks/dep-Cg8OuIew.js:48670:45)
+    at error (/Users/nimcheema/src/dessn/packages/components/node_modules/vite/dist/node/chunks/dep-Cg8OuIew.js:48667:16Click outside, press Esc key, or fix the code to dismiss.You can also disable this overlay by setting server.hmr.overlay to false in vite.config.js.
+
+<file name="apps/web/.temp/dessn-component-routes/UserProfile-2b7f371e.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../components/getting-started/steps-views/UserProfile';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createTRPCReact, httpBatchLink } from '@trpc/react-query';
+import { FormProvider, useForm } from "react-hook-form";
+import { Provider as JotaiProvider } from "jotai";
+
+// Create a new QueryClient instance
+const queryClient = new QueryClient();
+
+// Create a mock TRPC client
+const mockTrpcClient = {
+  viewer: {
+    me: {
+      useSuspenseQuery: () => [{
+        id: 1,
+        name: "John Doe",
+        email: "john@example.com",
+        avatar: "https://example.com/avatar.jpg",
+        bio: "I'm a software developer"
+      }],
+    },
+    eventTypes: {
+      list: {
+        useQuery: () => ({
+          data: [
+            { id: 1, title: "15min Meeting", slug: "15min", length: 15 },
+            { id: 2, title: "30min Meeting", slug: "30min", length: 30 },
+          ]
+        }),
+      },
+      create: {
+        useMutation: () => ({
+          mutate: async () => {},
+          isLoading: false,
+        }),
+      }
+    },
+    updateProfile: {
+      useMutation: () => ({
+        mutate: async () => {},
+        isPending: false,
+      }),
+    },
+  },
+};
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    user: {
+      type: "string",
+      value: JSON.stringify({
+        id: 1,
+        name: "John Doe",
+        email: "john@example.com",
+        avatar: "https://example.com/avatar.jpg",
+        bio: "I'm a software developer",
+      }),
+      label: "User Data",
+    },
+    eventTypes: {
+      type: "string",
+      value: JSON.stringify([
+        { id: 1, title: "15min Meeting", slug: "15min", length: 15 },
+        { id: 2, title: "30min Meeting", slug: "30min", length: 30 },
+      ]),
+      label: "Event Types",
+    },
+  });
+
+  // Create a form context
+  const methods = useForm();
+
+  return (
+    <JotaiProvider>
+      <QueryClientProvider client={queryClient}>
+        <FormProvider {...methods}>
+          <div className="w-full">
+            <ImportedComponent />
+          </div>
+        </FormProvider>
+      </QueryClientProvider>
+    </JotaiProvider>
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: I see that the `jotai` package is not available. Since we can't directly import it, let's try to work around this by removing the Jotai provider and mocking any necessary state. Let's modify the file:
+
+<file path="apps/web/.temp/dessn-component-routes/UserProfile-2b7f371e.tsx">
+  <change>
+    <description>Remove Jotai dependency and provide necessary context through other means</description>
+    <content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../components/getting-started/steps-views/UserProfile';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createTRPCReact, httpBatchLink } from '@trpc/react-query';
+import { FormProvider, useForm } from "react-hook-form";
+
+// Create a new QueryClient instance
+const queryClient = new QueryClient();
+
+// Create a mock TRPC client
+const mockTrpcClient = {
+  viewer: {
+    me: {
+      useSuspenseQuery: () => [{
+        id: 1,
+        name: "John Doe",
+        email: "john@example.com",
+        avatar: "https://example.com/avatar.jpg",
+        bio: "I'm a software developer",
+        completedOnboarding: false,
+        timeFormat: 12,
+        weekStart: "Monday",
+        theme: "light",
+        brandColor: "#292929",
+        darkBrandColor: "#fafafa",
+        away: false,
+      }],
+    },
+    eventTypes: {
+      list: {
+        useQuery: () => ({
+          data: [
+            { id: 1, title: "15min Meeting", slug: "15min", length: 15 },
+            { id: 2, title: "30min Meeting", slug: "30min", length: 30 },
+          ]
+        }),
+      },
+      create: {
+        useMutation: () => ({
+          mutate: async () => {},
+          isLoading: false,
+        }),
+      }
+    },
+    updateProfile: {
+      useMutation: () => ({
+        mutate: async () => {},
+        isPending: false,
+      }),
+    },
+  },
+};
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    user: {
+      type: "string",
+      value: JSON.stringify({
+        id: 1,
+        name: "John Doe",
+        email: "john@example.com",
+        avatar: "https://example.com/avatar.jpg",
+        bio: "I'm a software developer",
+        completedOnboarding: false,
+        timeFormat: 12,
+        weekStart: "Monday",
+        theme: "light",
+        brandColor: "#292929",
+        darkBrandColor: "#fafafa",
+        away: false,
+      }),
+      label: "User Data",
+    },
+    eventTypes: {
+      type: "string",
+      value: JSON.stringify([
+        { id: 1, title: "15min Meeting", slug: "15min", length: 15 },
+        { id: 2, title: "30min Meeting", slug: "30min", length: 30 },
+      ]),
+      label: "Event Types",
+    },
+  });
+
+  // Create a form context
+  const methods = useForm({
+    defaultValues: {
+      username: "johndoe",
+      name: "John Doe",
+      email: "john@example.com",
+      bio: "I'm a software developer",
+      timeFormat: 12,
+      weekStart: "Monday",
+      theme: "light",
+      brandColor: "#292929",
+      darkBrandColor: "#fafafa",
+      away: false,
+    }
+  });
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <FormProvider {...methods}>
+        <div className="w-full">
+          <ImportedComponent />
+        </div>
+      </FormProvider>
+    </QueryClientProvider>
+  );
+}
+</content>
+  </change>
+</file>
+
+I've made the following changes:
+1. Removed the Jotai Provider and its import since it's not available
+2. Enhanced the mock user data with additional fields that might be needed by the component
+3. Added more comprehensive default values to the form context
+4. Kept the QueryClientProvider and FormProvider as they are essential
+5. Expanded the mock TRPC client with more detailed user data
+
+This should allow the component to function without the Jotai dependency. The component will now rely on React Query and React Hook Form for state management instead. If there are any specific Jotai atoms that the component needs, we might need to mock those values through props or context, but let's see if this works first.
+
+Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/UserProfile-2b7f371e.tsx
+
+All changes applied successfully. Checking for errors...
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/UserProfile-2b7f371e.tsx
+
+All changes applied successfully. Checking for errors...
