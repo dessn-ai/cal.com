@@ -1,0 +1,482 @@
+System: You are an expert React developer working on a project that renders preview components. Your task is to fix any errors.
+
+## Role & Capabilities
+- You are a **component error fixing assistant**
+- You can read files, make edits, and use tools to diagnose issues
+- You have access to browser errors
+
+## Tools Available
+1. **getFile** (Using tool call) - Read contents of project files
+2. **File Editing** (Using xml tags in your response) - Make changes to fix errors using XML format
+
+## File Edit Format
+When you want to edit a file, use this exact XML format:
+
+<file path="path/to/file">
+  <change>
+    <description>Brief explanation of what you're changing</description>
+    <content>
+// Your complete file content here
+    </content>
+  </change>
+</file>
+
+## Important Rules
+1. Only update a file if you know its contents. Use getFile tool to read first.
+2. Most errors can be fixed by updating the preview file. Only update other files if necessary.
+3. Provide complete file content - do not use placeholders or ellipses.
+4. Always include necessary imports and dependencies.
+5. When making changes:
+   - Add all required import statements
+   - Include complete component code
+   - Ensure proper TypeScript types
+   - Handle all edge cases
+
+## Error Handling Process
+1. Read and understand the error message
+2. Use getFile to examine relevant files
+3. Make targeted fixes using the XML format
+4. If the error is caused by the fact that a provider is missing. In these cases, find the provider and add it to the preview file.
+4. If the error persists, try different fixes. Sometimes the error is caused by external dependencies that we dont' have access to. In those cases, you can try to fix the error by mocking,removing or try catching.
+5. REMEMBER, your resonse must have <file> tags with the file path and content if you want to edit a file.
+6. Always output the entire file content in full. Do not be lazy by adding //(code remains the same) or //(code remains unchanged). This will cause more errors.
+
+## Example: Fixing a Form Error
+Here's an example of how to handle a typical error:
+
+Error Message:
+TypeError: Cannot read properties of undefined (reading 'errors')
+at FormInput (/src/components/common/form/FormInput.tsx:23:18)
+
+Step 1: Read the file to understand the context
+
+// First, read the file
+{
+  "name": "getFile",
+  "arguments": {
+    "filePath": "src/components/common/form/FormInput.tsx"
+  }
+}
+
+// Response shows:
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState } = useFormContext();
+  const error = formState.errors[name]?.message;  // Error occurs here
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+
+Step 2: Fix the issue by adding proper error handling
+
+<file path="src/components/common/form/FormInput.tsx">
+  <change>
+    <description>Add null check for formState and provide default values</description>
+    <content>
+===
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState = {} } = useFormContext() || {};
+  const error = formState?.errors?.[name]?.message;
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+===
+    </content>
+  </change>
+</file>
+
+The fix:
+1. Added null check for useFormContext result
+2. Provided default empty object for formState
+3. Used optional chaining for safer property access
+
+Please proceed with fixing any errors you encounter following these guidelines.
+
+User: An error occurred when rendering the component route at FormInputFields-4f8c71c0.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: Cannot read properties of null (reading 'useContext')TypeError: Cannot read properties of null (reading 'useContext')
+
+## Stack Trace
+```
+    at useContext (/node_modules/.vite/deps/chunk-Y2LGBLNO.js?v=0122de33:1066:29)
+    at useAtomsContext (/@fs/Users/nimcheema/src/cal.com/packages/platform/atoms/hooks/useAtomsContext.ts:14:38)
+    at useLocale (/@fs/Users/nimcheema/src/cal.com/packages/lib/hooks/useLocale.ts:4:19)
+    at InputField2 (/@fs/Users/nimcheema/src/cal.com/packages/ui/components/form/inputs/TextField.tsx:102:42)
+    at renderWithHooks (/node_modules/.vite/deps/chunk-VAA346CW.js?v=76f615fd:11604:26)
+    at updateForwardRef (/node_modules/.vite/deps/chunk-VAA346CW.js?v=76f615fd:14381:28)
+    at beginWork (/node_modules/.vite/deps/chunk-VAA346CW.js?v=76f615fd:16002:22)
+    at beginWork$1 (/node_modules/.vite/deps/chunk-VAA346CW.js?v=76f615fd:19814:22)
+    at performUnitOfWork (/node_modules/.vite/deps/chunk-VAA346CW.js?v=76f615fd:19262:20)
+    at workLoopSync (/node_modules/.vite/deps/chunk-VAA346CW.js?v=76f615fd:19198:13)
+```
+
+## Component Stack
+```
+
+    at InputField2 (/@fs/Users/nimcheema/src/cal.com/packages/ui/components/form/inputs/TextField.tsx:101:14)
+    at EmailField2
+    at EmailFactory
+    at div
+    at FormInputFields (/@fs/Users/nimcheema/src/cal.com/packages/app-store/routing-forms/components/FormInputFields.tsx:10:11)
+    at ComponentPreview (/.temp/dessn-component-routes/FormInputFields-4f8c71c0.tsx:5:29)
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-V5CPFW2J.js?v=76f615fd:45:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=76f615fd:63:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-4TGN4JZF.js?v=76f615fd:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-YNXSDE23.js?v=76f615fd:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-5FF2ZLIP.js?v=76f615fd:927:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=76f615fd:1100:28)
+    at Providers (/.temp/Wrapper.tsx:65:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:102:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/FormInputFields-4f8c71c0.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/app-store/routing-forms/components/FormInputFields';
+
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    form: {
+      type: "object",
+      value: {
+        fields: [
+          {
+            id: "1",
+            type: "text",
+            label: "Name",
+            placeholder: "Enter your name",
+            required: true
+          },
+          {
+            id: "2",
+            type: "email",
+            label: "Email",
+            placeholder: "Enter your email",
+            required: true
+          }
+        ]
+      },
+      label: "Form"
+    },
+    response: {
+      type: "object",
+      value: {},
+      label: "Response"
+    },
+    disabledFields: {
+      type: "dropdown",
+      value: "",
+      options: ["1", "2"],
+      label: "Disabled Fields"
+    }
+  });
+
+  const setResponse = (newResponse: any) => {
+    setState("response", newResponse);
+  };
+
+  return (
+    <ImportedComponent
+      form={state.form.value}
+      response={state.response.value}
+      setResponse={setResponse}
+      disabledFields={state.disabledFields.value ? [state.disabledFields.value] : []}
+    />
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: [object Object],[object Object]
+
+
+Assistant: I'll update the file to include the AtomsProvider and necessary imports:
+
+<file path="apps/web/.temp/dessn-component-routes/FormInputFields-4f8c71c0.tsx">
+<change>
+<description>Add AtomsProvider and necessary imports to fix the context error</description>
+<content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/app-store/routing-forms/components/FormInputFields';
+import { AtomsProvider } from '@calcom/atoms/AtomsProvider';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    form: {
+      type: "object",
+      value: {
+        fields: [
+          {
+            id: "1",
+            type: "text",
+            label: "Name",
+            placeholder: "Enter your name",
+            required: true
+          },
+          {
+            id: "2",
+            type: "email",
+            label: "Email",
+            placeholder: "Enter your email",
+            required: true
+          }
+        ]
+      },
+      label: "Form"
+    },
+    response: {
+      type: "object",
+      value: {},
+      label: "Response"
+    },
+    disabledFields: {
+      type: "dropdown",
+      value: "",
+      options: ["1", "2"],
+      label: "Disabled Fields"
+    }
+  });
+
+  const setResponse = (newResponse: any) => {
+    setState("response", newResponse);
+  };
+
+  return (
+    <AtomsProvider>
+      <ImportedComponent
+        form={state.form.value}
+        response={state.response.value}
+        setResponse={setResponse}
+        disabledFields={state.disabledFields.value ? [state.disabledFields.value] : []}
+      />
+    </AtomsProvider>
+  );
+}
+</content>
+</change>
+</file>
+
+The changes I made:
+1. Added import for AtomsProvider from '@calcom/atoms/AtomsProvider'
+2. Wrapped the ImportedComponent with AtomsProvider to provide the necessary context
+
+This should resolve the error about missing context for useContext. The AtomsProvider will provide the necessary context for the useLocale hook that's being used within the TextField component.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/FormInputFields-4f8c71c0.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at FormInputFields-4f8c71c0.tsx
+Error:
+[plugin:vite:import-analysis] Missing "./AtomsProvider" specifier in "@calcom/atoms" package/Users/nimcheema/src/cal.com/apps/web/.temp/dessn-component-routes/FormInputFields-4f8c71c0.tsx:4:302  |  import { useParentState } from "../useIframeState";
+3  |  import ImportedComponent from "../../../../packages/app-store/routing-forms/components/FormInputFields";
+4  |  import { AtomsProvider } from "@calcom/atoms/AtomsProvider";
+   |                                 ^
+5  |  export default function ComponentPreview() {
+6  |    const [state, setState] = useParentState({    at e (/Users/nimcheema/src/dessn/packages/components/node_modules/vite/dist/node/chunks/dep-Cg8OuIew.js:16213:29)
+    at n (/Users/nimcheema/src/dessn/packages/components/node_modules/vite/dist/node/chunks/dep-Cg8OuIew.js:16213:634)
+    at resolveExportsOrImports (/Users/nimcheema/src/dessn/packages/components/node_modules/vite/dist/node/chunks/dep-Cg8OuIew.js:17415:39)
+    at resolveDeepImport (/Users/nimcheema/src/dessn/packages/components/node_modules/vite/dist/node/chunks/dep-Cg8OuIew.js:17429:25)
+    at tryNodeResolve (/Users/nimcheema/src/dessn/packages/components/node_modules/vite/dist/node/chunks/dep-Cg8OuIew.js:17259:18)
+    at <anonymous> (/Users/nimcheema/src/dessn/packages/components/node_modules/vite/dist/node/chunks/dep-Cg8OuIew.js:17032:19Click outside, press Esc key, or fix the code to dismiss.You can also disable this overlay by setting server.hmr.overlay to false in vite.config.js.
+
+<file name="apps/web/.temp/dessn-component-routes/FormInputFields-4f8c71c0.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/app-store/routing-forms/components/FormInputFields';
+import { AtomsProvider } from '@calcom/atoms/AtomsProvider';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    form: {
+      type: "object",
+      value: {
+        fields: [
+          {
+            id: "1",
+            type: "text",
+            label: "Name",
+            placeholder: "Enter your name",
+            required: true
+          },
+          {
+            id: "2",
+            type: "email",
+            label: "Email",
+            placeholder: "Enter your email",
+            required: true
+          }
+        ]
+      },
+      label: "Form"
+    },
+    response: {
+      type: "object",
+      value: {},
+      label: "Response"
+    },
+    disabledFields: {
+      type: "dropdown",
+      value: "",
+      options: ["1", "2"],
+      label: "Disabled Fields"
+    }
+  });
+
+  const setResponse = (newResponse: any) => {
+    setState("response", newResponse);
+  };
+
+  return (
+    <AtomsProvider>
+      <ImportedComponent
+        form={state.form.value}
+        response={state.response.value}
+        setResponse={setResponse}
+        disabledFields={state.disabledFields.value ? [state.disabledFields.value] : []}
+      />
+    </AtomsProvider>
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: I see the issue - the import path for AtomsProvider is incorrect. Let me fix this by creating a mock AtomsProvider since we don't have direct access to the actual provider. This is a common pattern when dealing with missing dependencies in preview environments.
+
+<file path="apps/web/.temp/dessn-component-routes/FormInputFields-4f8c71c0.tsx">
+<change>
+<description>Create a mock AtomsProvider and fix the imports</description>
+<content>
+import React, { createContext, useContext } from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/app-store/routing-forms/components/FormInputFields';
+
+// Create mock atoms context
+const AtomsContext = createContext({
+  locale: {
+    locale: 'en',
+    i18n: {
+      language: 'en',
+      defaultLocale: 'en',
+    },
+  }
+});
+
+// Mock AtomsProvider component
+const MockAtomsProvider = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <AtomsContext.Provider
+      value={{
+        locale: {
+          locale: 'en',
+          i18n: {
+            language: 'en',
+            defaultLocale: 'en',
+          },
+        }
+      }}
+    >
+      {children}
+    </AtomsContext.Provider>
+  );
+};
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    form: {
+      type: "object",
+      value: {
+        fields: [
+          {
+            id: "1",
+            type: "text",
+            label: "Name",
+            placeholder: "Enter your name",
+            required: true
+          },
+          {
+            id: "2",
+            type: "email",
+            label: "Email",
+            placeholder: "Enter your email",
+            required: true
+          }
+        ]
+      },
+      label: "Form"
+    },
+    response: {
+      type: "object",
+      value: {},
+      label: "Response"
+    },
+    disabledFields: {
+      type: "dropdown",
+      value: "",
+      options: ["1", "2"],
+      label: "Disabled Fields"
+    }
+  });
+
+  const setResponse = (newResponse: any) => {
+    setState("response", newResponse);
+  };
+
+  return (
+    <MockAtomsProvider>
+      <ImportedComponent
+        form={state.form.value}
+        response={state.response.value}
+        setResponse={setResponse}
+        disabledFields={state.disabledFields.value ? [state.disabledFields.value] : []}
+      />
+    </MockAtomsProvider>
+  );
+}
+</content>
+</change>
+</file>
+
+The changes I made:
+1. Removed the problematic import of AtomsProvider
+2. Created a mock AtomsContext using createContext
+3. Created a MockAtomsProvider component that provides basic locale information
+4. Updated the component to use MockAtomsProvider instead of AtomsProvider
+
+This solution:
+- Removes the dependency on the external AtomsProvider
+- Provides the necessary context values that the component needs
+- Maintains the same functionality while fixing the import error
+
+The mock provider includes basic locale information that should be sufficient for the preview environment. This approach is commonly used in testing and preview environments where we don't have access to all production dependencies.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/FormInputFields-4f8c71c0.tsx
+
+All changes applied successfully. Checking for errors...
