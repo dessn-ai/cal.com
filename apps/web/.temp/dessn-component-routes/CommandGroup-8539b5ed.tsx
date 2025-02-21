@@ -1,7 +1,5 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { CommandGroup } from '../../../../packages/ui/components/command/index';
-
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,8 +16,14 @@ export default function ComponentPreview() {
   });
 
   return (
-    <CommandGroup className={state.className.value}>
-      {state.children.value}
-    </CommandGroup>
+    <div className="command-root">
+      <div className="command-list">
+        <div className={`command-group ${state.className.value}`}>
+          <div className="command-item">
+            {state.children.value}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

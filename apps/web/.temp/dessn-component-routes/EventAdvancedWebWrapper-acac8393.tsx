@@ -1,14 +1,51 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/platform/atoms/event-types/wrappers/EventAdvancedWebWrapper';
-
+import { useForm, FormProvider } from 'react-hook-form';
 import { trpc } from '@calcom/trpc/react';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     eventType: {
       type: 'object',
-      value: {},
+      value: {
+        id: 1,
+        title: 'Test Event',
+        length: 30,
+        locations: [],
+        workflows: [],
+        bookingFields: [],
+        users: [{ id: 1, name: 'Test User' }],
+        seatsPerTimeSlot: null,
+        requiresConfirmation: false,
+        metadata: {
+          apps: {
+            stripe: {
+              enabled: false,
+              paymentOption: null
+            }
+          },
+          disableStandardEmails: {
+            confirmation: {
+              host: false,
+              attendee: false
+            }
+          }
+        },
+        hideCalendarNotes: false,
+        hideCalendarEventDetails: false,
+        seatsShowAttendees: false,
+        seatsShowAvailabilityCount: false,
+        schedulingType: null,
+        bookerUrl: 'test-url',
+        successRedirectUrl: '',
+        lockTimeZoneToggleOnBookingPage: false,
+        requiresBookerEmailVerification: false,
+        canSendCalVideoTranscriptionEmails: false,
+        forwardParamsSuccessRedirect: false,
+        multiplePrivateLinks: [],
+        useEventLevelSelectedCalendars: false
+      },
       label: 'Event Type',
     },
     team: {
@@ -37,6 +74,35 @@ export default function ComponentPreview() {
     console.log(`Toast: ${message} (${variant})`);
   };
 
+  // Initialize form methods with complete default values
+  const methods = useForm({
+    defaultValues: {
+      ...state.eventType.value,
+      bookingFields: [],
+      locations: [],
+      workflows: [],
+      seatsPerTimeSlot: null,
+      requiresConfirmation: false,
+      successRedirectUrl: '',
+      hideCalendarNotes: false,
+      hideCalendarEventDetails: false,
+      metadata: {
+        apps: {
+          stripe: {
+            enabled: false,
+            paymentOption: null
+          }
+        },
+        disableStandardEmails: {
+          confirmation: {
+            host: false,
+            attendee: false
+          }
+        }
+      }
+    },
+  });
+
   // Mock trpc.viewer.connectedCalendars.useQuery
   const mockUseQuery = () => ({
     data: [],
@@ -54,12 +120,14 @@ export default function ComponentPreview() {
   };
 
   return (
-    <ImportedComponent
-      eventType={state.eventType.value}
-      team={state.team.value}
-      user={state.user.value}
-      isUserLoading={state.isUserLoading.value}
-      showToast={showToast}
-    />
+    <FormProvider {...methods}>
+      <ImportedComponent
+        eventType={state.eventType.value}
+        team={state.team.value}
+        user={state.user.value}
+        isUserLoading={state.isUserLoading.value}
+        showToast={showToast}
+      />
+    </FormProvider>
   );
 }

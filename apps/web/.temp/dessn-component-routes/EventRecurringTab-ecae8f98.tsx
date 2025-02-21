@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { EventRecurringTab } from '../../../../packages/features/eventtypes/components/tabs/recurring/EventRecurringTab';
-
+import { FormProvider, useForm } from 'react-hook-form';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -45,11 +45,19 @@ export default function ComponentPreview() {
 
   const eventType = JSON.parse(state.eventType.value);
   const customClassNames = JSON.parse(state.customClassNames.value);
+  
+  const formMethods = useForm({
+    defaultValues: {
+      recurringEvent: null,
+    },
+  });
 
   return (
-    <EventRecurringTab
-      eventType={eventType}
-      customClassNames={customClassNames}
-    />
+    <FormProvider {...formMethods}>
+      <EventRecurringTab
+        eventType={eventType}
+        customClassNames={customClassNames}
+      />
+    </FormProvider>
   );
 }

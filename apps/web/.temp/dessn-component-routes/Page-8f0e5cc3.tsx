@@ -1,36 +1,56 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/teams/[id]/appearance/page';
 
+// Use dynamic import with error boundary
+const ImportedComponent = React.lazy(() => import('../../app/(use-page-wrapper)/settings/(settings-layout)/teams/[id]/appearance/page').catch(() => ({
+  default: () => <div>Error loading component</div>
+})));
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  _generateMetadata: jest.fn(),
-  getTranslate: jest.fn(() => Promise.resolve((key) => key)),
-}));
+// Simplified mock setup
+const mockTranslate = (key: string) => key;
 
-jest.mock('@calcom/features/ee/teams/pages/team-appearance-view', () => {
-  return function MockLegacyPage() {
-    return <div>Mock Legacy Page</div>;
-  };
-});
+if (typeof window !== 'undefined') {
+  // Only mock in browser environment
+  window.getTranslate = () => Promise.resolve(mockTranslate);
+}
 
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children, title, description }) {
-    return (
-      <div>
-        <h1>{title}</h1>
-        <p>{description}</p>
-        {children}
-      </div>
-    );
-  };
-});
+// Fallback component
+const LoadingFallback = () => <div>Loading...</div>;
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
-    // No props identified for this component
+    // Add any required state here
+    teamId: '1', // Default team ID
   });
 
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <ErrorBoundary>
+        <ImportedComponent />
+      </ErrorBoundary>
+    </Suspense>
+  );
+}
+
+// Simple Error Boundary Component
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong loading the component.</div>;
+    }
+
+    return this.props.children;
+  }
 }

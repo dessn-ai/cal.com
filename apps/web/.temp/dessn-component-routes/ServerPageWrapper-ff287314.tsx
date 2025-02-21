@@ -1,12 +1,51 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/more/page';
 
+// Wrap the import in a try-catch
+const ImportedComponent = React.lazy(() => import('../../app/(use-page-wrapper)/more/page').catch(() => ({
+  default: () => <div>Error loading component</div>
+})));
 
 export default function ComponentPreview() {
-  // Since ServerPageWrapper doesn't have any props, we don't need to use useParentState
-  // However, we'll keep it here in case props are added in the future
-  const [state, setState] = useParentState({});
+  // Wrap the state management in a try-catch
+  let state, setState;
+  try {
+    [state, setState] = useParentState({});
+  } catch (error) {
+    console.error('Failed to initialize state:', error);
+    state = {};
+    setState = () => {};
+  }
 
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ErrorBoundary>
+        <ImportedComponent />
+      </ErrorBoundary>
+    </Suspense>
+  );
+}
+
+// Simple Error Boundary Component
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('Component Error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong loading the component.</div>;
+    }
+
+    return this.props.children;
+  }
 }

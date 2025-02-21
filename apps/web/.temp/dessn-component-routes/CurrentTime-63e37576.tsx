@@ -2,9 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { CurrentTime } from '../../../../packages/features/calendars/weeklyview/components/currentTime/index';
 
-import { CalendarStoreProvider } from '../../../../packages/features/calendars/weeklyview/state/store';
-import { BookerTimeProvider } from '../../../../packages/features/bookings/Booker/components/hooks/useBookerTime';
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     startHour: {
@@ -30,10 +27,8 @@ export default function ComponentPreview() {
   });
 
   return (
-    <CalendarStoreProvider>
-      <BookerTimeProvider>
-        <CurrentTime />
-      </BookerTimeProvider>
-    </CalendarStoreProvider>
+    <div style={{ position: 'relative', height: '100vh' }}>
+      <CurrentTime />
+    </div>
   );
 }

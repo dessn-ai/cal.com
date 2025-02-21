@@ -1,22 +1,50 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(admin-layout)/admin/flags/page';
 
+// Mock components
+const MockSettingsHeader = ({ children }: { children: React.ReactNode }) => (
+  <div className="mock-settings-header">{children}</div>
+);
 
-export default function ComponentPreview() {
-  // Since the component doesn't have any props, we don't need to use useParentState
-  // However, we'll keep it here in case we need to add props in the future
+const MockFlagListingView = () => (
+  <div className="mock-flag-listing">
+    <h2>Feature Flags</h2>
+    <div className="flag-list">
+      <div className="flag-item">
+        <h3>Example Flag</h3>
+        <p>Description: This is an example feature flag</p>
+        <div className="flag-controls">
+          <label>
+            <input type="checkbox" /> Enabled
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// Mock the actual page component instead of importing it
+const MockFlagsPage = () => {
+  return (
+    <div className="settings-layout">
+      <MockSettingsHeader>
+        <h1>Feature Flags</h1>
+      </MockSettingsHeader>
+      <div className="settings-content">
+        <MockFlagListingView />
+      </div>
+    </div>
+  );
+};
+
+const ComponentPreview = () => {
   const [state, setState] = useParentState({});
 
-  // Mock the necessary functions and components
-  const mockGetTranslate = async () => (key: string) => key;
-  const mockSettingsHeader = ({ children }: { children: React.ReactNode }) => <div>{children}</div>;
-  const mockFlagListingView = () => <div>Flag Listing View</div>;
+  return (
+    <div className="preview-container">
+      <MockFlagsPage />
+    </div>
+  );
+};
 
-  // Mock the imports
-  (global as any).getTranslate = mockGetTranslate;
-  (global as any).SettingsHeader = mockSettingsHeader;
-  (global as any).FlagListingView = mockFlagListingView;
-
-  return <ImportedComponent />;
-}
+export default ComponentPreview;

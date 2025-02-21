@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { FormBuilder } from '../../../../packages/features/form-builder/FormBuilder';
-
+import { useForm, FormProvider } from "react-hook-form";
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -39,16 +39,36 @@ export default function ComponentPreview() {
   });
 
   const dataStore = JSON.parse(state.dataStore.value);
+  
+  // Initialize the form with the correct structure
+  const methods = useForm({
+    defaultValues: {
+      // Initialize with the property name that matches formProp.value
+      [state.formProp.value]: [
+        // Add a default field to prevent empty state
+        {
+          name: "default_field",
+          type: "text",
+          label: "Default Field",
+          required: false,
+        }
+      ]
+    }
+  });
 
   return (
-    <FormBuilder
-      formProp={state.formProp.value}
-      title={state.title.value}
-      description={state.description.value}
-      addFieldLabel={state.addFieldLabel.value}
-      disabled={state.disabled.value}
-      LockedIcon={false}
-      dataStore={dataStore}
-    />
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(() => {})}>
+        <FormBuilder
+          formProp={state.formProp.value}
+          title={state.title.value}
+          description={state.description.value}
+          addFieldLabel={state.addFieldLabel.value}
+          disabled={state.disabled.value}
+          LockedIcon={false}
+          dataStore={dataStore}
+        />
+      </form>
+    </FormProvider>
   );
 }

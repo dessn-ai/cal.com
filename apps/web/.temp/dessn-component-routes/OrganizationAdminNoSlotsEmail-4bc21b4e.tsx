@@ -2,14 +2,18 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { OrganizationAdminNoSlotsEmail } from '../../../../packages/emails/src/templates/OrganizationAdminNoSlots';
 
+// Mock translation function that returns the key and interpolates values
+const mockTranslation = (key: string, values?: Record<string, string>) => {
+  if (!values) return key;
+  let result = key;
+  Object.entries(values).forEach(([k, v]) => {
+    result = result.replace(`{{${k}}}`, v);
+  });
+  return result;
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
-    language: {
-      type: "string",
-      value: (key: string, options?: any) => key,
-      label: "Language Function",
-    },
     to: {
       type: "string",
       value: "admin@example.com",
@@ -47,16 +51,21 @@ export default function ComponentPreview() {
     },
   });
 
-  return (
-    <OrganizationAdminNoSlotsEmail
-      language={state.language.value}
-      to={{ email: state.to.value }}
-      user={state.user.value}
-      slug={state.slug.value}
-      startTime={state.startTime.value}
-      endTime={state.endTime.value}
-      editLink={state.editLink.value}
-      teamSlug={state.teamSlug.value}
-    />
-  );
+  try {
+    return (
+      <OrganizationAdminNoSlotsEmail
+        language={mockTranslation}
+        to={{ email: state.to.value }}
+        user={state.user.value}
+        slug={state.slug.value}
+        startTime={state.startTime.value}
+        endTime={state.endTime.value}
+        editLink={state.editLink.value}
+        teamSlug={state.teamSlug.value}
+      />
+    );
+  } catch (error) {
+    console.error('Error rendering OrganizationAdminNoSlotsEmail:', error);
+    return <div>Error rendering email preview</div>;
+  }
 }

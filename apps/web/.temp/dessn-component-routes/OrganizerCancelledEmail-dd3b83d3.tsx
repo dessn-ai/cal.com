@@ -2,6 +2,10 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { OrganizerCancelledEmail } from '../../../../packages/emails/src/templates/OrganizerCancelledEmail';
 
+// Create a simple translation function
+const createTranslateFunction = () => (key: string, vars?: Record<string, string>) => {
+  return vars ? `${key} ${JSON.stringify(vars)}` : key;
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -16,14 +20,19 @@ export default function ComponentPreview() {
           name: "Jane Smith",
           email: "jane@example.com",
           timeZone: "America/New_York",
-          language: { translate: (key: string) => key, locale: "en" }
+          language: {
+            locale: "en"
+          }
         },
         attendees: [{
           name: "John Doe",
           email: "john@example.com",
           timeZone: "America/Los_Angeles",
-          language: { translate: (key: string) => key, locale: "en" }
-        }]
+          language: {
+            locale: "en"
+          }
+        }],
+        schedulingType: "default"
       }),
       label: "Calendar Event"
     },
@@ -33,7 +42,9 @@ export default function ComponentPreview() {
         name: "John Doe",
         email: "john@example.com",
         timeZone: "America/Los_Angeles",
-        language: { translate: (key: string) => key, locale: "en" }
+        language: {
+          locale: "en"
+        }
       }),
       label: "Attendee"
     },
@@ -53,7 +64,9 @@ export default function ComponentPreview() {
         name: "Team Member",
         email: "team@example.com",
         timeZone: "Europe/London",
-        language: { translate: (key: string) => key, locale: "en" }
+        language: {
+          locale: "en"
+        }
       }),
       label: "Team Member"
     },
@@ -69,12 +82,25 @@ export default function ComponentPreview() {
     }
   });
 
+  // Parse the JSON and add the translation function
+  const calEvent = JSON.parse(state.calEvent.value);
+  calEvent.organizer.language.translate = createTranslateFunction();
+  calEvent.attendees.forEach(attendee => {
+    attendee.language.translate = createTranslateFunction();
+  });
+
+  const attendee = JSON.parse(state.attendee.value);
+  attendee.language.translate = createTranslateFunction();
+
+  const teamMember = JSON.parse(state.teamMember.value);
+  teamMember.language.translate = createTranslateFunction();
+
   const props = {
-    calEvent: JSON.parse(state.calEvent.value),
-    attendee: JSON.parse(state.attendee.value),
+    calEvent,
+    attendee,
     newSeat: state.newSeat.value,
     attendeeCancelled: state.attendeeCancelled.value,
-    teamMember: JSON.parse(state.teamMember.value),
+    teamMember,
     reassigned: JSON.parse(state.reassigned.value),
   };
 

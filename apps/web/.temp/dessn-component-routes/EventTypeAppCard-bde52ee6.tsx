@@ -1,7 +1,34 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/zoho-bigin/components/EventTypeAppCardInterface';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+// Create a new QueryClient instance
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+// Mock the useIsAppEnabled hook functionality
+const MockIsAppEnabledProvider = ({ children }) => {
+  const mockValue = {
+    enabled: true,
+    updateEnabled: () => {},
+  };
+
+  // Create a context to provide the mock value
+  const IsAppEnabledContext = React.createContext(mockValue);
+  
+  return (
+    <IsAppEnabledContext.Provider value={mockValue}>
+      {children}
+    </IsAppEnabledContext.Provider>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -15,7 +42,10 @@ export default function ComponentPreview() {
         length: 30,
         recurringEvent: null,
         seatsPerTimeSlot: null,
-        team: null,
+        team: {
+          id: null,
+          name: null
+        },
         schedulingType: "COLLECTIVE",
         URL: "https://example.com/event-type"
       },
@@ -40,7 +70,9 @@ export default function ComponentPreview() {
         category: "other",
         slug: "zoho-bigin",
         trending: false,
-        email: "help@cal.com"
+        email: "help@cal.com",
+        credentials: [],
+        credentialIds: []
       },
       label: "App"
     },
@@ -52,10 +84,14 @@ export default function ComponentPreview() {
   });
 
   return (
-    <ImportedComponent
-      eventType={state.eventType.value}
-      app={state.app.value}
-      disabled={state.disabled.value}
-    />
+    <QueryClientProvider client={queryClient}>
+      <MockIsAppEnabledProvider>
+        <ImportedComponent
+          eventType={state.eventType.value}
+          app={state.app.value}
+          disabled={state.disabled.value}
+        />
+      </MockIsAppEnabledProvider>
+    </QueryClientProvider>
   );
 }

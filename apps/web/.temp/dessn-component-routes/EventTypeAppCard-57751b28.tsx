@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/mock-payment-app/components/EventTypeAppCardInterface';
-
+import EventTypeAppContext from '@calcom/app-store/EventTypeAppContext';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -26,9 +26,29 @@ export default function ComponentPreview() {
       value: {
         name: "Mock Payment App",
         description: "This is a mock payment app for testing",
-        logo: "https://example.com/logo.png",
+        logo: "/api/app-store/mockpaymentapp/icon.svg",
+        slug: "mock-payment-app",
         category: "payment",
-        url: "https://example.com/app"
+        categories: ["payment"],
+        enabled: true,
+        isInstalled: true,
+        isSetupAlready: true,
+        url: "https://example.com/app",
+        variant: "payment",
+        type: "mock-payment-app_payment",
+        title: "Mock Payment App",
+        email: "test@example.com",
+        dirName: "mock-payment-app",
+        extendsFeature: "payment",
+        credentials: [],
+        publisher: "Cal.com",
+        rating: 5,
+        reviews: 0,
+        feeType: "usage-based",
+        price: 0,
+        commission: 0,
+        isGlobal: false,
+        installed: true
       },
       label: "App"
     },
@@ -39,11 +59,26 @@ export default function ComponentPreview() {
     }
   });
 
+  // Initial app data context
+  const appData = {
+    price: 1000, // Default price (in cents)
+    currency: "USD",
+    paymentOption: "ON_BOOKING",
+    enabled: true
+  };
+
   return (
-    <ImportedComponent
-      eventType={state.eventType.value}
-      app={state.app.value}
-      disabled={state.disabled.value}
-    />
+    <EventTypeAppContext.Provider
+      value={{
+        appData,
+        setAppData: () => {},
+        getAppData: (key) => appData[key],
+      }}>
+      <ImportedComponent
+        eventType={state.eventType.value}
+        app={state.app.value}
+        disabled={state.disabled.value}
+      />
+    </EventTypeAppContext.Provider>
   );
 }

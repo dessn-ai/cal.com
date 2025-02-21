@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { createHydrateClient } from '../../app/_trpc/createHydrateClient';
-
 import { DehydratedState } from '@tanstack/react-query';
 
 export default function ComponentPreview() {
@@ -16,7 +15,17 @@ export default function ComponentPreview() {
     },
   });
 
-  const transformer = JSON.parse(state.transformer.value);
+  // Create a proper transformer object with actual functions
+  const transformer = {
+    serialize: (data: any) => JSON.stringify(data),
+    deserialize: (data: any) => {
+      try {
+        return typeof data === 'string' ? JSON.parse(data) : data;
+      } catch {
+        return data;
+      }
+    },
+  };
 
   const HydrateClient = createHydrateClient({ transformer });
 

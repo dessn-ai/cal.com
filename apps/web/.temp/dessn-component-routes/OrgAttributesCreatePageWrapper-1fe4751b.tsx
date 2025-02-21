@@ -1,12 +1,50 @@
-import React from 'react';
+import React, { Suspense, useState } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/organizations/attributes/create/page';
 
+// Mock providers to avoid dependency issues
+const MockOrgBrandingProvider = ({ children }) => <>{children}</>;
+const MockFeatureProvider = ({ children }) => <>{children}</>;
+const MockTooltipProvider = ({ children }) => <>{children}</>;
+
+// Error Boundary Component
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong. Please try again.</div>;
+    }
+
+    return this.props.children;
+  }
+}
+
+// Lazy load the imported component
+const LazyImportedComponent = React.lazy(() => import('../../app/(use-page-wrapper)/settings/(settings-layout)/organizations/attributes/create/page').catch(() => ({
+  default: () => <div>Failed to load component</div>
+})));
 
 export default function ComponentPreview() {
-  // Since the component doesn't have any props, we don't need to use useParentState
-  // However, we'll keep it here in case we need to add props in the future
   const [state, setState] = useParentState({});
 
-  return <ImportedComponent />;
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<div>Loading...</div>}>
+        <MockTooltipProvider>
+          <MockFeatureProvider>
+            <MockOrgBrandingProvider>
+              <LazyImportedComponent />
+            </MockOrgBrandingProvider>
+          </MockFeatureProvider>
+        </MockTooltipProvider>
+      </Suspense>
+    </ErrorBoundary>
+  );
 }

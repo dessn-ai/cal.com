@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { Toast } from '../../../../packages/platform/atoms/src/components/ui/toast';
-
+import { Toast, ToastProvider, ToastViewport } from '../../../../packages/platform/atoms/src/components/ui/toast';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -24,11 +23,14 @@ export default function ComponentPreview() {
   });
 
   return (
-    <Toast variant={state.variant.value as "default" | "destructive"}>
-      <div>
-        <strong>{state.title.value}</strong>
-        <p>{state.description.value}</p>
-      </div>
-    </Toast>
+    <ToastProvider>
+      <Toast variant={state.variant.value as "default" | "destructive"}>
+        <div>
+          <strong>{state.title.value}</strong>
+          <p>{state.description.value}</p>
+        </div>
+      </Toast>
+      <ToastViewport />
+    </ToastProvider>
   );
 }

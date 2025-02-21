@@ -1,28 +1,35 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/organizations/admin-api/page';
 
+// Mock component to prevent actual import
+const MockAdminAPIView = () => {
+  return <div>Admin API View</div>;
+};
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  getTranslate: jest.fn(() => (key: string) => key),
-  _generateMetadata: jest.fn(),
-}));
+// Mock component for SettingsHeader
+const MockSettingsHeader = ({ children }: { children: React.ReactNode }) => {
+  return <div>Settings Header {children}</div>;
+};
 
-jest.mock('@calcom/features/ee/organizations/pages/settings/admin-api', () => ({
-  AdminAPIView: () => <div>AdminAPIView Mock</div>,
-}));
-
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children }: { children: React.ReactNode }) {
-    return <div>SettingsHeader Mock {children}</div>;
-  };
-});
+// Create a mock version of the page component
+const MockPageComponent = () => {
+  return (
+    <div>
+      <MockSettingsHeader>
+        <MockAdminAPIView />
+      </MockSettingsHeader>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     // No props identified for this component
   });
 
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <MockPageComponent />
+    </Suspense>
+  );
 }

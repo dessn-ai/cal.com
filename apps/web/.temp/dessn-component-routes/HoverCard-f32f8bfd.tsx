@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { HoverCard } from '../../../../packages/ui/components/hover-card/index';
-
+import { HoverCard, HoverCardContent, HoverCardTrigger, HoverCardPortal } from '../../../../packages/ui/components/hover-card';
+import { classNames } from "@calcom/lib";
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -25,18 +25,24 @@ export default function ComponentPreview() {
   });
 
   return (
-    <HoverCard>
-      <HoverCard.Trigger>Hover over me</HoverCard.Trigger>
-      <HoverCard.Portal>
-        <HoverCard.Content
-          className="p-4"
-          align={state.align.value}
-          sideOffset={state.sideOffset.value}
-          data-theme={state.theme.value}
-        >
-          <p>This is the hover card content</p>
-        </HoverCard.Content>
-      </HoverCard.Portal>
-    </HoverCard>
+    <div className="flex items-center justify-center h-32">
+      <HoverCard>
+        <HoverCardTrigger asChild>
+          <button className="px-4 py-2 rounded-md border border-gray-300">
+            Hover over me
+          </button>
+        </HoverCardTrigger>
+        <HoverCardPortal>
+          <HoverCardContent
+            align={state.align.value}
+            sideOffset={state.sideOffset.value}
+          >
+            <div className="space-y-2">
+              <p>This is the hover card content</p>
+            </div>
+          </HoverCardContent>
+        </HoverCardPortal>
+      </HoverCard>
+    </div>
   );
 }

@@ -2,6 +2,18 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../components/schemas/EventReservationSchema';
 
+// Define local types to replace Cal.com dependencies
+type ReservationStatus = 'ACCEPTED' | 'REJECTED' | 'CANCELLED' | 'PENDING';
+
+type Attendee = {
+  name: string;
+  email: string;
+};
+
+type Organizer = {
+  name: string;
+  email: string;
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -63,12 +75,12 @@ export default function ComponentPreview() {
     },
   });
 
-  const organizer = {
+  const organizer: Organizer = {
     name: state.organizerName.value,
     email: state.organizerEmail.value,
   };
 
-  const attendees = [
+  const attendees: Attendee[] = [
     {
       name: state.attendeeName.value,
       email: state.attendeeEmail.value,
@@ -85,7 +97,7 @@ export default function ComponentPreview() {
       attendees={attendees}
       location={state.location.value}
       description={state.description.value}
-      status={state.status.value as any}
+      status={state.status.value as ReservationStatus}
     />
   );
 }

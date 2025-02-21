@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { BookerWebWrapper } from '../../../../packages/platform/atoms/booker/BookerWebWrapper';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     eventSlug: {
@@ -79,20 +78,44 @@ export default function ComponentPreview() {
   };
 
   return (
-    <BookerWebWrapper
-      eventSlug={state.eventSlug.value}
-      username={state.username.value}
-      orgBannerUrl={state.orgBannerUrl.value}
-      hideBranding={state.hideBranding.value}
-      allowsDynamicBooking={state.allowsDynamicBooking.value}
-      isTeamEvent={state.isTeamEvent.value}
-      duration={state.duration.value}
-      hashedLink={state.hashedLink.value}
-      isInstantMeeting={state.isInstantMeeting.value}
-      teamMemberEmail={state.teamMemberEmail.value}
-      userLocale={state.userLocale.value}
-      hasValidLicense={state.hasValidLicense.value}
-      entity={entity}
-    />
+    <React.Suspense fallback={<div>Loading...</div>}>
+      <ErrorBoundary>
+        <BookerWebWrapper
+          eventSlug={state.eventSlug.value}
+          username={state.username.value}
+          orgBannerUrl={state.orgBannerUrl.value}
+          hideBranding={state.hideBranding.value}
+          allowsDynamicBooking={state.allowsDynamicBooking.value}
+          isTeamEvent={state.isTeamEvent.value}
+          duration={state.duration.value}
+          hashedLink={state.hashedLink.value}
+          isInstantMeeting={state.isInstantMeeting.value}
+          teamMemberEmail={state.teamMemberEmail.value}
+          userLocale={state.userLocale.value}
+          hasValidLicense={state.hasValidLicense.value}
+          entity={entity}
+        />
+      </ErrorBoundary>
+    </React.Suspense>
   );
+}
+
+// Simple error boundary component
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong.</div>;
+    }
+
+    return this.props.children;
+  }
 }

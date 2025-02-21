@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { OrganizationCreationEmail } from '../../../../packages/emails/src/templates/OrganizationCreationEmail';
-
 import { TFunction } from 'next-i18next';
 
 export default function ComponentPreview() {

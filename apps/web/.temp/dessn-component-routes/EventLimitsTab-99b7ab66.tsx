@@ -1,8 +1,12 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { EventLimitsTab } from '../../../../packages/features/eventtypes/components/tabs/limits/EventLimitsTab';
-
 import { FormProvider, useForm } from 'react-hook-form';
+
+// Mock AtomsProvider since we can't resolve the actual package
+const AtomsProvider = ({ children }: { children: React.ReactNode }) => {
+  return <>{children}</>;
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -35,11 +39,13 @@ export default function ComponentPreview() {
   });
 
   return (
-    <FormProvider {...formMethods}>
-      <EventLimitsTab 
-        eventType={state.eventType.value} 
-        customClassNames={state.customClassNames.value}
-      />
-    </FormProvider>
+    <AtomsProvider>
+      <FormProvider {...formMethods}>
+        <EventLimitsTab 
+          eventType={state.eventType.value} 
+          customClassNames={state.customClassNames.value}
+        />
+      </FormProvider>
+    </AtomsProvider>
   );
 }

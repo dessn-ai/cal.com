@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { EventTypeAppSettings } from '../../../../packages/app-store/_components/EventTypeAppSettingsInterface';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     slug: {
@@ -42,13 +41,18 @@ export default function ComponentPreview() {
   const mockGetAppData = () => Promise.resolve({});
   const mockSetAppData = () => Promise.resolve();
 
-  return (
-    <EventTypeAppSettings
-      slug={state.slug.value}
-      eventType={mockEventType}
-      getAppData={mockGetAppData}
-      setAppData={mockSetAppData}
-      disabled={state.disabled.value}
-    />
-  );
+  try {
+    return (
+      <EventTypeAppSettings
+        slug={state.slug.value}
+        eventType={mockEventType}
+        getAppData={mockGetAppData}
+        setAppData={mockSetAppData}
+        disabled={state.disabled.value}
+      />
+    );
+  } catch (error) {
+    console.error('Error rendering EventTypeAppSettings:', error);
+    return <div>Error: Could not render EventTypeAppSettings component</div>;
+  }
 }

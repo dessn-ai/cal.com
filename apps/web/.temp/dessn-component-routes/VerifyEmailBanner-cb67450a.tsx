@@ -2,8 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/users/components/VerifyEmailBanner';
 
-import { FlagProvider } from '../../../../packages/features/flags/context/provider';
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     data: {
@@ -14,8 +12,8 @@ export default function ComponentPreview() {
   });
 
   return (
-    <FlagProvider>
+    <div>
       <ImportedComponent data={state.data.value} />
-    </FlagProvider>
+    </div>
   );
 }

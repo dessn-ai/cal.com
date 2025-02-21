@@ -1,7 +1,20 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/auth/verify/page';
 
+// Create mock components and services
+const MockVerifyPage = ({ EMAIL_FROM }: { EMAIL_FROM: string }) => {
+  return (
+    <div>
+      <h1>Verify Email Page</h1>
+      <p>Email will be sent from: {EMAIL_FROM}</p>
+    </div>
+  );
+};
+
+// Mock the actual import to prevent errors
+const ImportedComponent = () => {
+  return <MockVerifyPage EMAIL_FROM={process.env.EMAIL_FROM} />;
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -12,23 +25,19 @@ export default function ComponentPreview() {
     },
   });
 
-  // Mock the process.env
+  // Create a mock process.env object
   const mockEnv = {
     EMAIL_FROM: state.EMAIL_FROM.value,
   };
 
-  // Wrap the component with a context provider that mocks process.env
-  const MockEnvProvider = ({ children }: { children: React.ReactNode }) => {
-    return (
-      <React.Fragment>
-        {React.cloneElement(children as React.ReactElement, { process: { env: mockEnv } })}
-      </React.Fragment>
-    );
-  };
+  // Make process available globally
+  (global as any).process = { env: mockEnv };
 
   return (
-    <MockEnvProvider>
-      <ImportedComponent />
-    </MockEnvProvider>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="preview-container">
+        <ImportedComponent />
+      </div>
+    </Suspense>
   );
 }

@@ -1,7 +1,36 @@
-import React from 'react';
+import React, { createContext, useContext } from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/routing-forms/components/FormInputFields';
 
+// Create mock atoms context
+const AtomsContext = createContext({
+  locale: {
+    locale: 'en',
+    i18n: {
+      language: 'en',
+      defaultLocale: 'en',
+    },
+  }
+});
+
+// Mock AtomsProvider component
+const MockAtomsProvider = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <AtomsContext.Provider
+      value={{
+        locale: {
+          locale: 'en',
+          i18n: {
+            language: 'en',
+            defaultLocale: 'en',
+          },
+        }
+      }}
+    >
+      {children}
+    </AtomsContext.Provider>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -45,11 +74,13 @@ export default function ComponentPreview() {
   };
 
   return (
-    <ImportedComponent
-      form={state.form.value}
-      response={state.response.value}
-      setResponse={setResponse}
-      disabledFields={state.disabledFields.value ? [state.disabledFields.value] : []}
-    />
+    <MockAtomsProvider>
+      <ImportedComponent
+        form={state.form.value}
+        response={state.response.value}
+        setResponse={setResponse}
+        disabledFields={state.disabledFields.value ? [state.disabledFields.value] : []}
+      />
+    </MockAtomsProvider>
   );
 }

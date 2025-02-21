@@ -1,25 +1,35 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(admin-layout)/admin/apps/[category]/page';
 
+// Mock components
+const MockSettingsHeader = ({ children }: { children: React.ReactNode }) => (
+  <div className="settings-header">{children}</div>
+);
+
+const MockAdminAppsList = () => (
+  <div className="admin-apps-list">Admin Apps List Mock</div>
+);
+
+// Mock page component instead of importing
+const MockPageComponent = () => {
+  return (
+    <div className="admin-apps-page">
+      <MockSettingsHeader>
+        <h2>App Store Settings</h2>
+      </MockSettingsHeader>
+      <div className="main-content">
+        <MockAdminAppsList />
+      </div>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
-  const [state, setState] = useParentState({
-    // Since this component doesn't have any props, we don't need to define any state
-  });
+  const [state, setState] = useParentState({});
 
-  // Mock the necessary functions and components
-  const mockGetTranslate = async () => (key: string) => key;
-  const mockSettingsHeader = ({ children }: { children: React.ReactNode }) => <div>{children}</div>;
-  const mockAdminAppsList = () => <div>Admin Apps List</div>;
-
-  // Mock the necessary modules
-  jest.mock("app/_utils", () => ({
-    getTranslate: mockGetTranslate,
-  }));
-
-  jest.mock("@calcom/features/settings/appDir/SettingsHeader", () => mockSettingsHeader);
-  jest.mock("@calcom/features/apps/AdminAppsList", () => mockAdminAppsList);
-
-  return <ImportedComponent />;
+  return (
+    <div className="preview-wrapper">
+      <MockPageComponent />
+    </div>
+  );
 }

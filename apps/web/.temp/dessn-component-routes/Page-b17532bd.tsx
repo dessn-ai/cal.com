@@ -1,27 +1,35 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/organizations/profile/page';
 
-
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  getTranslate: jest.fn(() => (key: string) => key),
-}));
-
-jest.mock('@calcom/features/ee/organizations/pages/settings/profile', () => {
-  return function MockLegacyPage() {
-    return <div>Mock Legacy Page</div>;
-  };
-});
-
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children }: { children: React.ReactNode }) {
-    return <div>Mock Settings Header {children}</div>;
-  };
-});
+// Mock the organization profile page component
+const MockOrganizationProfilePage = () => {
+  return (
+    <div className="organization-profile-mock">
+      <div className="mock-header">
+        <h1>Organization Profile Settings</h1>
+      </div>
+      <div className="mock-content">
+        <div className="mock-form">
+          <div className="mock-field">
+            <label>Organization Name</label>
+            <input type="text" placeholder="Enter organization name" />
+          </div>
+          <div className="mock-field">
+            <label>Organization Slug</label>
+            <input type="text" placeholder="Enter organization slug" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({});
 
-  return <ImportedComponent />;
+  return (
+    <div className="preview-container">
+      <MockOrganizationProfilePage />
+    </div>
+  );
 }

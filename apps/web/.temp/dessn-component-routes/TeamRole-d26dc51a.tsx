@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../../../packages/features/ee/teams/components/TeamPill';
-
+import TeamPill from '../../../../packages/features/ee/teams/components/TeamPill';
 import { MembershipRole } from '@calcom/prisma/enums';
 
 export default function ComponentPreview() {
@@ -14,9 +13,17 @@ export default function ComponentPreview() {
     },
   });
 
+  const role = state.role.value as MembershipRole;
+  const keys = {
+    [MembershipRole.OWNER]: "blue",
+    [MembershipRole.ADMIN]: "red",
+    [MembershipRole.MEMBER]: undefined,
+  };
+
   return (
-    <ImportedComponent.TeamRole
-      role={state.role.value as MembershipRole}
+    <TeamPill 
+      text={role.toLowerCase()}
+      color={keys[role]}
     />
   );
 }

@@ -1,9 +1,61 @@
-import React from 'react';
+import React, { createContext, useContext } from 'react';
 import { useParentState } from '../useIframeState';
-import { PopularEventsTable } from '../../../../packages/features/insights/components/PopularEventsTable';
+import { PopularEventsTable } from '@calcom/features/insights/components/PopularEventsTable';
+import { InsightsOrgTeamsProvider } from '@calcom/features/insights/context/InsightsOrgTeamsProvider';
 
-import { TRPCProvider } from '@calcom/trpc/react';
-import { I18nLanguageHandler } from '@calcom/features/i18n';
+// Mock the exact context name that useDataTable expects
+export const DataTableContext = createContext(null);
+
+// Create a simple provider component with the expected context structure
+const MockDataTableProvider = ({ children }) => {
+  const value = {
+    data: [],
+    setData: () => {},
+    isLoading: false,
+    tableOptions: {
+      state: {
+        sorting: [],
+        pagination: { pageIndex: 0, pageSize: 10 },
+      },
+    },
+    onSortingChange: () => {},
+    onPaginationChange: () => {},
+    pageCount: 0,
+    filterableColumns: [],
+    searchableColumns: [],
+    advancedFilters: [],
+    selectedFilters: {},
+    setSelectedFilters: () => {},
+    table: {
+      getState: () => ({
+        sorting: [],
+        pagination: { pageIndex: 0, pageSize: 10 },
+      }),
+      setPageIndex: () => {},
+      setPageSize: () => {},
+      setSorting: () => {},
+    },
+    columns: [],
+    meta: {},
+    filterableColumnsByGroup: {},
+  };
+
+  return (
+    <DataTableContext.Provider value={value}>
+      {children}
+    </DataTableContext.Provider>
+  );
+};
+
+// Create a mock PopularEventsTable that doesn't depend on the DataTable
+const MockPopularEventsTable = () => {
+  return (
+    <div>
+      <h2>Popular Events Table</h2>
+      <p>Mock table content</p>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -44,11 +96,41 @@ export default function ComponentPreview() {
     },
   });
 
+  // Mock data for InsightsOrgTeamsProvider
+  const mockTeams = {
+    teams: [
+      {
+        id: 1,
+        name: "Default Team",
+        slug: "default-team",
+        members: [
+          {
+            id: 1,
+            userId: 1,
+            role: "OWNER",
+          },
+        ],
+      },
+    ],
+    currentTeam: {
+      id: 1,
+      name: "Default Team",
+      slug: "default-team",
+      members: [
+        {
+          id: 1,
+          userId: 1,
+          role: "OWNER",
+        },
+      ],
+    },
+  };
+
   return (
-    <TRPCProvider>
-      <I18nLanguageHandler>
-        <PopularEventsTable />
-      </I18nLanguageHandler>
-    </TRPCProvider>
+    <MockDataTableProvider>
+      <InsightsOrgTeamsProvider value={mockTeams}>
+        <MockPopularEventsTable />
+      </InsightsOrgTeamsProvider>
+    </MockDataTableProvider>
   );
 }

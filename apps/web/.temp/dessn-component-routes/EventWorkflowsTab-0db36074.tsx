@@ -1,9 +1,18 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/eventtypes/components/tabs/workflows/EventWorkfowsTab';
-
+import { FormProvider, useForm } from 'react-hook-form';
 
 export default function ComponentPreview() {
+  const formMethods = useForm({
+    defaultValues: {
+      workflows: [],
+      seatsEnabled: false,
+      requiresConfirmation: false,
+      // Add any other form fields that might be needed
+    }
+  });
+
   const [state, setState] = useParentState({
     eventType: {
       type: "object",
@@ -33,9 +42,11 @@ export default function ComponentPreview() {
   });
 
   return (
-    <ImportedComponent
-      eventType={state.eventType.value}
-      workflows={state.workflows.value}
-    />
+    <FormProvider {...formMethods}>
+      <ImportedComponent
+        eventType={state.eventType.value}
+        workflows={state.workflows.value}
+      />
+    </FormProvider>
   );
 }

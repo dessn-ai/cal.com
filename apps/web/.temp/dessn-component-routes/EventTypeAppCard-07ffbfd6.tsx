@@ -2,6 +2,30 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/ga4/components/EventTypeAppCardInterface';
 
+// Create a mock context
+const MockEventTypeAppContext = React.createContext({
+  getAppData: () => ({}),
+  setAppData: () => {},
+  disabled: false,
+});
+
+// Mock the useIsAppEnabled hook
+const mockUseIsAppEnabled = () => ({
+  enabled: true,
+  updateEnabled: () => {},
+});
+
+// Add the mock to window
+if (typeof window !== 'undefined') {
+  // @ts-ignore - Mocking the hooks for preview purposes
+  window.useAppContextWithSchema = () => ({
+    getAppData: () => ({}),
+    setAppData: () => {},
+    disabled: false,
+  });
+  // @ts-ignore
+  window.useIsAppEnabled = mockUseIsAppEnabled;
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -29,8 +53,12 @@ export default function ComponentPreview() {
         logo: "https://example.com/ga4-logo.png",
         category: "analytics",
         description: "Track your event bookings with Google Analytics 4",
+        categories: ["analytics"],
+        isInstalled: true,
+        enabled: true,
         credentialOwner: null,
-        credentialIds: []
+        credentialIds: [],
+        isSetupAlready: true
       },
       label: "App"
     },
@@ -41,11 +69,20 @@ export default function ComponentPreview() {
     }
   });
 
+  // Mock the context values
+  const contextValue = {
+    getAppData: () => ({}),
+    setAppData: () => {},
+    disabled: state.disabled.value,
+  };
+
   return (
-    <ImportedComponent
-      eventType={state.eventType.value}
-      app={state.app.value}
-      disabled={state.disabled.value}
-    />
+    <MockEventTypeAppContext.Provider value={contextValue}>
+      <ImportedComponent
+        eventType={state.eventType.value}
+        app={state.app.value}
+        disabled={state.disabled.value}
+      />
+    </MockEventTypeAppContext.Provider>
   );
 }

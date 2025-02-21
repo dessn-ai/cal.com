@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { CommandItem } from '../../../../packages/ui/components/command/index';
-
+import { Command, CommandList, CommandItem } from '../../../../packages/ui/components/command/index';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -23,11 +22,15 @@ export default function ComponentPreview() {
   });
 
   return (
-    <CommandItem
-      className={state.className.value}
-      disabled={state.disabled.value}
-    >
-      {state.children.value}
-    </CommandItem>
+    <Command>
+      <CommandList>
+        <CommandItem
+          className={state.className.value}
+          disabled={state.disabled.value}
+        >
+          {state.children.value}
+        </CommandItem>
+      </CommandList>
+    </Command>
   );
 }

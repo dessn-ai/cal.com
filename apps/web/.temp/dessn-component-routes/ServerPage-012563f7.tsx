@@ -1,8 +1,35 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/(main-nav)/teams/page';
 
-import { ShellMainAppDir } from "app/(use-page-wrapper)/(main-nav)/ShellMainAppDir";
+// Use dynamic import with error boundary
+const ImportedComponent = React.lazy(() => 
+  import('../../app/(use-page-wrapper)/(main-nav)/teams/page')
+    .catch(() => ({
+      default: () => (
+        <div>Error: Could not load component. This might be a server component that needs to be wrapped differently.</div>
+      ),
+    }))
+);
+
+// Create a simple error boundary component
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong. Please check the component implementation.</div>;
+    }
+
+    return this.props.children;
+  }
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -23,14 +50,13 @@ export default function ComponentPreview() {
     searchParams: JSON.parse(state.searchParams.value),
   };
 
-  // Mock the necessary Next.js and server-side functions
-  const mockRedirect = () => {};
-  const mockGetServerSession = async () => ({ user: { name: "Test User" } });
-  const mockGetTranslate = async () => (key: string) => key;
-
   return (
-    <React.Suspense fallback={<div>Loading...</div>}>
-      <ImportedComponent {...props} />
-    </React.Suspense>
+    <ErrorBoundary>
+      <React.Suspense fallback={<div>Loading...</div>}>
+        <div className="preview-container">
+          <ImportedComponent {...props} />
+        </div>
+      </React.Suspense>
+    </ErrorBoundary>
   );
 }

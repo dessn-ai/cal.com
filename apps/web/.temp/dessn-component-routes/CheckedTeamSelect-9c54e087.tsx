@@ -1,9 +1,15 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/eventtypes/components/CheckedTeamSelect';
-
+import { FormProvider, useForm } from 'react-hook-form';
 
 export default function ComponentPreview() {
+  const methods = useForm({
+    defaultValues: {
+      hosts: []
+    }
+  });
+
   const [state, setState] = useParentState({
     value: {
       type: "string",
@@ -39,11 +45,13 @@ export default function ComponentPreview() {
   ];
 
   return (
-    <ImportedComponent
-      options={options}
-      value={JSON.parse(state.value.value)}
-      onChange={(newValue) => setState('value', JSON.stringify(newValue))}
-      isRRWeightsEnabled={state.isRRWeightsEnabled.value}
-    />
+    <FormProvider {...methods}>
+      <ImportedComponent
+        options={options}
+        value={JSON.parse(state.value.value)}
+        onChange={(newValue) => setState('value', JSON.stringify(newValue))}
+        isRRWeightsEnabled={state.isRRWeightsEnabled.value}
+      />
+    </FormProvider>
   );
 }

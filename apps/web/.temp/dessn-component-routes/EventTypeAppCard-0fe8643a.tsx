@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/posthog/components/EventTypeAppCardInterface';
-
+import EventTypeAppContext from '@calcom/app-store/EventTypeAppContext';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -42,8 +42,10 @@ export default function ComponentPreview() {
         imageSrc: "https://example.com/posthog-logo.png",
         credentialOwner: {
           name: "John Doe",
-          avatar: "https://example.com/avatar.png"
+          avatar: "https://example.com/avatar.png",
+          credentialId: 1
         },
+        userCredentialIds: [1, 2, 3],
         credentialIds: [1, 2, 3]
       },
       label: "App"
@@ -55,11 +57,25 @@ export default function ComponentPreview() {
     }
   });
 
+  // Mock data for EventTypeAppContext
+  const contextValue = {
+    appData: {},
+    setAppData: () => {},
+    getAppData: (key: string) => {
+      if (key === 'enabled') return true;
+      if (key === 'credentialId') return 1;
+      return undefined;
+    },
+    disabled: false
+  };
+
   return (
-    <ImportedComponent
-      eventType={state.eventType.value}
-      app={state.app.value}
-      disabled={state.disabled.value}
-    />
+    <EventTypeAppContext.Provider value={contextValue}>
+      <ImportedComponent
+        eventType={state.eventType.value}
+        app={state.app.value}
+        disabled={state.disabled.value}
+      />
+    </EventTypeAppContext.Provider>
   );
 }

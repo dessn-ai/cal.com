@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { RadioArea } from '../../../../packages/ui/form/radio-area/RadioAreaGroup';
-
+import { RadioArea, RadioAreaGroup } from '../../../../packages/ui/form/radio-area/RadioAreaGroup';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -27,14 +26,46 @@ export default function ComponentPreview() {
     },
   });
 
+  const handleValueChange = (newValue: string) => {
+    setState((prev) => ({
+      ...prev,
+      value: {
+        ...prev.value,
+        value: newValue,
+      },
+    }));
+  };
+
   return (
-    <RadioArea
-      id={state.id.value}
+    <RadioAreaGroup 
+      defaultValue="option1"
       value={state.value.value}
-      disabled={state.disabled.value}
-      className={state.className.value}
+      onValueChange={handleValueChange}
     >
-      <div>Radio Area Content</div>
-    </RadioArea>
+      <RadioArea
+        value="option1"
+        id="option1"
+        disabled={state.disabled.value}
+        className={state.className.value}
+      >
+        <div className="p-2">Option 1</div>
+      </RadioArea>
+      <RadioArea
+        value="option2"
+        id="option2"
+        disabled={state.disabled.value}
+        className={state.className.value}
+      >
+        <div className="p-2">Option 2</div>
+      </RadioArea>
+      <RadioArea
+        value="option3"
+        id="option3"
+        disabled={state.disabled.value}
+        className={state.className.value}
+      >
+        <div className="p-2">Option 3</div>
+      </RadioArea>
+    </RadioAreaGroup>
   );
 }

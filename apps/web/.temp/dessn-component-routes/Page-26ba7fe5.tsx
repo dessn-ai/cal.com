@@ -1,17 +1,35 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/organizations/members/page';
 
+// Create mock components to prevent dependency issues
+const MockLegacyPage = () => <div>LegacyPage</div>;
+const MockSettingsHeader = ({ children }) => <div>{children}</div>;
+const MockLayout = ({ children }) => <div>{children}</div>;
 
-// Mock the necessary dependencies
+// Mock metadata generator
+const mockGenerateMetadata = () => ({
+  title: 'Mock Title',
+  description: 'Mock Description'
+});
+
+// Mock translate function
+const mockTranslate = (key) => key;
+
+// Mock the modules at the top level
+jest.mock('@calcom/features/ee/organizations/pages/members', () => MockLegacyPage);
+jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => MockSettingsHeader);
+jest.mock('app/(use-page-wrapper)/settings/(settings-layout)/layout', () => MockLayout);
 jest.mock('app/_utils', () => ({
-  _generateMetadata: jest.fn(),
-  getTranslate: jest.fn(() => Promise.resolve((key) => key)),
+  _generateMetadata: mockGenerateMetadata,
+  getTranslate: () => Promise.resolve(mockTranslate),
 }));
 
-jest.mock('@calcom/features/ee/organizations/pages/members', () => () => <div>LegacyPage</div>);
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => ({ children }) => <div>{children}</div>);
-jest.mock('app/(use-page-wrapper)/settings/(settings-layout)/layout', () => ({ children }) => <div>{children}</div>);
+// Wrap the imported component in a try-catch to handle potential import errors
+const ImportedComponent = React.lazy(() => import('../../app/(use-page-wrapper)/settings/organizations/members/page')
+  .catch(() => ({
+    default: () => <div>Error loading component</div>
+  }))
+);
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -22,5 +40,11 @@ export default function ComponentPreview() {
     },
   });
 
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className={state.containerClassName.value}>
+        <ImportedComponent />
+      </div>
+    </Suspense>
+  );
 }

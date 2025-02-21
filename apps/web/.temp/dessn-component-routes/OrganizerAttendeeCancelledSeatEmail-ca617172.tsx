@@ -2,10 +2,14 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { OrganizerAttendeeCancelledSeatEmail } from '../../../../packages/emails/src/templates/OrganizerAttendeeCancelledSeatEmail';
 
-import { TimeFormat } from '../../../../packages/types/Calendar';
+// Define TimeFormat enum locally to avoid dependency issues
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h',
+}
 
 export default function ComponentPreview() {
-  const [state, setState] = useParentState({
+  const [state] = useParentState({
     calEvent: {
       type: 'object',
       value: {
@@ -17,14 +21,18 @@ export default function ComponentPreview() {
           name: 'John Doe',
           email: 'john@example.com',
           timeZone: 'America/New_York',
-          language: { translate: (key: string) => key, locale: 'en' },
+          language: {
+            locale: 'en'
+          }
         },
         attendees: [
           {
             name: 'Jane Smith',
             email: 'jane@example.com',
             timeZone: 'America/Los_Angeles',
-            language: { translate: (key: string) => key, locale: 'en' },
+            language: {
+              locale: 'en'
+            }
           },
         ],
       },
@@ -36,7 +44,9 @@ export default function ComponentPreview() {
         name: 'Jane Smith',
         email: 'jane@example.com',
         timeZone: 'America/Los_Angeles',
-        language: { translate: (key: string) => key, locale: 'en' },
+        language: {
+          locale: 'en'
+        }
       },
       label: 'Attendee',
     },
@@ -56,7 +66,9 @@ export default function ComponentPreview() {
         name: 'Team Member',
         email: 'team@example.com',
         timeZone: 'Europe/London',
-        language: { translate: (key: string) => key, locale: 'en' },
+        language: {
+          locale: 'en'
+        }
       },
       label: 'Team Member',
     },
@@ -98,13 +110,48 @@ export default function ComponentPreview() {
     },
   });
 
+  // Create the modified event objects with the translation function
+  const calEventWithTranslation = {
+    ...state.calEvent.value,
+    organizer: {
+      ...state.calEvent.value.organizer,
+      language: {
+        ...state.calEvent.value.organizer.language,
+        translate: (key: string) => key
+      }
+    },
+    attendees: state.calEvent.value.attendees.map(attendee => ({
+      ...attendee,
+      language: {
+        ...attendee.language,
+        translate: (key: string) => key
+      }
+    }))
+  };
+
+  const attendeeWithTranslation = {
+    ...state.attendee.value,
+    language: {
+      ...state.attendee.value.language,
+      translate: (key: string) => key
+    }
+  };
+
+  const teamMemberWithTranslation = {
+    ...state.teamMember.value,
+    language: {
+      ...state.teamMember.value.language,
+      translate: (key: string) => key
+    }
+  };
+
   return (
     <OrganizerAttendeeCancelledSeatEmail
-      calEvent={state.calEvent.value}
-      attendee={state.attendee.value}
+      calEvent={calEventWithTranslation}
+      attendee={attendeeWithTranslation}
       newSeat={state.newSeat.value}
       attendeeCancelled={state.attendeeCancelled.value}
-      teamMember={state.teamMember.value}
+      teamMember={teamMemberWithTranslation}
       reassigned={state.reassigned.value}
       timeZone={state.timeZone.value}
       includeAppsStatus={state.includeAppsStatus.value}

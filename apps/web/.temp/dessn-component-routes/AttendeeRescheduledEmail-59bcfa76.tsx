@@ -2,7 +2,34 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { AttendeeRescheduledEmail } from '../../../../packages/emails/src/templates/AttendeeRescheduledEmail';
 
-import { TimeFormat } from '../../../../packages/types/Calendar';
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
+
+// Error boundary component
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong.</div>;
+    }
+
+    return this.props.children;
+  }
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -27,6 +54,8 @@ export default function ComponentPreview() {
             language: { translate: (key: string) => key, locale: 'en' },
           },
         ],
+        uid: '123456',
+        recurringEventId: null,
       }),
       label: 'Calendar Event',
     },
@@ -71,16 +100,46 @@ export default function ComponentPreview() {
   const parsedCalEvent = JSON.parse(state.calEvent.value);
   const parsedAttendee = JSON.parse(state.attendee.value);
 
+  // Create a translation function that matches the expected signature
+  const translate = React.useMemo(() => {
+    function t(key: string): string;
+    function t(key: string, params: Record<string, unknown>): string;
+    function t(key: string, params?: Record<string, unknown>): string {
+      try {
+        if (!params) return key;
+        let result = key;
+        Object.entries(params).forEach(([k, v]) => {
+          const value = String(v ?? '');
+          result = result.replace(new RegExp(`{${k}}|{{${k}}}`, 'g'), value);
+        });
+        return result;
+      } catch (error) {
+        return key;
+      }
+    }
+    
+    // Add necessary properties to match expected interface
+    Object.assign(t, {
+      exists: (key: string) => true,
+      locale: 'en',
+      language: 'en',
+    });
+    
+    return t;
+  }, []);
+
   return (
-    <AttendeeRescheduledEmail
-      calEvent={parsedCalEvent}
-      attendee={parsedAttendee}
-      timeZone={state.timeZone.value}
-      includeAppsStatus={state.includeAppsStatus.value}
-      t={(key: string) => key}
-      locale={state.locale.value}
-      timeFormat={state.timeFormat.value as TimeFormat}
-      isOrganizer={state.isOrganizer.value}
-    />
+    <ErrorBoundary>
+      <AttendeeRescheduledEmail
+        calEvent={parsedCalEvent}
+        attendee={parsedAttendee}
+        timeZone={state.timeZone.value}
+        includeAppsStatus={state.includeAppsStatus.value}
+        t={translate}
+        locale={state.locale.value}
+        timeFormat={state.timeFormat.value as TimeFormat}
+        isOrganizer={state.isOrganizer.value}
+      />
+    </ErrorBoundary>
   );
 }

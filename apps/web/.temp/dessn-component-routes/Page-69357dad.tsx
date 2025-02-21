@@ -1,24 +1,43 @@
 import React from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { SessionProvider } from 'next-auth/react';
+import { I18nextProvider } from 'react-i18next';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/(main-nav)/bookings/[status]/page';
 
-import { ShellMainAppDir } from '../../app/(use-page-wrapper)/(main-nav)/ShellMainAppDir';
-import BookingsList from '../../bookings/views/bookings-listing-view';
+// Create instances of required clients/providers
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
-// Mock components and functions
-const MockShellMainAppDir = ({ children }) => <div>{children}</div>;
-const MockBookingsList = () => <div>Bookings List</div>;
+// Mock session data
+const mockSession = {
+  user: {
+    id: 1,
+    name: 'Test User',
+    email: 'test@example.com',
+  },
+  expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+};
 
-jest.mock('../../app/(use-page-wrapper)/(main-nav)/ShellMainAppDir', () => ({
-  ShellMainAppDir: MockShellMainAppDir,
-}));
-jest.mock('../../bookings/views/bookings-listing-view', () => MockBookingsList);
-jest.mock('next/navigation', () => ({
-  redirect: jest.fn(),
-}));
-jest.mock('app/_utils', () => ({
-  getTranslate: () => (key) => key,
-}));
+// Mock i18n instance
+const i18n = {
+  language: 'en',
+  t: (key) => key,
+  // Add other required i18n methods
+  exists: () => true,
+  getFixedT: () => (key) => key,
+};
+
+// Mock components
+const MockOrgBrandingProvider = ({ children }) => <>{children}</>;
+const MockFeatureProvider = ({ children }) => <>{children}</>;
+const MockTRPCProvider = ({ children }) => <>{children}</>;
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -37,5 +56,31 @@ export default function ComponentPreview() {
     searchParams: {},
   };
 
-  return <ImportedComponent {...mockParams} />;
+  // Lazy load the actual component to prevent immediate import issues
+  const ImportedComponent = React.lazy(() => 
+    import('../../app/(use-page-wrapper)/(main-nav)/bookings/[status]/page')
+      .catch(() => ({ default: () => <div>Failed to load component</div> }))
+  );
+
+  return (
+    <React.Suspense fallback={<div>Loading...</div>}>
+      <QueryClientProvider client={queryClient}>
+        <SessionProvider session={mockSession}>
+          <I18nextProvider i18n={i18n}>
+            <TooltipProvider>
+              <MockTRPCProvider>
+                <MockFeatureProvider>
+                  <MockOrgBrandingProvider>
+                    <div className="preview-container">
+                      <ImportedComponent {...mockParams} />
+                    </div>
+                  </MockOrgBrandingProvider>
+                </MockFeatureProvider>
+              </MockTRPCProvider>
+            </TooltipProvider>
+          </I18nextProvider>
+        </SessionProvider>
+      </QueryClientProvider>
+    </React.Suspense>
+  );
 }

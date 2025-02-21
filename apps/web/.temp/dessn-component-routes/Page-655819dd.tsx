@@ -1,11 +1,53 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../pages/team/[slug]/embed';
-
+import dynamic from 'next/dynamic';
 import { DehydratedState } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { SessionProvider } from 'next-auth/react';
+
+// Dynamically import the component with no SSR
+const ImportedComponent = dynamic(() => import('../../pages/team/[slug]/embed'), {
+  ssr: false,
+  loading: () => <div>Loading...</div>
+});
+
+const ErrorFallback = ({ error }) => (
+  <div role="alert">
+    <p>Something went wrong:</p>
+    <pre>{error?.message}</pre>
+  </div>
+);
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <ErrorFallback error={this.state.error} />;
+    }
+    return this.props.children;
+  }
+}
 
 export default function ComponentPreview() {
-  const [state, setState] = useParentState({
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        refetchOnWindowFocus: false,
+        staleTime: Infinity,
+      },
+    },
+  });
+
+  const [state] = useParentState({
     considerUnpublished: {
       type: "boolean",
       value: true,
@@ -34,6 +76,9 @@ export default function ComponentPreview() {
   });
 
   const mockTeam = {
+    id: 1,
+    name: "Test Team",
+    slug: "test-team",
     safeBio: "Safe bio content",
     members: [
       {
@@ -41,7 +86,10 @@ export default function ComponentPreview() {
         id: "1",
         avatarUrl: "https://example.com/avatar.jpg",
         bio: "Member bio",
-        profile: {},
+        profile: {
+          id: 1,
+          username: "johndoe",
+        },
         subteams: [],
         username: "johndoe",
         accepted: true,
@@ -63,7 +111,9 @@ export default function ComponentPreview() {
   };
 
   const mockThemeBasis = {
-    // Add mock theme data here
+    brandColor: "#292929",
+    darkBrandColor: "#fafafa",
+    theme: "light",
   };
 
   const mockTrpcState: DehydratedState = {
@@ -71,16 +121,40 @@ export default function ComponentPreview() {
     queries: [],
   };
 
-  return (
-    <ImportedComponent
-      considerUnpublished={state.considerUnpublished.value}
-      team={mockTeam}
-      trpcState={mockTrpcState}
-      themeBasis={mockThemeBasis}
-      markdownStrippedBio={state.markdownStrippedBio.value}
-      isValidOrgDomain={state.isValidOrgDomain.value}
-      currentOrgDomain={state.currentOrgDomain.value}
-      isSEOIndexable={state.isSEOIndexable.value}
-    />
-  );
+  const mockSession = {
+    user: {
+      id: "test-user",
+      name: "Test User",
+      email: "test@example.com",
+    },
+    expires: "2024-12-31",
+  };
+
+  try {
+    return (
+      <ErrorBoundary>
+        <Suspense fallback={<div>Loading...</div>}>
+          <SessionProvider session={mockSession}>
+            <QueryClientProvider client={queryClient}>
+              <div className="preview-container">
+                <ImportedComponent
+                  considerUnpublished={state.considerUnpublished.value}
+                  team={mockTeam}
+                  trpcState={mockTrpcState}
+                  themeBasis={mockThemeBasis}
+                  markdownStrippedBio={state.markdownStrippedBio.value}
+                  isValidOrgDomain={state.isValidOrgDomain.value}
+                  currentOrgDomain={state.currentOrgDomain.value}
+                  isSEOIndexable={state.isSEOIndexable.value}
+                />
+              </div>
+            </QueryClientProvider>
+          </SessionProvider>
+        </Suspense>
+      </ErrorBoundary>
+    );
+  } catch (error) {
+    console.error('Error in ComponentPreview:', error);
+    return <ErrorFallback error={error} />;
+  }
 }

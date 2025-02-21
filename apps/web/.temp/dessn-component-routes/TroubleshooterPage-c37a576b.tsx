@@ -2,11 +2,17 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../modules/availability/troubleshoot/troubleshoot-view';
 
+// Mock Provider to avoid build issues
+const MockTroubleshooterProvider = ({ children }: { children: React.ReactNode }) => {
+  return <div>{children}</div>;
+};
 
 export default function ComponentPreview() {
-  // Since the component doesn't have any props, we don't need to use useParentState
-  // However, we'll keep it here in case we need to add props in the future
   const [state, setState] = useParentState({});
 
-  return <ImportedComponent />;
+  return (
+    <MockTroubleshooterProvider>
+      <ImportedComponent />
+    </MockTroubleshooterProvider>
+  );
 }

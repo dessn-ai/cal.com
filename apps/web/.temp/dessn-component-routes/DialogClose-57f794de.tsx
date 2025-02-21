@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { DialogClose } from '../../../../packages/ui/components/dialog/Dialog';
-
+import { Dialog, DialogContent, DialogClose } from '../../../../packages/ui/components/dialog/Dialog';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -29,12 +28,16 @@ export default function ComponentPreview() {
   });
 
   return (
-    <DialogClose
-      children={state.children.value}
-      color={state.color.value as "minimal" | "primary" | "secondary" | "destructive"}
-      disabled={state.disabled.value}
-      data-testid={state["data-testid"].value}
-      onClick={() => console.log("DialogClose clicked")}
-    />
+    <Dialog open={true}>
+      <DialogContent>
+        <DialogClose
+          children={state.children.value}
+          color={state.color.value as "minimal" | "primary" | "secondary" | "destructive"}
+          disabled={state.disabled.value}
+          data-testid={state["data-testid"].value}
+          onClick={() => console.log("DialogClose clicked")}
+        />
+      </DialogContent>
+    </Dialog>
   );
 }

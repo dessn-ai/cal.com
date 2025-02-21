@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { tabs } from '../../../../packages/features/embed/lib/EmbedTabs';
-
+import { OrgBrandingProvider } from '../../../../packages/features/ee/organizations/context/provider';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -39,6 +39,17 @@ export default function ComponentPreview() {
     elementClick: {},
   };
 
+  const mockOrgBranding = {
+    orgBranding: {
+      logo: "",
+      brandColor: "#292929",
+      darkBrandColor: "#fafafa",
+      theme: null,
+      backgroundImage: null,
+    },
+    isLoading: false,
+  };
+
   const TabComponent = tabs.find((tab) => tab.name === "HTML")?.Component;
 
   if (!TabComponent) {
@@ -46,11 +57,13 @@ export default function ComponentPreview() {
   }
 
   return (
-    <TabComponent
-      embedType={state.embedType.value}
-      calLink={state.calLink.value}
-      previewState={previewState}
-      namespace={state.namespace.value}
-    />
+    <OrgBrandingProvider value={mockOrgBranding}>
+      <TabComponent
+        embedType={state.embedType.value}
+        calLink={state.calLink.value}
+        previewState={previewState}
+        namespace={state.namespace.value}
+      />
+    </OrgBrandingProvider>
   );
 }

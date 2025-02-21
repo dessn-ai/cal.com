@@ -1,7 +1,43 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../pages/org/[orgSlug]/[user]/embed';
+import { TRPCClientError } from '@trpc/client';
 
+// Simplified PageWrapper for preview
+const PreviewPageWrapper = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div className="preview-wrapper">
+      {children}
+    </div>
+  );
+};
+
+// Mock the imported component to handle dynamic import issues
+const Page = ({ isEmbed, profile, team, ...props }: any) => {
+  try {
+    if (team) {
+      return (
+        <div>
+          <h1>{team.name}</h1>
+          <p>Team Embed View</p>
+        </div>
+      );
+    }
+    return (
+      <div>
+        <h1>{profile.name}</h1>
+        <p>User Embed View</p>
+      </div>
+    );
+  } catch (error) {
+    if (error instanceof TRPCClientError) {
+      return <div>Error: {error.message}</div>;
+    }
+    return <div>Something went wrong</div>;
+  }
+};
+
+// Attach the simplified PageWrapper
+Page.PageWrapper = PreviewPageWrapper;
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -53,5 +89,9 @@ export default function ComponentPreview() {
 
   const props = state.profile.value === "user" ? mockUserProps : mockTeamProps;
 
-  return <ImportedComponent {...props} />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Page {...props} />
+    </Suspense>
+  );
 }

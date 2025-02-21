@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
+import Select, { components } from 'react-select';
 import { OptionComponent } from '../../../../packages/ui/components/form/select/components';
-
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -28,15 +28,22 @@ export default function ComponentPreview() {
     },
   });
 
-  const optionProps = {
-    label: state.option.value,
-    value: state.option.value,
-    isMulti: state.isMulti.value,
-    isSelected: state.isSelected.value,
-    data: {
-      needsTeamsUpgrade: state.needsTeamsUpgrade.value,
-    },
-  };
+  // Create options array for Select
+  const options = state.option.options.map(opt => ({
+    label: opt,
+    value: opt,
+    needsTeamsUpgrade: state.needsTeamsUpgrade.value
+  }));
 
-  return <OptionComponent {...optionProps} />;
+  return (
+    <Select
+      options={options}
+      value={options.find(opt => opt.value === state.option.value)}
+      isMulti={state.isMulti.value}
+      components={{
+        Option: OptionComponent
+      }}
+      onChange={() => {}}
+    />
+  );
 }

@@ -1,8 +1,12 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../../../packages/features/ee/organizations/pages/settings/privacy';
 
-import { MembershipRole } from '@calcom/prisma/enums';
+// Mock the MembershipRole enum if not available
+const MembershipRole = {
+  OWNER: 'OWNER',
+  ADMIN: 'ADMIN',
+  MEMBER: 'MEMBER',
+};
 
 // Mock the trpc hook
 const mockUseQuery = () => ({
@@ -14,6 +18,8 @@ const mockUseQuery = () => ({
       accepted: true,
     },
   },
+  isLoading: false,
+  error: null,
 });
 
 // Mock the trpc object
@@ -35,15 +41,45 @@ const MockMakeTeamPrivateSwitch = ({ isOrg, teamId, isPrivate, disabled }) => (
   <div>
     MakeTeamPrivateSwitch (mocked)
     <br />
-    isOrg: {isOrg.toString()}
+    isOrg: {String(isOrg)}
     <br />
     teamId: {teamId}
     <br />
-    isPrivate: {isPrivate.toString()}
+    isPrivate: {String(isPrivate)}
     <br />
-    disabled: {disabled.toString()}
+    disabled: {String(disabled)}
   </div>
 );
+
+// Mock Privacy Component
+const MockPrivacyComponent = () => {
+  const query = mockUseQuery();
+  const { data } = query;
+
+  return (
+    <div className="privacy-settings">
+      <div className="mt-6">
+        <h2 className="font-medium text-gray-900">Privacy Settings</h2>
+        <p className="text-sm text-gray-600">
+          Configure your organization's privacy settings
+        </p>
+      </div>
+
+      <hr className="my-8 border-gray-200" />
+
+      <MockLicenseRequired>
+        <div className="flex flex-col gap-6">
+          <MockMakeTeamPrivateSwitch
+            isOrg={true}
+            teamId={data?.id || 0}
+            isPrivate={data?.isPrivate || false}
+            disabled={false}
+          />
+        </div>
+      </MockLicenseRequired>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -59,13 +95,5 @@ export default function ComponentPreview() {
     },
   });
 
-  // Override the imported components and hooks with mocks
-  ImportedComponent.defaultProps = {
-    ...ImportedComponent.defaultProps,
-    LicenseRequired: MockLicenseRequired,
-    MakeTeamPrivateSwitch: MockMakeTeamPrivateSwitch,
-    trpc: mockTrpc,
-  };
-
-  return <ImportedComponent />;
+  return <MockPrivacyComponent />;
 }

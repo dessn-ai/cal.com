@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/zohocrm/components/EventTypeAppCardInterface';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     eventType: {
@@ -40,7 +39,13 @@ export default function ComponentPreview() {
         category: "crm",
         slug: "zoho-crm",
         trending: true,
-        email: "help@cal.com"
+        email: "help@cal.com",
+        // Add missing required properties
+        categories: ["calendar"],
+        isInstalled: true,
+        enabled: true,
+        isSetupAlready: true,
+        credentialOwner: null
       },
       label: "App"
     },

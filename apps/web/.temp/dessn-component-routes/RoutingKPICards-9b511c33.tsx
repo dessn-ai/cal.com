@@ -1,9 +1,28 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { RoutingKPICards } from '../../../../packages/features/insights/components/RoutingKPICards';
 
-import { TRPCProvider } from '@calcom/trpc/react';
-import { InsightsProvider } from '../../../../packages/features/insights/context/insights-provider';
+// Mock RoutingKPICards component
+const MockRoutingKPICards: React.FC = () => {
+  return (
+    <div className="mock-routing-kpi-cards">
+      <h2>Routing KPI Cards</h2>
+      <div className="grid grid-cols-3 gap-4">
+        <div className="card p-4 border rounded">
+          <h3>Total Submissions</h3>
+          <p>150</p>
+        </div>
+        <div className="card p-4 border rounded">
+          <h3>Successful Bookings</h3>
+          <p>75</p>
+        </div>
+        <div className="card p-4 border rounded">
+          <h3>Conversion Rate</h3>
+          <p>50%</p>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -40,16 +59,8 @@ export default function ComponentPreview() {
   });
 
   return (
-    <TRPCProvider>
-      <InsightsProvider
-        teamId={state.teamId.value}
-        startDate={new Date(state.startDate.value)}
-        endDate={new Date(state.endDate.value)}
-        userId={state.userId.value}
-        isAll={state.isAll.value}
-        routingFormId={state.routingFormId.value}>
-        <RoutingKPICards />
-      </InsightsProvider>
-    </TRPCProvider>
+    <div className="p-4">
+      <MockRoutingKPICards />
+    </div>
   );
 }

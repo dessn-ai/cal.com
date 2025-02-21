@@ -2,9 +2,23 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { AttendeeAddGuestsEmail } from '../../../../packages/emails/src/templates/AttendeeAddGuestsEmail';
 
-import { TimeFormat } from '../../../../packages/types/Calendar';
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
 
 export default function ComponentPreview() {
+  // Create a translation function that will be consistent throughout the app
+  const translate = (key: string, variables?: Record<string, string | number>) => {
+    if (!variables) return key;
+    let translatedString = key;
+    Object.entries(variables).forEach(([varKey, varValue]) => {
+      translatedString = translatedString.replace(new RegExp(`{${varKey}}`, 'g'), String(varValue));
+    });
+    return translatedString;
+  };
+
   const [state, setState] = useParentState({
     calEvent: {
       type: 'string',
@@ -17,16 +31,18 @@ export default function ComponentPreview() {
           name: 'John Doe',
           email: 'john@example.com',
           timeZone: 'America/New_York',
-          language: { translate: (key: string) => key, locale: 'en' },
+          language: { translate, locale: 'en' },
         },
         attendees: [
           {
             name: 'Jane Smith',
             email: 'jane@example.com',
             timeZone: 'America/Los_Angeles',
-            language: { translate: (key: string) => key, locale: 'en' },
+            language: { translate, locale: 'en' },
           },
         ],
+        language: { translate, locale: 'en' },
+        t: translate,
       }),
       label: 'Calendar Event',
     },
@@ -36,7 +52,7 @@ export default function ComponentPreview() {
         name: 'Jane Smith',
         email: 'jane@example.com',
         timeZone: 'America/Los_Angeles',
-        language: { translate: (key: string) => key, locale: 'en' },
+        language: { translate, locale: 'en' },
       }),
       label: 'Attendee',
     },
@@ -73,11 +89,18 @@ export default function ComponentPreview() {
 
   return (
     <AttendeeAddGuestsEmail
-      calEvent={parsedCalEvent}
-      attendee={parsedAttendee}
+      calEvent={{
+        ...parsedCalEvent,
+        language: { translate, locale: 'en' },
+        t: translate,
+      }}
+      attendee={{
+        ...parsedAttendee,
+        language: { translate, locale: 'en' },
+      }}
       timeZone={state.timeZone.value}
       includeAppsStatus={state.includeAppsStatus.value}
-      t={(key: string) => key}
+      t={translate}
       locale={state.locale.value}
       timeFormat={state.timeFormat.value as TimeFormat}
       isOrganizer={state.isOrganizer.value}

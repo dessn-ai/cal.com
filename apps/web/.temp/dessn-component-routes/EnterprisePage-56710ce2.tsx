@@ -2,11 +2,16 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../components/EnterprisePage';
 
-import { useLocale } from "@calcom/lib/hooks/useLocale";
+// Mock translation function
+const mockT = (key: string) => key;
+const mockUseLocale = () => ({ t: mockT });
+
+// Mock the useLocale hook
+jest.mock("@calcom/lib/hooks/useLocale", () => ({
+  useLocale: mockUseLocale
+}));
 
 export default function ComponentPreview() {
-  const { t } = useLocale();
-
   const [state, setState] = useParentState({
     heading: {
       type: "string",
@@ -26,6 +31,12 @@ export default function ComponentPreview() {
   });
 
   return (
-    <ImportedComponent />
+    <div className="bg-white">
+      <ImportedComponent 
+        heading={state.heading.value}
+        subtitle={state.subtitle.value}
+        withoutSeo={state.withoutSeo.value}
+      />
+    </div>
   );
 }

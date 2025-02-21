@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../../../packages/features/ee/teams/components/TeamPill';
-
+import TeamPill, { TeamRole } from '../../../../packages/features/ee/teams/components/TeamPill';
 import { MembershipRole } from '@calcom/prisma/enums';
+import { LocaleProvider } from './LocaleContext';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -26,9 +26,9 @@ export default function ComponentPreview() {
   });
 
   return (
-    <>
-      <ImportedComponent text={state.text.value} color={state.color.value as "blue" | "green" | "red" | "orange"} />
-      <ImportedComponent.TeamRole role={state.role.value as MembershipRole} />
-    </>
+    <LocaleProvider>
+      <TeamPill text={state.text.value} color={state.color.value as "blue" | "green" | "red" | "orange"} />
+      <TeamRole role={state.role.value as MembershipRole} />
+    </LocaleProvider>
   );
 }

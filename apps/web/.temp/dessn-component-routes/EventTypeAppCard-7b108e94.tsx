@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/paypal/components/EventTypeAppCardInterface';
-
+import EventTypeAppContext from "@calcom/app-store/EventTypeAppContext";
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -26,10 +26,27 @@ export default function ComponentPreview() {
       value: {
         name: "PayPal",
         slug: "paypal",
-        logo: "https://example.com/paypal-logo.png",
+        logo: "https://app-store-assets.cal.com/paypal/icon.svg",
         description: "Accept payments via PayPal",
+        categories: ["payment", "calendar"],
+        category: "payment",
+        isInstalled: true,
+        enabled: true,
+        isSetupAlready: true,
         credentialOwner: null,
-        credentialIds: []
+        credentialIds: [],
+        dirName: "paypal",
+        email: "demo@paypal.com",
+        installed: true,
+        type: "paypal_payment",
+        title: "PayPal",
+        variant: "payment",
+        price: 0,
+        trending: false,
+        rating: 5,
+        reviews: 1,
+        verified: true,
+        locationOption: "conferencing",
       },
       label: "App"
     },
@@ -40,17 +57,39 @@ export default function ComponentPreview() {
     },
     eventTypeFormMetadata: {
       type: "object",
-      value: {},
+      value: {
+        price: 0,
+        enabled: true,
+        currency: "USD",
+      },
       label: "Event Type Form Metadata"
     }
   });
 
+  const contextValue = {
+    getAppData: (key: string) => {
+      if (key === "enabled") return true;
+      if (key === "price") return 0;
+      if (key === "currency") return "USD";
+      return undefined;
+    },
+    setAppData: (key: string, value: unknown) => {
+      console.log("Setting app data", key, value);
+    },
+    disabled: false,
+    LockedIcon: undefined,
+  };
+
   return (
-    <ImportedComponent
-      eventType={state.eventType.value}
-      app={state.app.value}
-      disabled={state.disabled.value}
-      eventTypeFormMetadata={state.eventTypeFormMetadata.value}
-    />
+    <EventTypeAppContext.Provider value={contextValue}>
+      <div className="w-full">
+        <ImportedComponent
+          eventType={state.eventType.value}
+          app={state.app.value}
+          disabled={state.disabled.value}
+          eventTypeFormMetadata={state.eventTypeFormMetadata.value}
+        />
+      </div>
+    </EventTypeAppContext.Provider>
   );
 }

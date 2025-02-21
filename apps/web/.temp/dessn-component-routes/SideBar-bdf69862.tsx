@@ -1,7 +1,18 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { SideBar } from '../../../../packages/features/shell/SideBar';
 
+// Create a simplified version of SideBar that doesn't use Navigation
+const SimplifiedSideBar = ({ bannersHeight, isPlatformUser, user }) => {
+  return (
+    <div className="flex h-full flex-col" data-testid="sidebar">
+      <aside className="desktop-transparent fixed left-0 top-0 h-full max-h-screen w-14 flex-col md:flex lg:w-56 lg:px-2">
+        <div className="flex h-full w-full flex-col">
+          <div className="text-center">Menu Items Would Go Here</div>
+        </div>
+      </aside>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -27,7 +38,7 @@ export default function ComponentPreview() {
   };
 
   return (
-    <SideBar 
+    <SimplifiedSideBar 
       bannersHeight={state.bannersHeight.value} 
       isPlatformUser={state.isPlatformUser.value}
       user={mockUser}

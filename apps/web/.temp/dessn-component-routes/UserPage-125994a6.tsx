@@ -1,7 +1,15 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../pages/[user]/embed';
+import dynamic from 'next/dynamic';
 
+// Use dynamic import with error handling
+const ImportedComponent = dynamic(() => import('../../pages/[user]/embed').catch(() => {
+  // Fallback component if import fails
+  return () => <div>Failed to load component</div>;
+}), {
+  ssr: false,
+  loading: () => <div>Loading...</div>
+});
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -121,5 +129,34 @@ export default function ComponentPreview() {
     isEmbed: state.isEmbed.value,
   };
 
-  return <ImportedComponent {...props} />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ErrorBoundary>
+        <ImportedComponent {...props} />
+      </ErrorBoundary>
+    </Suspense>
+  );
+}
+
+// Simple Error Boundary Component
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong loading the component.</div>;
+    }
+
+    return this.props.children;
+  }
 }

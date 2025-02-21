@@ -1,9 +1,34 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../../../packages/app-store/routing-forms/components/SingleForm';
+import { TestForm } from '../../../../packages/app-store/routing-forms/components/SingleForm';
+import { FormProvider, useForm } from 'react-hook-form';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+// Mock user data
+const mockUser = {
+  id: 1,
+  name: "Test User",
+  email: "test@example.com",
+  username: "testuser",
+};
 
 export default function ComponentPreview() {
+  const methods = useForm({
+    defaultValues: {
+      response: {},
+    }
+  });
+
   const [state, setState] = useParentState({
     form: {
       type: "object",
@@ -26,6 +51,9 @@ export default function ComponentPreview() {
           slug: "sample-team",
         },
         teamMembers: [],
+        routers: [],
+        connectedForms: [],
+        user: mockUser,
       },
       label: "Form",
     },
@@ -37,10 +65,29 @@ export default function ComponentPreview() {
   });
 
   return (
-    <ImportedComponent
-      form={state.form.value}
-      isTestPreviewOpen={state.isTestPreviewOpen.value}
-      setIsTestPreviewOpen={(value) => setState("isTestPreviewOpen", value)}
-    />
+    <QueryClientProvider client={queryClient}>
+      <FormProvider {...methods}>
+        <TestForm
+          form={state.form.value}
+          showAllData={true}
+          renderFooter={(onClose) => (
+            <div className="mt-4 flex justify-end space-x-2">
+              <button 
+                type="button" 
+                onClick={() => {
+                  setState("isTestPreviewOpen", false);
+                  onClose();
+                }}
+                className="button">
+                Close
+              </button>
+              <button type="submit" className="button">
+                Test Routing
+              </button>
+            </div>
+          )}
+        />
+      </FormProvider>
+    </QueryClientProvider>
   );
 }

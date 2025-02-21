@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { createContext } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../../../packages/app-store/routing-forms/components/SingleForm';
+import { FormProvider, useForm } from 'react-hook-form';
+import { TestForm } from '../../../../packages/app-store/routing-forms/components/SingleForm';
 
+// Create necessary context providers
+const OrgBrandingProvider = createContext(null);
+OrgBrandingProvider.displayName = 'OrgBrandingProvider';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -12,13 +16,50 @@ export default function ComponentPreview() {
         name: "Sample Form",
         description: "This is a sample form",
         teamId: 1,
-        routes: [],
-        fields: [],
-        settings: {},
+        routes: [
+          {
+            id: "default",
+            isFallback: true,
+            action: {
+              type: "customPageMessage",
+              value: "Thank you for submitting the form"
+            }
+          }
+        ],
+        fields: [
+          {
+            id: "1",
+            name: "name",
+            type: "text",
+            label: "Name",
+            required: true
+          },
+          {
+            id: "2",
+            name: "email",
+            type: "email",
+            label: "Email",
+            required: true
+          }
+        ],
+        settings: {
+          emailOwnerOnSubmission: false,
+          sendUpdatesTo: [],
+          sendToAll: false
+        },
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         _count: { responses: 0 },
-        team: { slug: "team-slug", name: "Team Name" },
+        team: { 
+          slug: "team-slug", 
+          name: "Team Name",
+        },
+        user: {
+          id: 1,
+          username: "testuser",
+          email: "test@example.com",
+          name: "Test User"
+        },
         connectedForms: [],
         routers: [],
         teamMembers: []
@@ -38,15 +79,44 @@ export default function ComponentPreview() {
     }
   });
 
-  const renderFooter = state.renderFooter.value === "custom" 
-    ? (onClose: () => void) => <div>Custom Footer <button onClick={onClose}>Close</button></div>
-    : undefined;
+  const methods = useForm({
+    defaultValues: {
+      id: state.form.value.id,
+      name: state.form.value.name,
+      description: state.form.value.description,
+      fields: state.form.value.fields,
+      settings: state.form.value.settings,
+      routes: state.form.value.routes
+    }
+  });
+
+  // Mock the org branding context
+  const orgBrandingValue = {
+    orgBrand: {
+      id: 1,
+      name: "Test Org",
+      slug: "test-org",
+      logoUrl: null,
+      fullDomain: "test-org.cal.com",
+      domainSuffix: "cal.com",
+      role: "ADMIN",
+      theme: null,
+      brandColor: "#292929",
+      darkBrandColor: "#fafafa",
+      hideBranding: false
+    }
+  };
 
   return (
-    <ImportedComponent
-      form={state.form.value}
-      showAllData={state.showAllData.value}
-      renderFooter={renderFooter}
-    />
+    <div className="w-full max-w-2xl mx-auto p-6">
+      <OrgBrandingProvider.Provider value={orgBrandingValue}>
+        <FormProvider {...methods}>
+          <TestForm
+            form={state.form.value}
+            showAllData={state.showAllData.value}
+          />
+        </FormProvider>
+      </OrgBrandingProvider.Provider>
+    </div>
   );
 }

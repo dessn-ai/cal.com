@@ -1,7 +1,23 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/workflows/[workflow]/page';
 
+// Define proper types
+type PageParams = {
+  workflow: string;
+};
+
+type Props = {
+  params: PageParams;
+  searchParams: Record<string, string>;
+};
+
+// Use dynamic import with proper error handling
+const ImportedComponent = React.lazy(() => import('../../app/(use-page-wrapper)/workflows/[workflow]/page')
+  .catch((err) => {
+    console.error('Failed to load component:', err);
+    return { default: () => <div>Failed to load component</div> };
+  })
+);
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -17,8 +33,12 @@ export default function ComponentPreview() {
     },
   });
 
-  const params = JSON.parse(state.params.value);
-  const searchParams = JSON.parse(state.searchParams.value);
+  const params = JSON.parse(state.params.value) as PageParams;
+  const searchParams = JSON.parse(state.searchParams.value) as Record<string, string>;
 
-  return <ImportedComponent params={params} searchParams={searchParams} />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ImportedComponent params={params} searchParams={searchParams} />
+    </Suspense>
+  );
 }

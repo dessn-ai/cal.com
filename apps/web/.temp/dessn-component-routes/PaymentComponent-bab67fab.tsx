@@ -5,15 +5,22 @@ import ImportedComponent from '../../../../packages/features/ee/payments/compone
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 
+// Enhanced mock Stripe implementation
 const mockStripe = {
-  elements: () => ({}),
-  confirmPayment: () => Promise.resolve({}),
-  confirmSetup: () => Promise.resolve({}),
+  elements: () => mockElements,
+  confirmPayment: () => Promise.resolve({ paymentIntent: { status: 'succeeded' } }),
+  confirmSetup: () => Promise.resolve({ setupIntent: { status: 'succeeded' } }),
 };
 
 const mockElements = {
-  getElement: () => ({}),
+  getElement: () => ({
+    mount: () => {},
+    destroy: () => {},
+    on: () => {},
+    update: () => {},
+  }),
   update: () => ({}),
+  create: () => ({}),
 };
 
 export default function ComponentPreview() {
@@ -63,7 +70,7 @@ export default function ComponentPreview() {
     user: {
       username: state.username.value,
     },
-    clientSecret: "mock_client_secret",
+    clientSecret: "pi_1234567890_secret_abcdefghijklmnop",
     booking: {
       uid: "mock_booking_uid",
     },
@@ -72,7 +79,7 @@ export default function ComponentPreview() {
   const stripePromise = Promise.resolve(mockStripe);
 
   return (
-    <Elements stripe={stripePromise}>
+    <Elements stripe={stripePromise} options={{ clientSecret: props.clientSecret }}>
       <ImportedComponent {...props} />
     </Elements>
   );

@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { EditForm } from '../../../../packages/features/users/components/UserTable/EditSheet/EditUserForm';
-
 import { MembershipRole } from '@calcom/prisma/enums';
+import * as Dialog from '@radix-ui/react-dialog';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -45,11 +45,17 @@ export default function ComponentPreview() {
   };
 
   return (
-    <EditForm
-      selectedUser={mockSelectedUser}
-      avatarUrl={state.avatarUrl.value}
-      domainUrl={state.domainUrl.value}
-      dispatch={mockDispatch}
-    />
+    <Dialog.Root open={true}>
+      <Dialog.Portal>
+        <Dialog.Content>
+          <EditForm
+            selectedUser={mockSelectedUser}
+            avatarUrl={state.avatarUrl.value}
+            domainUrl={state.domainUrl.value}
+            dispatch={mockDispatch}
+          />
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }

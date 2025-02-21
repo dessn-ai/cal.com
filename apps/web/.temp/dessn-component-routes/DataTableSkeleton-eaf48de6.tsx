@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { DataTableSkeleton } from '../../../../packages/features/data-table/components/DataTableSkeleton';
-
+import { DataTableProvider } from '../../../../packages/features/data-table/context/data-table';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -25,10 +25,17 @@ export default function ComponentPreview() {
   const columnWidths = state.columnWidths.value.split(',').map(Number);
 
   return (
-    <DataTableSkeleton
-      columns={state.columns.value}
-      rows={state.rows.value}
-      columnWidths={columnWidths}
-    />
+    <DataTableProvider
+      columns={[]}
+      data={[]}
+      onRowSelectionChange={() => {}}
+      selectedRows={new Set()}
+    >
+      <DataTableSkeleton
+        columns={state.columns.value}
+        rows={state.rows.value}
+        columnWidths={columnWidths}
+      />
+    </DataTableProvider>
   );
 }

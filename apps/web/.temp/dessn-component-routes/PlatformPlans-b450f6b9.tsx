@@ -2,12 +2,20 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../modules/settings/platform/plans/platform-plans-view';
 
-import { useGetUserAttributes } from '@components/settings/platform/hooks/useGetUserAttributes';
+// Create a mock module for useGetUserAttributes
+const mockUseGetUserAttributes = (props: any) => {
+  return {
+    isUserLoading: props.isUserLoading,
+    isUserBillingDataLoading: props.isUserBillingDataLoading,
+    isPlatformUser: props.isPlatformUser,
+    isPaidUser: props.isPaidUser,
+    userBillingData: props.userBillingData,
+    userOrgId: props.userOrgId,
+  };
+};
 
-// Mock the useGetUserAttributes hook
-jest.mock('@components/settings/platform/hooks/useGetUserAttributes', () => ({
-  useGetUserAttributes: jest.fn(),
-}));
+// Override the actual import with our mock
+const useGetUserAttributes = mockUseGetUserAttributes;
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -43,8 +51,8 @@ export default function ComponentPreview() {
     },
   });
 
-  // Mock the useGetUserAttributes hook
-  (useGetUserAttributes as jest.Mock).mockReturnValue({
+  // Use the mock hook with the state values
+  const userAttributes = useGetUserAttributes({
     isUserLoading: state.isUserLoading.value,
     isUserBillingDataLoading: state.isUserBillingDataLoading.value,
     isPlatformUser: state.isPlatformUser.value,

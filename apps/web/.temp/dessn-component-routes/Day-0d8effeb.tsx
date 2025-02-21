@@ -1,8 +1,40 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { Day } from '../../../../packages/features/calendars/DatePicker';
+import dayjs from 'dayjs';
 
-import dayjs from '@calcom/dayjs';
+// Create a simplified Day component since we can't access the original package
+const Day = ({
+  active,
+  date,
+  disabled,
+  away,
+  emoji,
+  customClassName,
+  onClick
+}) => {
+  const dateStr = dayjs(date).format('D');
+  
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className={`day-container ${active ? 'active' : ''} ${away ? 'away' : ''} ${customClassName?.dayContainer || ''}`}
+      style={{
+        padding: '8px',
+        margin: '2px',
+        border: '1px solid #ddd',
+        borderRadius: '4px',
+        background: active ? '#e2e8f0' : 'white',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        opacity: disabled ? 0.5 : 1
+      }}
+    >
+      <span>{dateStr}</span>
+      {emoji && <span style={{ marginLeft: '4px' }}>{emoji}</span>}
+    </button>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({

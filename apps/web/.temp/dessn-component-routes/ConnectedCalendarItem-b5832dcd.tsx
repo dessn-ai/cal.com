@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { ConnectedCalendarItem } from '../../components/getting-started/components/ConnectedCalendarItem';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     name: {

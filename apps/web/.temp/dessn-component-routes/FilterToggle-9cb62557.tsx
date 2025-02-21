@@ -2,31 +2,21 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { FilterToggle } from '../../../../packages/features/bookings/components/FilterToggle';
 
-import { useFilterQuery } from '@calcom/features/bookings/lib/useFilterQuery';
-import { useLocale } from '@calcom/lib/hooks/useLocale';
+// Create mock data and functions directly
+const mockFilterData = {
+  teamIds: null,
+  userIds: null,
+  eventTypeIds: null,
+};
 
-// Mock the useFilterQuery hook
-const mockUseFilterQuery = () => ({
-  data: {
-    teamIds: null,
-    userIds: null,
-    eventTypeIds: null,
-  },
+// Override the actual hooks with local mock implementations
+const useFilterQuery = () => ({
+  data: mockFilterData
 });
 
-// Mock the useLocale hook
-const mockUseLocale = () => ({
-  t: (key: string) => key,
+const useLocale = () => ({
+  t: (key: string) => key
 });
-
-// Override the actual hooks with mocked versions
-jest.mock('@calcom/features/bookings/lib/useFilterQuery', () => ({
-  useFilterQuery: mockUseFilterQuery,
-}));
-
-jest.mock('@calcom/lib/hooks/useLocale', () => ({
-  useLocale: mockUseLocale,
-}));
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -45,7 +35,12 @@ export default function ComponentPreview() {
     }
   };
 
+  // Provide the mocked hooks through props
   return (
-    <FilterToggle setIsFiltersVisible={setIsFiltersVisible} />
+    <FilterToggle 
+      setIsFiltersVisible={setIsFiltersVisible}
+      useFilterQuery={useFilterQuery}
+      useLocale={useLocale}
+    />
   );
 }

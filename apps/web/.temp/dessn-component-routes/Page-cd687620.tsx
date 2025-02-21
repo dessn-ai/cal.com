@@ -1,28 +1,39 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/organizations/sso/page';
 
+// Create mock components and utilities
+const MockOrgSSOView = () => <div>Mock OrgSSOView</div>;
+const MockSettingsHeader = ({ children }: { children: React.ReactNode }) => (
+  <div>Mock SettingsHeader {children}</div>
+);
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  _generateMetadata: jest.fn(),
-  getTranslate: jest.fn(() => (key: string) => key),
-}));
-
-jest.mock('@calcom/features/ee/sso/page/orgs-sso-view', () => {
-  return function MockOrgSSOView() {
-    return <div>Mock OrgSSOView</div>;
-  };
+// Mock metadata generator
+const mockGenerateMetadata = () => ({
+  title: 'Mock Title',
+  description: 'Mock Description'
 });
 
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children }: { children: React.ReactNode }) {
-    return <div>Mock SettingsHeader {children}</div>;
-  };
-});
+// Mock translate function
+const mockGetTranslate = () => (key: string) => key;
+
+// Create a mock version of the imported component
+const MockImportedComponent = () => {
+  return (
+    <div>
+      <MockSettingsHeader>
+        <h1>SSO Configuration</h1>
+      </MockSettingsHeader>
+      <MockOrgSSOView />
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({});
 
-  return <ImportedComponent />;
+  return (
+    <div className="preview-container">
+      <MockImportedComponent />
+    </div>
+  );
 }

@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { BannerContainer } from '../../../../packages/features/shell/banners/LayoutBanner';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     teamUpgradeBanner: {
@@ -42,15 +41,68 @@ export default function ComponentPreview() {
     },
   });
 
-  const banners = {
-    teamUpgradeBanner: state.teamUpgradeBanner.value,
-    orgUpgradeBanner: state.orgUpgradeBanner.value,
-    verifyEmailBanner: state.verifyEmailBanner.value,
-    adminPasswordBanner: state.adminPasswordBanner.value,
-    impersonationBanner: state.impersonationBanner.value,
-    calendarCredentialBanner: state.calendarCredentialBanner.value,
-    invalidAppCredentialBanners: state.invalidAppCredentialBanners.value,
+  const mockBanners = {
+    teamUpgradeBanner: state.teamUpgradeBanner.value ? [{
+      team: {
+        id: 1,
+        name: "Team 1",
+        slug: "team-1"
+      },
+      role: "OWNER",
+      accepted: true,
+      teamId: 1
+    }] : null,
+    orgUpgradeBanner: state.orgUpgradeBanner.value ? [{
+      team: {
+        id: 1,
+        name: "Org 1",
+        slug: "org-1"
+      },
+      role: "OWNER",
+      accepted: true,
+      teamId: 1
+    }] : null,
+    verifyEmailBanner: state.verifyEmailBanner.value ? {
+      emailVerified: false,
+      email: "test@example.com"
+    } : null,
+    adminPasswordBanner: state.adminPasswordBanner.value ? {
+      user: {
+        role: "ADMIN",
+        username: "admin",
+        defaultPassword: true
+      }
+    } : null,
+    impersonationBanner: state.impersonationBanner.value ? {
+      user: {
+        username: "impersonated-user",
+        impersonatedBy: {
+          id: 1,
+          username: "admin",
+          role: "ADMIN"
+        }
+      }
+    } : null,
+    calendarCredentialBanner: state.calendarCredentialBanner.value ? {
+      connectedCalendars: [],
+      hasCalendarConnected: false,
+      integrationRequested: true
+    } : null,
+    invalidAppCredentialBanners: state.invalidAppCredentialBanners.value ? [
+      {
+        name: "Google Calendar",
+        slug: "google-calendar"
+      },
+      {
+        name: "Office 365 Calendar",
+        slug: "office365-calendar"
+      }
+    ] : null
   };
 
-  return <BannerContainer banners={banners} />;
+  return (
+    <div className="w-full">
+      <BannerContainer banners={mockBanners} />
+    </div>
+  );
 }

@@ -7,6 +7,7 @@ import { useState, type PropsWithChildren } from "react";
 import { initReactI18next, I18nextProvider } from "react-i18next";
 
 import { FeatureProvider } from "@calcom/features/flags/context/provider";
+import { OrgBrandingProvider } from "@calcom/features/ee/organizations/context/provider";
 import { httpBatchLink } from "@calcom/trpc";
 import type { AppRouter } from "@calcom/trpc/server/routers/_app";
 
@@ -71,6 +72,15 @@ const mockRouter = {
   isFallback: false,
 };
 
+const mockOrgBranding = {
+  brandColor: "#292929",
+  darkBrandColor: "#fafafa",
+  logo: "",
+  name: "Test Organization",
+  theme: null,
+  hideBranding: false,
+};
+
 const Providers = ({ children }: PropsWithChildren) => {
   const [queryClient] = useState(new QueryClient({ defaultOptions: { queries: { staleTime: Infinity } } }));
 
@@ -87,7 +97,11 @@ const Providers = ({ children }: PropsWithChildren) => {
           <mockedTrpc.Provider client={trpcClient} queryClient={queryClient}>
             <QueryClientProvider client={queryClient}>
               <TooltipProvider>
-                <FeatureProvider value={{}}>{children}</FeatureProvider>
+                <FeatureProvider value={{}}>
+                  <OrgBrandingProvider orgBranding={mockOrgBranding}>
+                    {children}
+                  </OrgBrandingProvider>
+                </FeatureProvider>
               </TooltipProvider>
             </QueryClientProvider>
           </mockedTrpc.Provider>

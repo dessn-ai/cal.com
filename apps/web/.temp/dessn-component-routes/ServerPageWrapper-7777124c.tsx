@@ -1,12 +1,48 @@
-import React from 'react';
-import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/platform/oauth-clients/[clientId]/edit/webhooks/page';
+import React, { Suspense, useState } from 'react';
 
+// Wrap the import in a try-catch
+const ImportedComponent = React.lazy(() => import('../../app/(use-page-wrapper)/settings/platform/oauth-clients/[clientId]/edit/webhooks/page')
+  .catch((error) => {
+    console.error('Failed to load component:', error);
+    return { default: () => <div>Failed to load component</div> };
+  })
+);
 
 export default function ComponentPreview() {
-  // Since the component doesn't have any props, we don't need to use useParentState
-  // However, we'll keep it here in case we need to add props in the future
-  const [state, setState] = useParentState({});
+  const [state, setState] = useState({});
 
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ErrorBoundary>
+        <ImportedComponent />
+      </ErrorBoundary>
+    </Suspense>
+  );
+}
+
+// Simple Error Boundary Component
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: any, errorInfo: any) {
+    console.error('Component Error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong loading the component.</div>;
+    }
+
+    return this.props.children;
+  }
 }

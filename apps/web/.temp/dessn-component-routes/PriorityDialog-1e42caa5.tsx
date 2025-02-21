@@ -1,9 +1,52 @@
-import React from 'react';
+import React, { createContext, useContext } from 'react';
 import { useParentState } from '../useIframeState';
 import { PriorityDialog } from '../../../../packages/features/eventtypes/components/HostEditDialogs';
+import { FormProvider, useForm } from 'react-hook-form';
 
+// Create mock Atoms context
+const AtomsContext = createContext({
+  locale: {
+    i18n: {
+      language: 'en',
+      languages: ['en'],
+      loadPath: '/locales/{{lng}}/{{ns}}.json',
+      defaultNS: 'common',
+    },
+    isLocaleReady: true,
+    i18next: {
+      language: 'en',
+      t: (key: string) => key,
+    },
+  }
+});
+
+// Mock AtomsProvider component
+const MockAtomsProvider = ({ children }: { children: React.ReactNode }) => {
+  const value = {
+    locale: {
+      i18n: {
+        language: 'en',
+        languages: ['en'],
+        loadPath: '/locales/{{lng}}/{{ns}}.json',
+        defaultNS: 'common',
+      },
+      isLocaleReady: true,
+      i18next: {
+        language: 'en',
+        t: (key: string) => key,
+      },
+    }
+  };
+
+  return (
+    <AtomsContext.Provider value={value}>
+      {children}
+    </AtomsContext.Provider>
+  );
+};
 
 export default function ComponentPreview() {
+  const methods = useForm();
   const [state, setState] = useParentState({
     isOpenDialog: {
       type: "boolean",
@@ -61,12 +104,16 @@ export default function ComponentPreview() {
   };
 
   return (
-    <PriorityDialog
-      isOpenDialog={state.isOpenDialog.value}
-      setIsOpenDialog={(value) => setState('isOpenDialog', value)}
-      option={option}
-      onChange={(value) => console.log('onChange', value)}
-      customClassNames={customClassNames}
-    />
+    <MockAtomsProvider>
+      <FormProvider {...methods}>
+        <PriorityDialog
+          isOpenDialog={state.isOpenDialog.value}
+          setIsOpenDialog={(value) => setState('isOpenDialog', value)}
+          option={option}
+          onChange={(value) => console.log('onChange', value)}
+          customClassNames={customClassNames}
+        />
+      </FormProvider>
+    </MockAtomsProvider>
   );
 }

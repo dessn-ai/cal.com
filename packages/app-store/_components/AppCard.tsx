@@ -42,6 +42,9 @@ export default function AppCard({
   const { setAppData, LockedIcon, disabled: managedDisabled } = useAppContextWithSchema();
   const isPlatform = useIsPlatform();
 
+  // Safely check if logo contains -dark
+  const isDarkLogo = app?.logo && typeof app.logo === 'string' && app.logo.includes("-dark");
+
   return (
     <div
       className={classNames(
@@ -57,11 +60,11 @@ export default function AppCard({
             className={classNames(app?.isInstalled ? "mr-[11px]" : "mr-3", "h-auto w-10 rounded-sm")}>
             <img
               className={classNames(
-                app?.logo.includes("-dark") && "dark:invert",
+                isDarkLogo && "dark:invert",
                 app?.isInstalled ? "min-w-[42px]" : "min-w-[40px]",
                 "w-full"
               )}
-              src={app?.logo}
+              src={app?.logo || ""}
               alt={app?.name}
             />
           </Link>
@@ -70,9 +73,9 @@ export default function AppCard({
               <span className={classNames(app?.isInstalled && "text-base", "font-semibold leading-4")}>
                 {app?.name}
               </span>
-              {!app?.isInstalled && (
+              {!app?.isInstalled && app?.categories?.[0] && (
                 <span className="bg-emphasis ml-1 rounded px-1 py-0.5 text-xs font-medium leading-3 tracking-[0.01em]">
-                  {app?.categories[0].charAt(0).toUpperCase() + app?.categories[0].slice(1)}
+                  {app.categories[0].charAt(0).toUpperCase() + app.categories[0].slice(1)}
                 </span>
               )}
             </div>

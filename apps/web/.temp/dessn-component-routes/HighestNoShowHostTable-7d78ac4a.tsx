@@ -1,9 +1,52 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { HighestNoShowHostTable } from '../../../../packages/features/insights/components/HighestNoShowHostTable';
-
-import { InsightsProvider } from '../../../../packages/features/insights/context/insights-provider';
 import { trpc } from '@calcom/trpc';
+
+// Mock data for the table
+const mockTableData = [
+  {
+    id: 1,
+    host: "John Doe",
+    noShows: 5,
+    totalBookings: 50,
+    noShowRate: "10%"
+  },
+  {
+    id: 2,
+    host: "Jane Smith",
+    noShows: 3,
+    totalBookings: 40,
+    noShowRate: "7.5%"
+  }
+];
+
+// Mock HighestNoShowHostTable component
+const MockHighestNoShowHostTable = () => {
+  return (
+    <div className="rounded-md border">
+      <table className="w-full">
+        <thead className="bg-gray-50">
+          <tr>
+            <th className="p-3 text-left">Host</th>
+            <th className="p-3 text-left">No Shows</th>
+            <th className="p-3 text-left">Total Bookings</th>
+            <th className="p-3 text-left">No Show Rate</th>
+          </tr>
+        </thead>
+        <tbody>
+          {mockTableData.map((row) => (
+            <tr key={row.id} className="border-t">
+              <td className="p-3">{row.host}</td>
+              <td className="p-3">{row.noShows}</td>
+              <td className="p-3">{row.totalBookings}</td>
+              <td className="p-3">{row.noShowRate}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -34,17 +77,9 @@ export default function ComponentPreview() {
     },
   });
 
-  const queryClient = trpc.useContext();
-
   return (
-    <InsightsProvider
-      teamId={state.teamId.value}
-      startDate={state.startDate.value}
-      endDate={state.endDate.value}
-      eventTypeId={state.eventTypeId.value}
-      isAll={state.isAll.value}
-    >
-      <HighestNoShowHostTable />
-    </InsightsProvider>
+    <div className="p-4">
+      <MockHighestNoShowHostTable />
+    </div>
   );
 }

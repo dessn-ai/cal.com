@@ -1,26 +1,24 @@
 import React from 'react';
-import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/auth/signin/page';
+import { useParentState } from "../useIframeState";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { httpBatchLink } from "@trpc/client";
+import { trpc } from "@calcom/trpc/react";
 
+// Mock JotaiProvider
+const MockJotaiProvider = ({ children }: { children: React.ReactNode }) => {
+  return <>{children}</>;
+};
 
-export default function ComponentPreview() {
-  const [state, setState] = useParentState({
-    params: {
-      type: "string",
-      value: JSON.stringify({}),
-      label: "Params",
-    },
-    searchParams: {
-      type: "string",
-      value: JSON.stringify({}),
-      label: "Search Params",
-    },
-  });
+const queryClient = new QueryClient();
 
-  const props = {
-    params: JSON.parse(state.params.value),
-    searchParams: JSON.parse(state.searchParams.value),
-  };
+export default function ServerPage() {
+  const [state, setState] = useParentState({});
 
-  return <ImportedComponent {...props} />;
+  return (
+    <MockJotaiProvider>
+      <QueryClientProvider client={queryClient}>
+        {/* Your server page content */}
+      </QueryClientProvider>
+    </MockJotaiProvider>
+  );
 }

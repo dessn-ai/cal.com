@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/salesforce/components/EventTypeAppCardInterface';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     eventType: {
@@ -26,6 +25,12 @@ export default function ComponentPreview() {
       value: {
         name: "Salesforce",
         description: "Salesforce integration",
+        categories: ["calendar"],
+        slug: "salesforce",
+        logo: "https://example.com/salesforce-logo.png",
+        enabled: true,
+        isInstalled: true,
+        isSetupAlready: true,
         credentialOwner: {
           name: "John Doe",
           avatar: "https://example.com/avatar.jpg",
@@ -33,7 +38,9 @@ export default function ComponentPreview() {
           credentialId: 123,
           readOnly: false
         },
-        credentialIds: [123, 456]
+        credentialIds: [123, 456],
+        userCredentialIds: [123, 456],
+        dirName: "salesforce"
       },
       label: "App"
     },

@@ -55,15 +55,24 @@ export default function ComponentPreview() {
     },
   });
 
+  // Safely parse JSON or return the original value if it's a simple string
+  const safeJSONParse = (value: string) => {
+    try {
+      return JSON.parse(value);
+    } catch (e) {
+      return value;
+    }
+  };
+
   return (
     <ImportedComponent
-      user={JSON.parse(state.user.value)}
-      eventType={JSON.parse(state.eventType.value)}
-      booking={JSON.parse(state.booking.value)}
-      trpcState={JSON.parse(state.trpcState.value) as DehydratedState}
-      payment={JSON.parse(state.payment.value)}
+      user={state.user.value}
+      eventType={state.eventType.value}
+      booking={safeJSONParse(state.booking.value)}
+      trpcState={safeJSONParse(state.trpcState.value) as DehydratedState}
+      payment={safeJSONParse(state.payment.value)}
       clientSecret={state.clientSecret.value}
-      profile={JSON.parse(state.profile.value)}
+      profile={safeJSONParse(state.profile.value)}
     />
   );
 }

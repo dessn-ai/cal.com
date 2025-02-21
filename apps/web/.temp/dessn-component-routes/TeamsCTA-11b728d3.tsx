@@ -1,9 +1,37 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { TeamsCTA } from '../../modules/teams/teams-view';
+import { createContext, useContext } from 'react';
 
-import { TRPCProvider } from '@calcom/trpc/react';
-import { I18nLanguageHandler } from '@calcom/features/i18n';
+// Create mock TRPC context
+const TRPCContext = createContext(null);
+
+// Mock TRPC Provider
+const MockTRPCProvider = ({ children }) => {
+  const mockTrpcClient = {
+    query: () => ({
+      teams: {
+        list: () => Promise.resolve([]),
+        hasTeams: () => Promise.resolve(false),
+      },
+      viewer: {
+        teams: {
+          list: () => Promise.resolve([]),
+          hasTeams: () => Promise.resolve(false),
+        },
+        organizations: {
+          listCurrent: () => Promise.resolve([]),
+        },
+      },
+    }),
+  };
+
+  return (
+    <TRPCContext.Provider value={mockTrpcClient}>
+      {children}
+    </TRPCContext.Provider>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -19,16 +47,14 @@ export default function ComponentPreview() {
     },
   });
 
-  const mockTrpcQuery = () => ({
+  const mockData = {
     organizationId: state.organizationId.value,
     organization: { isOrgAdmin: state.isOrgAdmin.value },
-  });
+  };
 
   return (
-    <TRPCProvider>
-      <I18nLanguageHandler>
-        <TeamsCTA />
-      </I18nLanguageHandler>
-    </TRPCProvider>
+    <MockTRPCProvider>
+      <TeamsCTA />
+    </MockTRPCProvider>
   );
 }

@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { SingleValueComponent } from '../../../../packages/features/calendars/DestinationCalendarSelector';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     option: {
@@ -29,20 +28,34 @@ export default function ComponentPreview() {
     subtitle: state.subtitle.value,
   };
 
+  // Mock the required styling functions and props
+  const commonProps = {
+    cx: (styles: string, state: any) => styles,
+    getStyles: () => ({}),
+    getValue: () => [option],
+    hasValue: true,
+    isDisabled: false,
+    isFocused: false,
+    isMulti: false,
+    options: [option],
+    selectOption: () => {},
+    theme: {
+      spacing: { baseUnit: 4 },
+      colors: {},
+      borderRadius: 4,
+    },
+    getClassNames: (name: string, props: any) => `react-select__${name}`,
+    className: '',
+    innerProps: {},
+    selectProps: {
+      classNamePrefix: 'react-select',
+    },
+  };
+
   return (
     <SingleValueComponent
       data={option}
-      selectProps={{}}
-      cx={() => ({})}
-      getStyles={() => ({})}
-      getValue={() => []}
-      hasValue={true}
-      isDisabled={false}
-      isFocused={false}
-      isMulti={false}
-      options={[]}
-      selectOption={() => {}}
-      theme={{}}
+      {...commonProps}
     />
   );
 }

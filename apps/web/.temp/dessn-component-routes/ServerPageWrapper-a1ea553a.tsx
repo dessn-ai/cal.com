@@ -1,12 +1,40 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/platform/members/page';
+import dynamic from 'next/dynamic';
 
+// Create a loading component
+const Loading = () => (
+  <div>Loading...</div>
+);
+
+// Create an error component
+const ErrorComponent = ({ error }: { error: Error }) => (
+  <div style={{ color: 'red' }}>
+    Error loading component: {error.message}
+  </div>
+);
+
+// Dynamically import the component
+const ImportedComponent = dynamic(
+  () => import('../../app/(use-page-wrapper)/settings/platform/members/page'),
+  {
+    loading: () => <Loading />,
+    ssr: false,
+  }
+);
 
 export default function ComponentPreview() {
-  // Since the component doesn't have any props, we don't need to use useParentState
-  // However, we'll keep it here in case we need to add props in the future
   const [state, setState] = useParentState({});
 
-  return <ImportedComponent />;
+  try {
+    return (
+      <Suspense fallback={<Loading />}>
+        <div className="w-full">
+          <ImportedComponent />
+        </div>
+      </Suspense>
+    );
+  } catch (error) {
+    return <ErrorComponent error={error as Error} />;
+  }
 }

@@ -1,7 +1,16 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/500/page';
 
+// Wrap the import in a try-catch to handle potential import failures
+const ImportedComponent = React.lazy(() => import('../../app/(use-page-wrapper)/500/page')
+  .catch(() => ({
+    default: () => (
+      <div className="text-red-500">
+        Error: Failed to load Error500 component
+      </div>
+    ),
+  }))
+);
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -16,5 +25,11 @@ export default function ComponentPreview() {
     error: state.error.value,
   };
 
-  return <ImportedComponent searchParams={searchParams} />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="w-full">
+        <ImportedComponent searchParams={searchParams} />
+      </div>
+    </Suspense>
+  );
 }

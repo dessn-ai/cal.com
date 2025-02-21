@@ -1,7 +1,45 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../pages/org/[orgSlug]/[user]/[type]/embed';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { I18nextProvider } from 'react-i18next';
+import i18next from 'i18next';
+import { SessionProvider } from 'next-auth/react';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
 
+// Initialize i18next
+const i18n = i18next.createInstance();
+i18n.init({
+  lng: 'en',
+  resources: {},
+});
+
+// Create Query Client
+const queryClient = new QueryClient();
+
+// Mock Providers to simplify the setup
+const MockOrgBrandingProvider = ({ children }) => <>{children}</>;
+const MockFeatureProvider = ({ children }) => <>{children}</>;
+const MockTRPCProvider = ({ children }) => <>{children}</>;
+
+// Error Boundary Component
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong. Please try again.</div>;
+    }
+
+    return this.props.children;
+  }
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -87,5 +125,31 @@ export default function ComponentPreview() {
     trpcState: {},
   };
 
-  return <ImportedComponent {...props} />;
+  const ImportedComponent = React.lazy(() => 
+    import('../../pages/org/[orgSlug]/[user]/[type]/embed').catch(() => ({
+      default: () => <div>Failed to load component</div>
+    }))
+  );
+
+  return (
+    <ErrorBoundary>
+      <SessionProvider session={null}>
+        <I18nextProvider i18n={i18n}>
+          <MockTRPCProvider>
+            <QueryClientProvider client={queryClient}>
+              <TooltipProvider>
+                <MockFeatureProvider>
+                  <MockOrgBrandingProvider>
+                    <Suspense fallback={<div>Loading...</div>}>
+                      <ImportedComponent {...props} />
+                    </Suspense>
+                  </MockOrgBrandingProvider>
+                </MockFeatureProvider>
+              </TooltipProvider>
+            </QueryClientProvider>
+          </MockTRPCProvider>
+        </I18nextProvider>
+      </SessionProvider>
+    </ErrorBoundary>
+  );
 }

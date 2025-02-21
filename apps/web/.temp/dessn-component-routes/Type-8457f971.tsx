@@ -1,7 +1,23 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../pages/[user]/[type]/embed';
 
+// Lazy load the imported component
+const ImportedComponent = React.lazy(() => import('../../pages/[user]/[type]/embed').catch(() => ({
+  default: () => <div>Failed to load component</div>
+})));
+
+// Mock generateNonce globally
+if (typeof window !== 'undefined') {
+  (window as any).generateNonce = () => {
+    return Array.from({ length: 32 }, () => 
+      Math.floor(Math.random() * 16).toString(16)
+    ).join('');
+  };
+}
+
+function LoadingFallback() {
+  return <div>Loading...</div>;
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -83,18 +99,20 @@ export default function ComponentPreview() {
   };
 
   return (
-    <ImportedComponent
-      eventData={state.eventData.value}
-      rescheduleUid={state.rescheduleUid.value}
-      bookingUid={state.bookingUid.value}
-      user={state.user.value}
-      slug={state.slug.value}
-      trpcState={mockTrpcState}
-      isBrandingHidden={state.isBrandingHidden.value}
-      isSEOIndexable={state.isSEOIndexable.value}
-      themeBasis={state.themeBasis.value}
-      orgBannerUrl={state.orgBannerUrl.value}
-      isEmbed={state.isEmbed.value}
-    />
+    <Suspense fallback={<LoadingFallback />}>
+      <ImportedComponent
+        eventData={state.eventData.value}
+        rescheduleUid={state.rescheduleUid.value}
+        bookingUid={state.bookingUid.value}
+        user={state.user.value}
+        slug={state.slug.value}
+        trpcState={mockTrpcState}
+        isBrandingHidden={state.isBrandingHidden.value}
+        isSEOIndexable={state.isSEOIndexable.value}
+        themeBasis={state.themeBasis.value}
+        orgBannerUrl={state.orgBannerUrl.value}
+        isEmbed={state.isEmbed.value}
+      />
+    </Suspense>
   );
 }

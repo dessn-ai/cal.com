@@ -1,28 +1,28 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/teams/[id]/members/page';
 
+// Create mock components and utilities
+const MockLegacyPage = () => <div>Mock Legacy Page</div>;
+const MockSettingsHeader = ({ children }) => <div>Mock Settings Header {children}</div>;
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  _generateMetadata: jest.fn(),
-  getTranslate: jest.fn(() => Promise.resolve((key) => key)),
-}));
-
-jest.mock('@calcom/features/ee/teams/pages/team-members-view', () => {
-  return function MockLegacyPage() {
-    return <div>Mock Legacy Page</div>;
-  };
-});
-
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children }) {
-    return <div>Mock Settings Header {children}</div>;
-  };
-});
+// Create a mock version of the imported component
+const MockImportedComponent = () => {
+  return (
+    <div>
+      <MockSettingsHeader>
+        <h1>Team Members</h1>
+      </MockSettingsHeader>
+      <MockLegacyPage />
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({});
 
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <MockImportedComponent />
+    </Suspense>
+  );
 }

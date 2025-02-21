@@ -1,9 +1,15 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { AddMembersWithSwitchWebWrapper } from '../../../../packages/platform/atoms/add-members-switch/AddMembersWithSwitchWebWrapper';
-
+import { FormProvider, useForm } from 'react-hook-form';
 
 export default function ComponentPreview() {
+  const methods = useForm({
+    defaultValues: {
+      hosts: []
+    }
+  });
+
   const [state, setState] = useParentState({
     teamMembers: {
       type: "string",
@@ -59,20 +65,22 @@ export default function ComponentPreview() {
   });
 
   return (
-    <AddMembersWithSwitchWebWrapper
-      teamMembers={JSON.parse(state.teamMembers.value)}
-      value={JSON.parse(state.value.value)}
-      onChange={(hosts) => console.log("Hosts changed:", hosts)}
-      assignAllTeamMembers={state.assignAllTeamMembers.value}
-      setAssignAllTeamMembers={(value) => setState("assignAllTeamMembers", value)}
-      automaticAddAllEnabled={state.automaticAddAllEnabled.value}
-      onActive={() => console.log("Component activated")}
-      isFixed={state.isFixed.value}
-      placeholder={state.placeholder.value}
-      isRRWeightsEnabled={state.isRRWeightsEnabled.value}
-      teamId={state.teamId.value}
-      isSegmentApplicable={state.isSegmentApplicable.value}
-      data-testid="add-members-switch"
-    />
+    <FormProvider {...methods}>
+      <AddMembersWithSwitchWebWrapper
+        teamMembers={JSON.parse(state.teamMembers.value)}
+        value={JSON.parse(state.value.value)}
+        onChange={(hosts) => console.log("Hosts changed:", hosts)}
+        assignAllTeamMembers={state.assignAllTeamMembers.value}
+        setAssignAllTeamMembers={(value) => setState("assignAllTeamMembers", value)}
+        automaticAddAllEnabled={state.automaticAddAllEnabled.value}
+        onActive={() => console.log("Component activated")}
+        isFixed={state.isFixed.value}
+        placeholder={state.placeholder.value}
+        isRRWeightsEnabled={state.isRRWeightsEnabled.value}
+        teamId={state.teamId.value}
+        isSegmentApplicable={state.isSegmentApplicable.value}
+        data-testid="add-members-switch"
+      />
+    </FormProvider>
   );
 }

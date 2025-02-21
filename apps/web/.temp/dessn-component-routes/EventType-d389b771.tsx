@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { EventType } from '../../../../packages/features/eventtypes/components/EventType';
-
 import { useForm } from 'react-hook-form';
 
 export default function ComponentPreview() {
@@ -13,6 +12,14 @@ export default function ComponentPreview() {
         title: "Sample Event Type",
         slug: "sample-event",
         bookerUrl: "https://example.com/book",
+        users: [
+          {
+            id: 1,
+            username: "testuser",
+            email: "test@example.com",
+            name: "Test User"
+          }
+        ]
       },
       label: "Event Type",
     },
@@ -58,7 +65,22 @@ export default function ComponentPreview() {
     },
   });
 
-  const formMethods = useForm<any>();
+  const formMethods = useForm({
+    defaultValues: {
+      id: 1,
+      title: "Sample Event Type",
+      slug: "sample-event",
+      users: [
+        {
+          id: 1,
+          username: "testuser",
+          email: "test@example.com",
+          name: "Test User"
+        }
+      ],
+      hidden: false
+    }
+  });
 
   const mockTabMap = {
     setup: <div>Setup Tab Content</div>,
@@ -90,6 +112,7 @@ export default function ComponentPreview() {
       tabsNavigation={mockTabsNavigation}
       handleSubmit={() => {}}
       allowDelete={state.allowDelete.value}
+      bookerUrl="https://example.com"
     />
   );
 }

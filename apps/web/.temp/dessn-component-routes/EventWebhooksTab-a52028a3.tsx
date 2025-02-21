@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { EventWebhooksTab } from '../../../../packages/features/eventtypes/components/tabs/webhooks/EventWebhooksTab';
-
+import { FormProvider, useForm } from 'react-hook-form';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,9 +18,20 @@ export default function ComponentPreview() {
     },
   });
 
+  const formMethods = useForm({
+    defaultValues: {
+      title: state.eventType.value.title,
+      slug: state.eventType.value.slug,
+      description: state.eventType.value.description,
+      length: state.eventType.value.length,
+    }
+  });
+
   return (
-    <EventWebhooksTab
-      eventType={state.eventType.value}
-    />
+    <FormProvider {...formMethods}>
+      <EventWebhooksTab
+        eventType={state.eventType.value}
+      />
+    </FormProvider>
   );
 }

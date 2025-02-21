@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { DataTableWrapper } from '../../../../packages/features/data-table/components/DataTableWrapper';
-
+import { DataTableProvider } from '../../../../packages/features/data-table/components/DataTableProvider';
 import { useReactTable } from '@tanstack/react-table';
 
 export default function ComponentPreview() {
@@ -56,17 +56,23 @@ export default function ComponentPreview() {
   });
 
   return (
-    <DataTableWrapper
-      testId={state.testId.value}
-      bodyTestId={state.bodyTestId.value}
+    <DataTableProvider
       table={mockTable}
-      isPending={state.isPending.value}
-      hasNextPage={state.hasNextPage.value}
-      fetchNextPage={() => {}}
-      isFetching={state.isFetching.value}
-      hideHeader={state.hideHeader.value}
-      variant={state.variant.value}
-      totalDBRowCount={state.totalDBRowCount.value}
-    />
+      selectedRows={new Set()}
+      setSelectedRows={() => {}}
+    >
+      <DataTableWrapper
+        testId={state.testId.value}
+        bodyTestId={state.bodyTestId.value}
+        table={mockTable}
+        isPending={state.isPending.value}
+        hasNextPage={state.hasNextPage.value}
+        fetchNextPage={() => {}}
+        isFetching={state.isFetching.value}
+        hideHeader={state.hideHeader.value}
+        variant={state.variant.value}
+        totalDBRowCount={state.totalDBRowCount.value}
+      />
+    </DataTableProvider>
   );
 }

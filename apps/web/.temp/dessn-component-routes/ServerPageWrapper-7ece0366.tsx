@@ -1,12 +1,54 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/auth/oauth2/authorize/page';
 
+// Create a fallback error component
+const ErrorFallback = ({ error }: { error: Error }) => {
+  return (
+    <div role="alert" className="error-boundary">
+      <p>Something went wrong:</p>
+      <pre>{error.message}</pre>
+    </div>
+  );
+};
+
+// Create an error boundary component
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <ErrorFallback error={this.state.error!} />;
+    }
+
+    return this.props.children;
+  }
+}
+
+// Wrap the imported component in a lazy load
+const ImportedComponent = React.lazy(() => import('../../app/(use-page-wrapper)/auth/oauth2/authorize/page')
+  .catch(error => ({
+    default: () => <ErrorFallback error={error} />
+  }))
+);
 
 export default function ComponentPreview() {
-  // Since the ServerPageWrapper component doesn't have any props, we don't need to use useParentState
-  // However, we'll keep it here in case we want to add any configurable options in the future
   const [state, setState] = useParentState({});
 
-  return <ImportedComponent />;
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<div>Loading...</div>}>
+        <ImportedComponent />
+      </Suspense>
+    </ErrorBoundary>
+  );
 }

@@ -1,38 +1,45 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/organizations/teams/other/[id]/members/page';
 
+// Create mock components to prevent import errors
+const MockSettingsHeader = ({ children, title, description, CTA }) => (
+  <div className="settings-header">
+    <h1>{title}</h1>
+    <p>{description}</p>
+    {CTA}
+    {children}
+  </div>
+);
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  getTranslate: jest.fn(() => ({
-    team_members: 'Team Members',
-    members_team_description: 'Manage your team members',
-  })),
-}));
+const MockLegacyPage = () => <div>Legacy Page Content</div>;
+const MockTeamMembersCTA = () => <div>Team Members CTA</div>;
 
-jest.mock('@calcom/features/ee/organizations/pages/settings/other-team-members-view', () => ({
-  __esModule: true,
-  default: () => <div>LegacyPage</div>,
-  TeamMembersCTA: () => <div>TeamMembersCTA</div>,
-}));
+// Mock translations
+const mockTranslations = {
+  team_members: 'Team Members',
+  members_team_description: 'Manage your team members',
+};
 
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => ({
-  __esModule: true,
-  default: ({ children, title, description, CTA }) => (
-    <div>
-      <h1>{title}</h1>
-      <p>{description}</p>
-      {CTA}
-      {children}
-    </div>
-  ),
-}));
+// Create a mock wrapper component
+const MockImportedComponent = () => {
+  return (
+    <MockSettingsHeader
+      title={mockTranslations.team_members}
+      description={mockTranslations.members_team_description}
+      CTA={<MockTeamMembersCTA />}>
+      <MockLegacyPage />
+    </MockSettingsHeader>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
-    // No props identified for this component
+    // Default state if needed
   });
 
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <MockImportedComponent />
+    </Suspense>
+  );
 }

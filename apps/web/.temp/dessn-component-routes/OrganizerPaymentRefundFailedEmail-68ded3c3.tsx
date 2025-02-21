@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
 import { OrganizerPaymentRefundFailedEmail } from '../../../../packages/emails/src/templates/OrganizerPaymentRefundFailedEmail';
 
-import { TimeFormat } from '../../../../packages/types/Calendar';
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,8 +22,8 @@ export default function ComponentPreview() {
           email: 'jane@example.com',
           timeZone: 'America/New_York',
           language: {
-            translate: (key: string) => key,
             locale: 'en',
+            translate: 'no-op-translate'
           },
         },
         attendees: [
@@ -28,8 +32,8 @@ export default function ComponentPreview() {
             email: 'john@example.com',
             timeZone: 'America/Los_Angeles',
             language: {
-              translate: (key: string) => key,
               locale: 'en',
+              translate: 'no-op-translate'
             },
           },
         ],
@@ -47,8 +51,8 @@ export default function ComponentPreview() {
         email: 'john@example.com',
         timeZone: 'America/Los_Angeles',
         language: {
-          translate: (key: string) => key,
           locale: 'en',
+          translate: 'no-op-translate'
         },
       },
       label: 'Attendee',
@@ -66,12 +70,41 @@ export default function ComponentPreview() {
     },
   });
 
+  // Transform the state before passing it to the component
+  const transformedCalEvent = {
+    ...state.calEvent.value,
+    organizer: {
+      ...state.calEvent.value.organizer,
+      language: {
+        ...state.calEvent.value.organizer.language,
+        translate: (key: string) => key,
+      },
+    },
+    attendees: state.calEvent.value.attendees.map(attendee => ({
+      ...attendee,
+      language: {
+        ...attendee.language,
+        translate: (key: string) => key,
+      },
+    })),
+  };
+
+  const transformedAttendee = {
+    ...state.attendee.value,
+    language: {
+      ...state.attendee.value.language,
+      translate: (key: string) => key,
+    },
+  };
+
   return (
-    <OrganizerPaymentRefundFailedEmail
-      calEvent={state.calEvent.value}
-      attendee={state.attendee.value}
-      timeZone={state.timeZone.value}
-      timeFormat={state.timeFormat.value}
-    />
+    <Suspense fallback="Loading...">
+      <OrganizerPaymentRefundFailedEmail
+        calEvent={transformedCalEvent}
+        attendee={transformedAttendee}
+        timeZone={state.timeZone.value}
+        timeFormat={state.timeFormat.value}
+      />
+    </Suspense>
   );
 }

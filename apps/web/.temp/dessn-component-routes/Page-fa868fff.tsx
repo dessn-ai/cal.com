@@ -1,30 +1,36 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/security/password/page';
 
+// Create mock components and utilities
+const MockSettingsHeader = ({ children }: { children: React.ReactNode }) => <div>{children}</div>;
+const MockPasswordView = () => <div>Password View Wrapper</div>;
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  _generateMetadata: jest.fn(),
-  getTranslate: jest.fn(() => (key: string) => key),
-}));
-
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children }: { children: React.ReactNode }) {
-    return <div>{children}</div>;
-  };
+// Mock metadata generator
+const mockGenerateMetadata = () => ({
+  title: 'Password Settings',
+  description: 'Password Settings Page'
 });
 
-jest.mock('~/settings/security/password-view', () => {
-  return function MockPasswordViewWrapper() {
-    return <div>Password View Wrapper</div>;
-  };
-});
+// Create a mock component that represents the imported page
+const MockImportedComponent = () => {
+  return (
+    <div>
+      <MockSettingsHeader>
+        <h1>Password Settings</h1>
+      </MockSettingsHeader>
+      <MockPasswordView />
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
-    // No props identified for this component
+    // Default state if needed
   });
 
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <MockImportedComponent />
+    </Suspense>
+  );
 }

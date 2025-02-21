@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../modules/videos/views/videos-single-view';
-
+import { VideoMeetingInfo } from '../../modules/videos/views/videos-single-view';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -27,5 +26,5 @@ export default function ComponentPreview() {
 
   const booking = JSON.parse(state.booking.value);
 
-  return <ImportedComponent.VideoMeetingInfo booking={booking} />;
+  return <VideoMeetingInfo booking={booking} />;
 }

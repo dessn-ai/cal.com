@@ -1,19 +1,25 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/settings/TimezoneChangeDialog';
-
 import { SessionProvider } from 'next-auth/react';
-import { trpc } from '@calcom/trpc/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { httpBatchLink } from '@trpc/client';
 
-const queryClient = new QueryClient();
-const trpcClient = trpc.createClient({
-  links: [
-    httpBatchLink({
-      url: '/api/trpc',
-    }),
-  ],
+// Create a mock TRPC Provider component
+const MockTRPCProvider = ({ children }) => {
+  return children;
+};
+
+// Create a new QueryClient instance
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+      // Prevent actual data fetching
+      staleTime: Infinity,
+      cacheTime: Infinity,
+    },
+  },
 });
 
 export default function ComponentPreview() {
@@ -27,11 +33,15 @@ export default function ComponentPreview() {
 
   return (
     <SessionProvider session={null}>
-      <trpc.Provider client={trpcClient} queryClient={queryClient}>
-        <QueryClientProvider client={queryClient}>
-          {state.showDialog.value && <ImportedComponent />}
-        </QueryClientProvider>
-      </trpc.Provider>
+      <QueryClientProvider client={queryClient}>
+        <MockTRPCProvider>
+          {state.showDialog.value && (
+            <React.Suspense fallback={<div>Loading...</div>}>
+              <ImportedComponent />
+            </React.Suspense>
+          )}
+        </MockTRPCProvider>
+      </QueryClientProvider>
     </SessionProvider>
   );
 }

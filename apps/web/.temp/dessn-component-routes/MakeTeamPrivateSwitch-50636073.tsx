@@ -1,10 +1,51 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/ee/teams/components/MakeTeamPrivateSwitch';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
 
-import { trpc } from '@calcom/trpc/react';
+// Mock providers
+const SessionProvider = ({ children }) => children;
+const I18nextProvider = ({ children }) => children;
+const TRPCProvider = ({ children }) => children;
+const FeatureProvider = ({ children }) => children;
+const OrgBrandingProvider = ({ children }) => children;
+
+const ErrorFallback = ({ error }) => (
+  <div>
+    <h2>Something went wrong:</h2>
+    <pre>{error.message}</pre>
+  </div>
+);
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <ErrorFallback error={this.state.error} />;
+    }
+    return this.props.children;
+  }
+}
 
 export default function ComponentPreview() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        cacheTime: 0,
+      },
+    },
+  });
+
   const [state, setState] = useParentState({
     teamId: {
       type: "number",
@@ -28,36 +69,47 @@ export default function ComponentPreview() {
     },
   });
 
-  const mockTrpc = {
-    useUtils: () => ({
-      viewer: {
-        teams: {
-          get: {
-            invalidate: async () => {},
-          },
-        },
-      },
-    }),
+  // Mock TRPC context
+  const mockUtils = {
     viewer: {
       teams: {
         update: {
           useMutation: () => ({
-            mutate: () => {},
-            isPending: false,
-          }),
-        },
-      },
-    },
+            mutate: async () => {},
+            isLoading: false,
+            isPending: false
+          })
+        }
+      }
+    }
   };
 
   return (
-    <trpc.Provider client={mockTrpc as any}>
-      <ImportedComponent
-        teamId={state.teamId.value}
-        isPrivate={state.isPrivate.value}
-        disabled={state.disabled.value}
-        isOrg={state.isOrg.value}
-      />
-    </trpc.Provider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <SessionProvider>
+          <I18nextProvider>
+            <TRPCProvider>
+              <TooltipProvider>
+                <FeatureProvider>
+                  <OrgBrandingProvider>
+                    <Suspense fallback={<div>Loading...</div>}>
+                      <div style={{ padding: '20px' }}>
+                        <ImportedComponent
+                          teamId={state.teamId.value}
+                          isPrivate={state.isPrivate.value}
+                          disabled={state.disabled.value}
+                          isOrg={state.isOrg.value}
+                        />
+                      </div>
+                    </Suspense>
+                  </OrgBrandingProvider>
+                </FeatureProvider>
+              </TooltipProvider>
+            </TRPCProvider>
+          </I18nextProvider>
+        </SessionProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }

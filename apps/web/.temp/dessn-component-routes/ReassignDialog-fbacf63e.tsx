@@ -2,6 +2,35 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { ReassignDialog } from '../../components/dialog/ReassignDialog';
 
+// Mock the search params context
+const SearchParamsContext = React.createContext(null);
+
+export const SearchParamsProvider = ({ children }) => {
+  const mockSearchParams = new URLSearchParams();
+  const setSearchParams = () => {};
+  
+  return (
+    <SearchParamsContext.Provider value={[mockSearchParams, setSearchParams]}>
+      {children}
+    </SearchParamsContext.Provider>
+  );
+};
+
+// Mock any required contexts from atoms
+const MockAtomsContext = React.createContext({});
+
+const MockAtomsProvider = ({ children }) => {
+  const mockValue = {
+    config: {},
+    setConfig: () => {},
+  };
+
+  return (
+    <MockAtomsContext.Provider value={mockValue}>
+      {children}
+    </MockAtomsContext.Provider>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -28,12 +57,16 @@ export default function ComponentPreview() {
   });
 
   return (
-    <ReassignDialog
-      isOpenDialog={state.isOpenDialog.value}
-      setIsOpenDialog={(value) => setState('isOpenDialog', value)}
-      teamId={state.teamId.value}
-      bookingId={state.bookingId.value}
-      bookingFromRoutingForm={state.bookingFromRoutingForm.value}
-    />
+    <MockAtomsProvider>
+      <SearchParamsProvider>
+        <ReassignDialog
+          isOpenDialog={state.isOpenDialog.value}
+          setIsOpenDialog={(value) => setState('isOpenDialog', value)}
+          teamId={state.teamId.value}
+          bookingId={state.bookingId.value}
+          bookingFromRoutingForm={state.bookingFromRoutingForm.value}
+        />
+      </SearchParamsProvider>
+    </MockAtomsProvider>
   );
 }

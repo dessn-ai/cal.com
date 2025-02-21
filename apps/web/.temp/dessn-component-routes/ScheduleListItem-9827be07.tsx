@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { ScheduleListItem } from '../../../../packages/features/schedules/components/ScheduleListItem';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     schedule: {
@@ -44,7 +43,17 @@ export default function ComponentPreview() {
     },
   });
 
-  const schedule = JSON.parse(state.schedule.value);
+  const rawSchedule = JSON.parse(state.schedule.value);
+  
+  // Convert string times to Date objects
+  const schedule = {
+    ...rawSchedule,
+    availability: rawSchedule.availability.map((slot) => ({
+      ...slot,
+      startTime: new Date(`1970-01-01T${slot.startTime}Z`),
+      endTime: new Date(`1970-01-01T${slot.endTime}Z`),
+    })),
+  };
 
   const deleteFunction = ({ scheduleId }: { scheduleId: number }) => {
     console.log(`Delete schedule with id: ${scheduleId}`);

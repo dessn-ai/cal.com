@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { RadioAreaGroup } from '../../../../packages/ui/form/radio-area/RadioAreaGroup';
-
+import { RadioAreaGroup, Item } from '../../../../packages/ui/form/radio-area/RadioAreaGroup';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -33,9 +32,9 @@ export default function ComponentPreview() {
       disabled={state.disabled.value}
       className={state.className.value}
     >
-      <RadioAreaGroup.Item value="option1">Option 1</RadioAreaGroup.Item>
-      <RadioAreaGroup.Item value="option2">Option 2</RadioAreaGroup.Item>
-      <RadioAreaGroup.Item value="option3">Option 3</RadioAreaGroup.Item>
+      <Item value="option1">Option 1</Item>
+      <Item value="option2">Option 2</Item>
+      <Item value="option3">Option 3</Item>
     </RadioAreaGroup>
   );
 }

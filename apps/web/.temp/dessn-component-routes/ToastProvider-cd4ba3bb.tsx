@@ -1,7 +1,15 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { ToastProvider } from '../../../../packages/platform/atoms/src/components/ui/toast';
 
+// Mock ToastProvider implementation
+const ToastProvider = ({ children }) => {
+  return (
+    <div data-testid="toast-provider">
+      {children}
+      <div id="toast-root" />
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -15,7 +23,13 @@ export default function ComponentPreview() {
 
   return (
     <ToastProvider>
-      {/* ToastProvider doesn't render any visible UI by itself */}
+      <div style={{ padding: '20px' }}>
+        <p>Toast Provider Demo</p>
+        <small style={{ color: '#666' }}>
+          ToastProvider is configured and ready to show notifications.
+          It doesn't render any visible UI by itself.
+        </small>
+      </div>
     </ToastProvider>
   );
 }

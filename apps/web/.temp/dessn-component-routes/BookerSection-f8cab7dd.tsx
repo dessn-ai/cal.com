@@ -1,8 +1,20 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { BookerSection } from '../../../../packages/features/bookings/Booker/components/Section';
+import { create } from 'zustand';
 
-import { BookerProvider } from '../../../../packages/features/bookings/Booker/store';
+// Create a mock store with the minimal required state
+const mockStore = create(() => ({
+  layout: 'month_view',
+  selectedDate: null,
+  state: {
+    loading: false,
+  },
+}));
+
+// Override the useBookerStore import in the Section component
+// by adding it to the window object
+window.useBookerStore = mockStore;
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -25,7 +37,7 @@ export default function ComponentPreview() {
   });
 
   return (
-    <BookerProvider>
+    <div>
       <BookerSection
         area={state.area.value}
         visible={state.visible.value}
@@ -33,6 +45,13 @@ export default function ComponentPreview() {
       >
         <div>Sample Content</div>
       </BookerSection>
-    </BookerProvider>
+    </div>
   );
+}
+
+// Add type declaration for the window object
+declare global {
+  interface Window {
+    useBookerStore: typeof mockStore;
+  }
 }

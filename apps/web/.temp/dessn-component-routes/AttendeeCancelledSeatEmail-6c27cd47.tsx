@@ -2,7 +2,11 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { AttendeeCancelledSeatEmail } from '../../../../packages/emails/src/templates/AttendeeCancelledSeatEmail';
 
-import { TimeFormat } from '../../../../packages/types/Calendar';
+// Mock TimeFormat enum
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({

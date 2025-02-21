@@ -2,9 +2,37 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { AttendeeDeclinedEmail } from '../../../../packages/emails/src/templates/AttendeeDeclinedEmail';
 
-import { TimeFormat } from '../../../../packages/types/Calendar';
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
 
 export default function ComponentPreview() {
+  // Create a more robust translation function
+  const translate = (key: string, vars?: Record<string, unknown>) => {
+    // Handle recurring strings specifically
+    if (key.includes('recurring')) {
+      return 'Recurring meeting';
+    }
+    // Handle email-specific strings
+    if (key.includes('email')) {
+      return 'Email notification';
+    }
+    // Default translations
+    const translations: Record<string, string> = {
+      'meeting_declined': 'Meeting Declined',
+      'meeting_details': 'Meeting Details',
+      'recurring_event': 'Recurring Event',
+      'weekly': 'Weekly',
+      'monthly': 'Monthly',
+      'daily': 'Daily',
+      'yes': 'Yes',
+      'no': 'No'
+    };
+    return translations[key] || key;
+  };
+
   const [state, setState] = useParentState({
     calEvent: {
       type: 'string',
@@ -17,17 +45,23 @@ export default function ComponentPreview() {
           name: 'John Doe',
           email: 'john@example.com',
           timeZone: 'America/New_York',
-          language: { translate: (key: string) => key, locale: 'en' },
+          language: { translate, locale: 'en' },
         },
         attendees: [
           {
             name: 'Jane Smith',
             email: 'jane@example.com',
             timeZone: 'America/Los_Angeles',
-            language: { translate: (key: string) => key, locale: 'en' },
+            language: { translate, locale: 'en' },
           },
         ],
-        recurringEvent: { count: 1, interval: 1, freq: 2 },
+        // Simplified recurring event structure
+        recurringEvent: null,
+        language: { translate, locale: 'en' },
+        uid: '123',
+        location: 'Virtual',
+        description: 'Team meeting',
+        status: 'DECLINED'
       }),
       label: 'Calendar Event',
     },
@@ -37,7 +71,7 @@ export default function ComponentPreview() {
         name: 'Jane Smith',
         email: 'jane@example.com',
         timeZone: 'America/Los_Angeles',
-        language: { translate: (key: string) => key, locale: 'en' },
+        language: { translate, locale: 'en' },
       }),
       label: 'Attendee',
     },
@@ -78,7 +112,7 @@ export default function ComponentPreview() {
       attendee={parsedAttendee}
       timeZone={state.timeZone.value}
       includeAppsStatus={state.includeAppsStatus.value}
-      t={(key: string) => key}
+      t={translate}
       locale={state.locale.value}
       timeFormat={state.timeFormat.value as TimeFormat}
       isOrganizer={state.isOrganizer.value}

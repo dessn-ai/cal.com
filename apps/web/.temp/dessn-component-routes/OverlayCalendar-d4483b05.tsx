@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { OverlayCalendar } from '../../../../packages/features/bookings/Booker/components/OverlayCalendar/OverlayCalendar';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     connectedCalendars: {
@@ -48,17 +47,22 @@ export default function ComponentPreview() {
     setState("isOverlayCalendarEnabled", newState);
   };
 
-  return (
-    <OverlayCalendar
-      connectedCalendars={JSON.parse(state.connectedCalendars.value)}
-      overlayBusyDates={new Set(JSON.parse(state.overlayBusyDates.value))}
-      onToggleCalendar={onToggleCalendar}
-      isOverlayCalendarEnabled={state.isOverlayCalendarEnabled.value}
-      loadingConnectedCalendar={state.loadingConnectedCalendar.value}
-      handleClickNoCalendar={handleClickNoCalendar}
-      hasSession={state.hasSession.value}
-      handleClickContinue={handleClickContinue}
-      handleSwitchStateChange={handleSwitchStateChange}
-    />
-  );
+  try {
+    return (
+      <OverlayCalendar
+        connectedCalendars={JSON.parse(state.connectedCalendars.value)}
+        overlayBusyDates={JSON.parse(state.overlayBusyDates.value)}
+        onToggleCalendar={onToggleCalendar}
+        isOverlayCalendarEnabled={state.isOverlayCalendarEnabled.value}
+        loadingConnectedCalendar={state.loadingConnectedCalendar.value}
+        handleClickNoCalendar={handleClickNoCalendar}
+        hasSession={state.hasSession.value}
+        handleClickContinue={handleClickContinue}
+        handleSwitchStateChange={handleSwitchStateChange}
+      />
+    );
+  } catch (error) {
+    console.error('Error rendering OverlayCalendar:', error);
+    return <div>Error rendering OverlayCalendar component</div>;
+  }
 }

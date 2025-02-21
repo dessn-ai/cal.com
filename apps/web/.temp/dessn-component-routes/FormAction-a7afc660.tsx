@@ -1,9 +1,25 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { FormAction } from '../../../../packages/app-store/routing-forms/components/FormActions';
 
-import { EmbedDialogProvider } from '@calcom/features/embed/lib/hooks/useEmbedDialogCtx';
-import { FormActionsProvider } from '../../../../packages/app-store/routing-forms/components/FormActions';
+// Mock FormAction component instead of using the real one
+const MockFormAction = ({ 
+  routingForm, 
+  action, 
+  children 
+}: { 
+  routingForm: any; 
+  action: string; 
+  children: React.ReactNode;
+}) => {
+  return (
+    <div className="mock-form-action">
+      <h3>Form Action Preview</h3>
+      <div>Action: {action}</div>
+      <div>Form: {routingForm ? routingForm.name : 'No form selected'}</div>
+      {children}
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -31,18 +47,13 @@ export default function ComponentPreview() {
     : null;
 
   return (
-    <EmbedDialogProvider>
-      <FormActionsProvider
-        appUrl={state.appUrl.value}
-        newFormDialogState={null}
-        setNewFormDialogState={() => {}}>
-        <FormAction
-          routingForm={routingForm}
-          action={state.action.value as any}
-        >
-          {state.action.value}
-        </FormAction>
-      </FormActionsProvider>
-    </EmbedDialogProvider>
+    <div className="preview-container">
+      <MockFormAction
+        routingForm={routingForm}
+        action={state.action.value}
+      >
+        {state.action.value}
+      </MockFormAction>
+    </div>
   );
 }

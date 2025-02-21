@@ -1,12 +1,31 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/developer/webhooks/page';
+import dynamic from 'next/dynamic';
 
+// Dynamically import the component with error handling
+const DynamicComponent = dynamic(
+  () => import('../../app/(use-page-wrapper)/settings/(settings-layout)/developer/webhooks/page')
+    .catch(err => {
+      console.error('Failed to load component:', err);
+      return () => <div>Error loading component</div>;
+    }),
+  {
+    ssr: false,
+    loading: () => <div>Loading...</div>
+  }
+);
+
+// Mock providers to avoid dependency issues
+const MockProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
 
 export default function ComponentPreview() {
-  // Since the component doesn't have any props, we don't need to use useParentState
-  // However, we'll keep it here in case we need to add props in the future
   const [state, setState] = useParentState({});
 
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <MockProvider>
+        <DynamicComponent />
+      </MockProvider>
+    </Suspense>
+  );
 }

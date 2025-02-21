@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParentState } from '../useIframeState';
-import { EventTypeSelect } from '../../../../packages/features/troubleshooter/components/EventTypeSelect';
-
-import { TroubleshooterStoreProvider } from '../../../../packages/features/troubleshooter/store';
+import { EventTypeSelect } from '@calcom/features/troubleshooter/components/EventTypeSelect';
+import { useTroubleshooterStore } from '@calcom/features/troubleshooter/store';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -21,6 +20,20 @@ export default function ComponentPreview() {
     },
   });
 
+  // Get the setEvent function from the store
+  const setEvent = useTroubleshooterStore((state) => state.setEvent);
+
+  // Initialize the event in the store when the component mounts or when selectedEventType changes
+  useEffect(() => {
+    try {
+      const selectedEvent = JSON.parse(state.selectedEventType.value);
+      setEvent(selectedEvent);
+    } catch (error) {
+      console.error('Failed to parse selected event:', error);
+    }
+  }, [state.selectedEventType.value, setEvent]);
+
+  // Mock TRPC for the component
   const mockTrpc = {
     viewer: {
       eventTypes: {
@@ -34,13 +47,5 @@ export default function ComponentPreview() {
     },
   };
 
-  return (
-    <TroubleshooterStoreProvider
-      initialState={{
-        event: JSON.parse(state.selectedEventType.value),
-        setEvent: (event) => setState('selectedEventType', JSON.stringify(event)),
-      }}>
-      <EventTypeSelect />
-    </TroubleshooterStoreProvider>
-  );
+  return <EventTypeSelect />;
 }

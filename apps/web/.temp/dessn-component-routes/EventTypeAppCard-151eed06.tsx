@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/umami/components/EventTypeAppCardInterface';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     eventType: {
@@ -30,7 +29,13 @@ export default function ComponentPreview() {
         category: "analytics",
         url: "https://umami.is",
         credentialOwner: null,
-        credentialIds: []
+        credentialIds: [],
+        // Add missing required properties
+        slug: "umami",
+        categories: ["analytics"],
+        isInstalled: true,
+        enabled: true,
+        isSetupAlready: true
       },
       label: "App"
     },

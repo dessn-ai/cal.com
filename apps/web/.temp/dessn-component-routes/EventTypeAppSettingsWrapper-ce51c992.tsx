@@ -1,9 +1,16 @@
 import React from 'react';
+import { useForm, FormProvider } from 'react-hook-form';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../components/apps/installation/EventTypeAppSettingsWrapper';
 
-
 export default function ComponentPreview() {
+  const methods = useForm({
+    defaultValues: {
+      enabled: true,
+      appData: {},
+    }
+  });
+
   const [state, setState] = useParentState({
     slug: {
       type: "string",
@@ -54,12 +61,14 @@ export default function ComponentPreview() {
   const eventType = JSON.parse(state.eventType.value);
 
   return (
-    <ImportedComponent
-      slug={state.slug.value}
-      userName={state.userName.value}
-      categories={state.categories.value.split(',')}
-      credentialId={state.credentialId.value}
-      eventType={eventType}
-    />
+    <FormProvider {...methods}>
+      <ImportedComponent
+        slug={state.slug.value}
+        userName={state.userName.value}
+        categories={state.categories.value.split(',')}
+        credentialId={state.credentialId.value}
+        eventType={eventType}
+      />
+    </FormProvider>
   );
 }

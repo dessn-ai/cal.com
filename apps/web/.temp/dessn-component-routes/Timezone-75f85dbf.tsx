@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { Timezone } from '../../../../packages/platform/atoms/timezone/index';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     variant: {
@@ -27,7 +26,22 @@ export default function ComponentPreview() {
       value: false,
       label: "Grow",
     },
+    selectedTimezone: {
+      type: "string",
+      value: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      label: "Selected Timezone",
+    },
   });
+
+  const handleTimezoneChange = (timezone: string) => {
+    setState((prev) => ({
+      ...prev,
+      selectedTimezone: {
+        ...prev.selectedTimezone,
+        value: timezone,
+      },
+    }));
+  };
 
   return (
     <Timezone
@@ -35,6 +49,8 @@ export default function ComponentPreview() {
       timezoneSelectCustomClassname={state.timezoneSelectCustomClassname.value}
       size={state.size.value}
       grow={state.grow.value}
+      value={state.selectedTimezone.value}
+      onChange={handleTimezoneChange}
     />
   );
 }

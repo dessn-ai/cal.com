@@ -1,9 +1,36 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { EventAvailabilityTab } from '../../../../packages/features/eventtypes/components/tabs/availability/EventAvailabilityTab';
+import { FormProvider, useForm } from 'react-hook-form';
 
+// Mock LockedFieldsProvider context
+const LockedFieldsContext = React.createContext({
+  lockedFields: new Set(),
+  setLockedFields: () => {},
+});
+
+const LockedFieldsProvider = ({ children }) => {
+  const [lockedFields, setLockedFields] = React.useState(new Set());
+  
+  return (
+    <LockedFieldsContext.Provider value={{ lockedFields, setLockedFields }}>
+      {children}
+    </LockedFieldsContext.Provider>
+  );
+};
 
 export default function ComponentPreview() {
+  const formMethods = useForm({
+    defaultValues: {
+      schedule: [],
+      availability: [],
+      timeZone: "UTC",
+      seatsPerTimeSlot: 1,
+      requiresConfirmation: false,
+      metadata: {},
+    }
+  });
+
   const [state, setState] = useParentState({
     isTeamEvent: {
       type: "boolean",
@@ -22,7 +49,13 @@ export default function ComponentPreview() {
     },
     eventType: {
       type: "string",
-      value: JSON.stringify({ schedule: 1, scheduleName: "Default Schedule" }),
+      value: JSON.stringify({ 
+        schedule: 1, 
+        scheduleName: "Default Schedule",
+        metadata: {},
+        seatsPerTimeSlot: 1,
+        requiresConfirmation: false,
+      }),
       label: "Event Type",
     },
     teamMembers: {
@@ -58,17 +91,21 @@ export default function ComponentPreview() {
   });
 
   return (
-    <EventAvailabilityTab
-      isTeamEvent={state.isTeamEvent.value}
-      schedulesQueryData={JSON.parse(state.schedulesQueryData.value)}
-      isSchedulesPending={state.isSchedulesPending.value}
-      eventType={JSON.parse(state.eventType.value)}
-      teamMembers={JSON.parse(state.teamMembers.value)}
-      scheduleQueryData={JSON.parse(state.scheduleQueryData.value)}
-      isSchedulePending={state.isSchedulePending.value}
-      user={JSON.parse(state.user.value)}
-      editAvailabilityRedirectUrl={state.editAvailabilityRedirectUrl.value}
-      hostSchedulesQuery={mockHostSchedulesQuery}
-    />
+    <LockedFieldsProvider>
+      <FormProvider {...formMethods}>
+        <EventAvailabilityTab
+          isTeamEvent={state.isTeamEvent.value}
+          schedulesQueryData={JSON.parse(state.schedulesQueryData.value)}
+          isSchedulesPending={state.isSchedulesPending.value}
+          eventType={JSON.parse(state.eventType.value)}
+          teamMembers={JSON.parse(state.teamMembers.value)}
+          scheduleQueryData={JSON.parse(state.scheduleQueryData.value)}
+          isSchedulePending={state.isSchedulePending.value}
+          user={JSON.parse(state.user.value)}
+          editAvailabilityRedirectUrl={state.editAvailabilityRedirectUrl.value}
+          hostSchedulesQuery={mockHostSchedulesQuery}
+        />
+      </FormProvider>
+    </LockedFieldsProvider>
   );
 }

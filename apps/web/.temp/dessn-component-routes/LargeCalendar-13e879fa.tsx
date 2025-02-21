@@ -1,8 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { LargeCalendar } from '../../../../packages/features/troubleshooter/components/LargeCalendar';
-
-import { TroubleshooterStoreProvider } from '../../../../packages/features/troubleshooter/store';
+import { useTroubleshooterStore } from '../../../../packages/features/troubleshooter/store';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -14,8 +13,6 @@ export default function ComponentPreview() {
   });
 
   return (
-    <TroubleshooterStoreProvider>
-      <LargeCalendar extraDays={state.extraDays.value} />
-    </TroubleshooterStoreProvider>
+    <LargeCalendar extraDays={state.extraDays.value} />
   );
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/ee/organizations/pages/components/OtherTeamList';
-
+import { OrgBrandingProvider } from '../../../../packages/features/ee/organizations/context/provider';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -22,5 +22,21 @@ export default function ComponentPreview() {
 
   const teams = JSON.parse(state.teams.value);
 
-  return <ImportedComponent teams={teams} pending={state.pending.value} />;
+  const mockOrgBrand = {
+    orgBrand: {
+      id: 1,
+      name: "Test Organization",
+      slug: "test-org",
+      logoUrl: null,
+      fullDomain: "test-org.cal.com",
+      domainSuffix: "cal.com",
+      role: "OWNER",
+    }
+  };
+
+  return (
+    <OrgBrandingProvider value={mockOrgBrand}>
+      <ImportedComponent teams={teams} pending={state.pending.value} />
+    </OrgBrandingProvider>
+  );
 }

@@ -1,12 +1,47 @@
-import React from 'react';
-import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/auth/verify-email/page';
+import React, { Suspense } from 'react';
+import dynamic from 'next/dynamic';
 
+// Dynamically import the component with SSR disabled
+const ImportedComponent = dynamic(
+  () => import('../../app/(use-page-wrapper)/auth/verify-email/page').catch(() => {
+    // Return a fallback component if import fails
+    return () => <div>Error loading component</div>;
+  }),
+  {
+    ssr: false,
+    loading: () => <div>Loading...</div>
+  }
+);
 
 export default function ComponentPreview() {
-  // Since ServerPageWrapper doesn't have any props, we don't need to use useParentState
-  // However, we'll keep it here in case we need to add props in the future
-  const [state, setState] = useParentState({});
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ErrorBoundary>
+        <ImportedComponent />
+      </ErrorBoundary>
+    </Suspense>
+  );
+}
 
-  return <ImportedComponent />;
+// Simple Error Boundary Component
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong loading the component.</div>;
+    }
+
+    return this.props.children;
+  }
 }

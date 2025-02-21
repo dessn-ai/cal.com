@@ -1,9 +1,46 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../modules/apps/installation/[[...step]]/step-view';
+import { TroubleshooterStoreProvider } from './store';
 
+// Create a simplified version of the component
+const SimplifiedComponent = ({
+  appMetadata,
+  step,
+  userName,
+  showEventTypesStep,
+  isConferencing,
+  installableOnTeams,
+  isOrg,
+  personalAccount
+}) => {
+  return (
+    <div className="onboarding-preview">
+      <div className="preview-content">
+        <h2>Installation Preview</h2>
+        <div className="preview-section">
+          <h3>App Information</h3>
+          <p>Name: {appMetadata.name}</p>
+          <p>Type: {appMetadata.type}</p>
+          <p>Current Step: {step}</p>
+        </div>
+        <div className="preview-section">
+          <h3>User Information</h3>
+          <p>Name: {userName}</p>
+          <p>Account: {personalAccount.name}</p>
+        </div>
+        <div className="preview-section">
+          <h3>Settings</h3>
+          <p>Show Event Types: {showEventTypesStep ? 'Yes' : 'No'}</p>
+          <p>Conferencing: {isConferencing ? 'Yes' : 'No'}</p>
+          <p>Team Installation: {installableOnTeams ? 'Available' : 'Not Available'}</p>
+          <p>Organization: {isOrg ? 'Yes' : 'No'}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-export default function ComponentPreview() {
+const PreviewComponent = () => {
   const [state, setState] = useParentState({
     appMetadata: {
       type: "string",
@@ -56,15 +93,21 @@ export default function ComponentPreview() {
   };
 
   return (
-    <ImportedComponent
-      appMetadata={JSON.parse(state.appMetadata.value)}
-      step={state.step.value}
-      userName={state.userName.value}
-      showEventTypesStep={state.showEventTypesStep.value}
-      isConferencing={state.isConferencing.value}
-      installableOnTeams={state.installableOnTeams.value}
-      isOrg={state.isOrg.value}
-      personalAccount={personalAccount}
-    />
+    <TroubleshooterStoreProvider>
+      <React.Suspense fallback={<div>Loading...</div>}>
+        <SimplifiedComponent
+          appMetadata={JSON.parse(state.appMetadata.value)}
+          step={state.step.value}
+          userName={state.userName.value}
+          showEventTypesStep={state.showEventTypesStep.value}
+          isConferencing={state.isConferencing.value}
+          installableOnTeams={state.installableOnTeams.value}
+          isOrg={state.isOrg.value}
+          personalAccount={personalAccount}
+        />
+      </React.Suspense>
+    </TroubleshooterStoreProvider>
   );
-}
+};
+
+export default PreviewComponent;

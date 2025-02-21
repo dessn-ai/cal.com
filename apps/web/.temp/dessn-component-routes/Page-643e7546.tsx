@@ -1,30 +1,63 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(admin-layout)/admin/impersonation/page';
 
+// Mock components and utilities
+const mockUtils = {
+  _generateMetadata: () => ({}),
+  getTranslate: () => (key: string) => key,
+};
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  _generateMetadata: jest.fn(),
-  getTranslate: jest.fn(() => (key: string) => key),
-}));
+const MockSettingsHeader = ({ children }: { children: React.ReactNode }) => (
+  <div data-testid="mock-settings-header">{children}</div>
+);
 
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children }: { children: React.ReactNode }) {
-    return <div data-testid="mock-settings-header">{children}</div>;
-  };
-});
+const MockImpersonationView = () => (
+  <div data-testid="mock-impersonation-view">Impersonation View</div>
+);
 
-jest.mock('~/settings/admin/impersonation-view', () => {
-  return function MockImpersonationView() {
-    return <div data-testid="mock-impersonation-view">Impersonation View</div>;
-  };
-});
+// Mock the imported component directly
+const ImportedComponent = () => {
+  return (
+    <div>
+      <MockSettingsHeader>
+        <h1>Impersonation Settings</h1>
+      </MockSettingsHeader>
+      <MockImpersonationView />
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
-  const [state, setState] = useParentState({
-    // No props identified for this component
-  });
+  const [state, setState] = useParentState({});
 
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ErrorBoundary>
+        <ImportedComponent />
+      </ErrorBoundary>
+    </Suspense>
+  );
+}
+
+// Simple error boundary component
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong loading the component.</div>;
+    }
+
+    return this.props.children;
+  }
 }

@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { ControlComponent } from '../../../../packages/ui/components/form/select/components';
-
 import { GroupBase } from 'react-select';
 
 export default function ComponentPreview() {
@@ -15,7 +14,6 @@ export default function ComponentPreview() {
   });
 
   const mockControlProps = {
-    selectProps: state.selectProps.value,
     children: null,
     cx: () => "",
     clearValue: () => {},
@@ -26,9 +24,22 @@ export default function ComponentPreview() {
     isRtl: false,
     options: [],
     selectOption: () => {},
-    selectProps: {},
+    selectProps: state.selectProps,
     setValue: () => {},
     theme: {},
+    getClassNames: () => ({
+      'select-container': '',
+      'select-control': '',
+      'select-input': '',
+      'select-menu': '',
+      'select-option': '',
+      'select-placeholder': '',
+      'select-single-value': '',
+      'select-value-container': ''
+    }),
+    innerProps: {},
+    menuIsOpen: false,
+    isFocused: false
   };
 
   return (

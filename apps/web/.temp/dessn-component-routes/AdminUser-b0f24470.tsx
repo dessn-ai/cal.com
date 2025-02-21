@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { AdminUser } from '../../components/setup/AdminUser';
-
 import { FormProvider, useForm } from 'react-hook-form';
 
 export default function ComponentPreview() {

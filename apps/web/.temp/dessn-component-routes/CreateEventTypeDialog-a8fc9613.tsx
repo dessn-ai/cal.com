@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/eventtypes/components/CreateEventTypeDialog';
-
+import { OrgBrandingProvider } from '@calcom/features/ee/organizations/context/provider';
 import { MembershipRole } from '@calcom/prisma/enums';
 
 export default function ComponentPreview() {
@@ -34,5 +34,48 @@ export default function ComponentPreview() {
 
   const profileOptions = JSON.parse(state.profileOptions.value);
 
-  return <ImportedComponent profileOptions={profileOptions} />;
+  // Mock data for OrgBrandingProvider
+  const mockOrgBranding = {
+    orgBranding: {
+      logo: '',
+      brandColor: '#292929',
+      darkBrandColor: '#fafafa',
+      theme: null,
+      backgroundImage: null,
+    },
+    isLoading: false,
+    error: null,
+  };
+
+  // Wrap the component with error boundary to handle potential errors
+  return (
+    <ErrorBoundary fallback={<div>Error loading component</div>}>
+      <OrgBrandingProvider value={mockOrgBranding}>
+        <ImportedComponent profileOptions={profileOptions} />
+      </OrgBrandingProvider>
+    </ErrorBoundary>
+  );
+}
+
+// Simple error boundary component
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode; fallback: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+
+    return this.props.children;
+  }
 }

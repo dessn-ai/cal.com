@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { OrganizerRequestReminderEmail } from '../../../../packages/emails/src/templates/OrganizerRequestReminderEmail';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     calEvent: {
@@ -16,14 +15,14 @@ export default function ComponentPreview() {
           name: "John Doe",
           email: "john@example.com",
           timeZone: "America/New_York",
-          language: { translate: (key: string) => key, locale: "en" }
+          language: { locale: "en" }
         },
         attendees: [
           {
             name: "Jane Smith",
             email: "jane@example.com",
             timeZone: "America/Los_Angeles",
-            language: { translate: (key: string) => key, locale: "en" }
+            language: { locale: "en" }
           }
         ]
       }),
@@ -35,7 +34,7 @@ export default function ComponentPreview() {
         name: "Jane Smith",
         email: "jane@example.com",
         timeZone: "America/Los_Angeles",
-        language: { translate: (key: string) => key, locale: "en" }
+        language: { locale: "en" }
       }),
       label: "Attendee"
     },
@@ -55,7 +54,7 @@ export default function ComponentPreview() {
         name: "Team Member",
         email: "team@example.com",
         timeZone: "Europe/London",
-        language: { translate: (key: string) => key, locale: "en" }
+        language: { locale: "en" }
       }),
       label: "Team Member"
     },
@@ -71,13 +70,39 @@ export default function ComponentPreview() {
     }
   });
 
+  // Parse the state values
+  const parsedCalEvent = JSON.parse(state.calEvent.value);
+  const parsedAttendee = JSON.parse(state.attendee.value);
+  const parsedTeamMember = JSON.parse(state.teamMember.value);
+  const parsedReassigned = JSON.parse(state.reassigned.value);
+
+  // Add translate function to language objects after parsing
+  const translate = (key: string) => key;
+  
+  parsedCalEvent.organizer.language.translate = translate;
+  if (parsedCalEvent.attendees) {
+    parsedCalEvent.attendees.forEach((attendee: any) => {
+      if (attendee.language) {
+        attendee.language.translate = translate;
+      }
+    });
+  }
+  
+  if (parsedAttendee.language) {
+    parsedAttendee.language.translate = translate;
+  }
+  
+  if (parsedTeamMember.language) {
+    parsedTeamMember.language.translate = translate;
+  }
+
   const props = {
-    calEvent: JSON.parse(state.calEvent.value),
-    attendee: JSON.parse(state.attendee.value),
+    calEvent: parsedCalEvent,
+    attendee: parsedAttendee,
     newSeat: state.newSeat.value,
     attendeeCancelled: state.attendeeCancelled.value,
-    teamMember: JSON.parse(state.teamMember.value),
-    reassigned: JSON.parse(state.reassigned.value)
+    teamMember: parsedTeamMember,
+    reassigned: parsedReassigned
   };
 
   return <OrganizerRequestReminderEmail {...props} />;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { Navigation } from '../../../../packages/features/shell/navigation/Navigation';
-
+import { OrgBrandingProvider } from '../../../../packages/features/ee/organizations/context/provider';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -12,7 +12,29 @@ export default function ComponentPreview() {
     },
   });
 
+  // Mock organization branding data with the correct structure
+  const mockOrgBranding = {
+    orgBrand: {
+      id: 1,
+      slug: 'demo-org',
+      fullDomain: 'demo-org.cal.com',
+      domainSuffix: 'cal.com',
+      role: 'OWNER',
+      name: 'Demo Organization',
+      logoUrl: null,
+      theme: null,
+      metadata: {
+        isOrganizationVerified: false,
+        isOrganizationConfigured: true,
+        requestedSlug: null,
+        isOrganizationEnabled: true,
+      }
+    }
+  };
+
   return (
-    <Navigation isPlatformNavigation={state.isPlatformNavigation.value} />
+    <OrgBrandingProvider value={mockOrgBranding}>
+      <Navigation isPlatformNavigation={state.isPlatformNavigation.value} />
+    </OrgBrandingProvider>
   );
 }

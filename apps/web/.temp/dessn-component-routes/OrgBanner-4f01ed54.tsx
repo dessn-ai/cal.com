@@ -1,7 +1,40 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { OrgBanner } from '../../../../packages/ui/components/organization-banner/OrgBanner';
 
+// Create a preview-specific version of OrgBanner that doesn't use Next/Image
+function PreviewOrgBanner({
+  alt,
+  width,
+  height,
+  imageSrc,
+  className,
+  fallback,
+  "data-testid": dataTestId,
+}: {
+  alt: string;
+  width?: number;
+  height?: number;
+  imageSrc?: string | null;
+  className?: string;
+  fallback?: React.ReactNode;
+  "data-testid"?: string;
+}) {
+  if (!imageSrc) {
+    return <div className={className}>{fallback}</div>;
+  }
+
+  return (
+    <img
+      data-testid={dataTestId}
+      src={imageSrc}
+      alt={alt}
+      className={className}
+      width={width}
+      height={height}
+      style={{ maxWidth: '100%', height: 'auto' }}
+    />
+  );
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -33,7 +66,7 @@ export default function ComponentPreview() {
   });
 
   return (
-    <OrgBanner
+    <PreviewOrgBanner
       alt={state.alt.value}
       width={state.width.value}
       height={state.height.value}

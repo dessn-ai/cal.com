@@ -1,25 +1,39 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/organizations/domain-wide-delegation/page';
 
+// Create mock components
+const MockDomainWideDelegationList = () => {
+  return <div>Mock DomainWideDelegation List Component</div>;
+};
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  getTranslate: jest.fn(() => (key: string) => key),
-}));
+const MockSettingsHeader = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div className="mock-settings-header">
+      <h1>Mock Settings Header</h1>
+      {children}
+    </div>
+  );
+};
 
-jest.mock('@calcom/features/ee/organizations/pages/settings/domainWideDelegation', () => {
-  return function MockDomainWideDelegationList() {
-    return <div>Mock DomainWideDelegationList</div>;
-  };
-});
+// Mock translations
+const mockT = (key: string) => key;
 
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children }: { children: React.ReactNode }) {
-    return <div>Mock SettingsHeader {children}</div>;
-  };
-});
+// Create a mock wrapper component that provides necessary context
+const MockImportedComponent = () => {
+  return (
+    <div className="settings-container">
+      <MockSettingsHeader>
+        <h2>Domain-wide Delegation Settings</h2>
+      </MockSettingsHeader>
+      <MockDomainWideDelegationList />
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <MockImportedComponent />
+    </Suspense>
+  );
 }

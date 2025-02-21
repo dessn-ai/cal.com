@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { Indicator } from '../../../../packages/ui/form/radio-area/Radio';
-
+import { Radio, Group, Indicator } from '../../../../packages/ui/form/radio-area/Radio';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -14,7 +13,11 @@ export default function ComponentPreview() {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <Indicator disabled={state.disabled.value} />
+      <Group value="default">
+        <Radio value="default" disabled={state.disabled.value}>
+          <Indicator disabled={state.disabled.value} />
+        </Radio>
+      </Group>
     </div>
   );
 }

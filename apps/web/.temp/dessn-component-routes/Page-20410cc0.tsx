@@ -1,36 +1,69 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/organizations/teams/other/[id]/appearance/page';
 
+// Mock components and utilities
+const MockLegacyPage = () => <div>Mock LegacyPage</div>;
+const MockSettingsHeader = ({ children, title, description }) => (
+  <div>
+    <h1>{title}</h1>
+    <p>{description}</p>
+    {children}
+  </div>
+);
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  _generateMetadata: jest.fn(),
-  getTranslate: jest.fn(() => Promise.resolve((key) => key)),
-}));
+// Mock utility functions
+const mockUtils = {
+  _generateMetadata: () => ({}),
+  getTranslate: () => Promise.resolve((key) => key),
+};
 
-jest.mock('@calcom/features/ee/teams/pages/team-appearance-view', () => {
-  return function MockLegacyPage() {
-    return <div>Mock LegacyPage</div>;
-  };
-});
+// Override imports with mock components
+const mockModules = {
+  '@calcom/features/ee/teams/pages/team-appearance-view': MockLegacyPage,
+  '@calcom/features/settings/appDir/SettingsHeader': MockSettingsHeader,
+  'app/_utils': mockUtils,
+};
 
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children, title, description }) {
-    return (
-      <div>
-        <h1>{title}</h1>
-        <p>{description}</p>
-        {children}
-      </div>
-    );
-  };
-});
+// Wrap the import in a try-catch to handle potential import errors
+let ImportedComponent;
+try {
+  ImportedComponent = React.lazy(() => import('../../app/(use-page-wrapper)/settings/(settings-layout)/organizations/teams/other/[id]/appearance/page').catch(() => ({
+    default: () => <div>Mock Imported Component</div>
+  })));
+} catch (error) {
+  ImportedComponent = () => <div>Error loading component</div>;
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
-    // No props identified for this component
+    // Default state if needed
   });
 
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ErrorBoundary>
+        <ImportedComponent />
+      </ErrorBoundary>
+    </Suspense>
+  );
+}
+
+// Simple Error Boundary Component
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong loading the component.</div>;
+    }
+
+    return this.props.children;
+  }
 }

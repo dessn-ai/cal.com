@@ -2,7 +2,11 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { OrganizerRequestedToRescheduleEmail } from '../../../../packages/emails/src/templates/OrganizerRequestedToRescheduleEmail';
 
-import { TimeFormat } from '../../../../packages/types/Calendar';
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,8 +22,7 @@ export default function ComponentPreview() {
           email: 'john@example.com',
           timeZone: 'America/New_York',
           language: {
-            translate: (key: string, params: any) => `Translated: ${key}`,
-            locale: 'en',
+            locale: 'en'
           },
         },
         attendees: [
@@ -28,8 +31,7 @@ export default function ComponentPreview() {
             email: 'jane@example.com',
             timeZone: 'America/Los_Angeles',
             language: {
-              translate: (key: string, params: any) => `Translated: ${key}`,
-              locale: 'en',
+              locale: 'en'
             },
           },
         ],
@@ -43,8 +45,7 @@ export default function ComponentPreview() {
         email: 'jane@example.com',
         timeZone: 'America/Los_Angeles',
         language: {
-          translate: (key: string, params: any) => `Translated: ${key}`,
-          locale: 'en',
+          locale: 'en'
         },
       }),
       label: 'Attendee',
@@ -65,10 +66,28 @@ export default function ComponentPreview() {
   const parsedCalEvent = JSON.parse(state.calEvent.value);
   const parsedAttendee = JSON.parse(state.attendee.value);
 
+  // Add translate function after parsing
+  const withTranslateFn = (obj: any) => ({
+    ...obj,
+    language: {
+      ...obj.language,
+      translate: (key: string, params: any) => `Translated: ${key}`
+    }
+  });
+
+  // Add translate function to organizer and attendees
+  const calEventWithTranslate = {
+    ...parsedCalEvent,
+    organizer: withTranslateFn(parsedCalEvent.organizer),
+    attendees: parsedCalEvent.attendees.map(withTranslateFn)
+  };
+
+  const attendeeWithTranslate = withTranslateFn(parsedAttendee);
+
   return (
     <OrganizerRequestedToRescheduleEmail
-      calEvent={parsedCalEvent}
-      attendee={parsedAttendee}
+      calEvent={calEventWithTranslate}
+      attendee={attendeeWithTranslate}
       timeZone={state.timeZone.value}
       timeFormat={state.timeFormat.value as TimeFormat}
     />

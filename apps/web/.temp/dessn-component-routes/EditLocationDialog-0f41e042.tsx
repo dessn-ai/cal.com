@@ -1,8 +1,20 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { EditLocationDialog } from '../../components/dialog/EditLocationDialog';
-
 import { DefaultEventLocationTypeEnum } from '@calcom/app-store/locations';
+
+// Create a simple LocaleContext
+const LocaleContext = React.createContext({
+  t: (key: string) => key,
+  i18n: {
+    language: 'en',
+    languages: ['en'],
+    loadPath: '/locales/{{lng}}/{{ns}}.json',
+    defaultNS: 'common',
+  },
+  locale: 'en',
+  isLocaleReady: true,
+});
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -41,21 +53,35 @@ export default function ComponentPreview() {
   };
 
   return (
-    <EditLocationDialog
-      saveLocation={state.saveLocation.value === "mock" ? mockSaveLocation : async () => {}}
-      selection={{
-        label: "Selected Location",
-        value: state.selection.value,
-        icon: "https://example.com/icon.png",
+    <LocaleContext.Provider 
+      value={{
+        t: (key: string) => key,
+        i18n: {
+          language: 'en',
+          languages: ['en'],
+          loadPath: '/locales/{{lng}}/{{ns}}.json',
+          defaultNS: 'common',
+        },
+        locale: 'en',
+        isLocaleReady: true,
       }}
-      booking={{
-        location: state.bookingLocation.value,
-      }}
-      setShowLocationModal={(show) => setState("isOpenDialog", show)}
-      isOpenDialog={state.isOpenDialog.value}
-      setSelectedLocation={() => {}}
-      setEditingLocationType={() => {}}
-      teamId={state.teamId.value}
-    />
+    >
+      <EditLocationDialog
+        saveLocation={state.saveLocation.value === "mock" ? mockSaveLocation : async () => {}}
+        selection={{
+          label: "Selected Location",
+          value: state.selection.value,
+          icon: "https://example.com/icon.png",
+        }}
+        booking={{
+          location: state.bookingLocation.value,
+        }}
+        setShowLocationModal={(show) => setState("isOpenDialog", show)}
+        isOpenDialog={state.isOpenDialog.value}
+        setSelectedLocation={() => {}}
+        setEditingLocationType={() => {}}
+        teamId={state.teamId.value}
+      />
+    </LocaleContext.Provider>
   );
 }

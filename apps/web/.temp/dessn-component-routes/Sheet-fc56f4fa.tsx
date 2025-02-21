@@ -1,7 +1,14 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { Sheet } from '../../../../packages/ui/components/sheet/Sheet';
-
+import { 
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetBody,
+  SheetFooter
+} from '../../../../packages/ui/components/sheet/Sheet';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -29,18 +36,18 @@ export default function ComponentPreview() {
 
   return (
     <Sheet open={state.open.value}>
-      <Sheet.Content>
-        <Sheet.Header showCloseButton={state.showCloseButton.value}>
-          <Sheet.Title>{state.title.value}</Sheet.Title>
-          <Sheet.Description>{state.description.value}</Sheet.Description>
-        </Sheet.Header>
-        <Sheet.Body>
+      <SheetContent>
+        <SheetHeader showCloseButton={state.showCloseButton.value}>
+          <SheetTitle>{state.title.value}</SheetTitle>
+          <SheetDescription>{state.description.value}</SheetDescription>
+        </SheetHeader>
+        <SheetBody>
           <p>Sheet content goes here</p>
-        </Sheet.Body>
-        <Sheet.Footer>
+        </SheetBody>
+        <SheetFooter>
           <button onClick={() => setState('open', false)}>Close</button>
-        </Sheet.Footer>
-      </Sheet.Content>
+        </SheetFooter>
+      </SheetContent>
     </Sheet>
   );
 }

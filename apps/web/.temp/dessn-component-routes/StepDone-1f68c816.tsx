@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../components/setup/StepDone';
-
+import { AtomsProvider } from "@calcom/atoms/AtomsProvider";
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -22,10 +22,12 @@ export default function ComponentPreview() {
   };
 
   return (
-    <ImportedComponent
-      currentStep={state.currentStep.value}
-      nextStepPath={state.nextStepPath.value}
-      setIsPending={setIsPending}
-    />
+    <AtomsProvider>
+      <ImportedComponent
+        currentStep={state.currentStep.value}
+        nextStepPath={state.nextStepPath.value}
+        setIsPending={setIsPending}
+      />
+    </AtomsProvider>
   );
 }

@@ -2,26 +2,41 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/bookings/UnconfirmedBookingBadge';
 
-import { trpc } from '@calcom/trpc/react';
-
-// Mock trpc.viewer.bookingUnconfirmedCount.useQuery
-const mockUseQuery = () => ({
+// Create a mock trpc object
+const mockTrpcHook = {
   data: 5,
-});
-
-// Mock trpc
-const mockTrpc = {
-  viewer: {
-    bookingUnconfirmedCount: {
-      useQuery: mockUseQuery,
-    },
-  },
+  isLoading: false,
+  error: null,
 };
 
-// Mock useLocale
-const mockUseLocale = () => ({
-  t: (key: string) => key,
-});
+// Override the imported component to inject our mocks
+const ComponentWithMocks = (props: any) => {
+  // Mock the trpc hook
+  const mockedTrpc = {
+    viewer: {
+      bookingUnconfirmedCount: {
+        useQuery: () => mockTrpcHook
+      }
+    }
+  };
+
+  // Create a mocked context with our mock values
+  const MockProvider = ({ children }: { children: React.ReactNode }) => {
+    return React.createElement(
+      React.Fragment,
+      {},
+      React.cloneElement(children as React.ReactElement, {
+        trpc: mockedTrpc,
+      })
+    );
+  };
+
+  return (
+    <MockProvider>
+      <ImportedComponent {...props} />
+    </MockProvider>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -32,11 +47,14 @@ export default function ComponentPreview() {
     },
   });
 
-  // Override trpc with mock
-  (trpc as any) = mockTrpc;
-
   // Mock useLocale
-  (ImportedComponent as any).useLocale = mockUseLocale;
+  React.useEffect(() => {
+    if (ComponentWithMocks) {
+      (ComponentWithMocks as any).useLocale = () => ({
+        t: (key: string) => key,
+      });
+    }
+  }, []);
 
-  return <ImportedComponent />;
+  return <ComponentWithMocks />;
 }

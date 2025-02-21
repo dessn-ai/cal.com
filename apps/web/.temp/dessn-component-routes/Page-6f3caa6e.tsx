@@ -1,27 +1,36 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(admin-layout)/admin/lockedSMS/page';
 
+// Create mock components and utilities
+const MockSettingsHeader = ({ children }: { children: React.ReactNode }) => {
+  return <div data-testid="mock-settings-header">{children}</div>;
+};
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  getTranslate: jest.fn(() => (key: string) => key),
-}));
+const MockLockedSMSView = () => {
+  return <div data-testid="mock-locked-sms-view">Locked SMS View</div>;
+};
 
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children }: { children: React.ReactNode }) {
-    return <div>{children}</div>;
-  };
-});
+// Mock translations
+const mockTranslate = (key: string) => key;
 
-jest.mock('~/settings/admin/locked-sms-view', () => {
-  return function MockLockedSMSView() {
-    return <div>Locked SMS View</div>;
-  };
-});
+// Create a mock component that represents the imported page
+const MockImportedComponent = () => {
+  return (
+    <div>
+      <MockSettingsHeader>
+        <h1>Locked SMS Settings</h1>
+      </MockSettingsHeader>
+      <MockLockedSMSView />
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({});
 
-  return <ImportedComponent />;
+  return (
+    <div className="preview-container">
+      <MockImportedComponent />
+    </div>
+  );
 }

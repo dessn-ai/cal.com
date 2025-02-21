@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { CommandSeparator } from '../../../../packages/ui/components/command/index';
-
+import { Command as CommandPrimitive } from 'cmdk';
+import cn from '../../../../packages/lib/classNames';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -14,7 +14,14 @@ export default function ComponentPreview() {
 
   return (
     <div style={{ padding: '20px', background: '#f0f0f0' }}>
-      <CommandSeparator className={state.className.value} />
+      <CommandPrimitive>
+        <CommandPrimitive.Separator
+          className={cn(
+            "bg-subtle -mx-1 mb-2 h-px",
+            state.className.value
+          )}
+        />
+      </CommandPrimitive>
     </div>
   );
 }

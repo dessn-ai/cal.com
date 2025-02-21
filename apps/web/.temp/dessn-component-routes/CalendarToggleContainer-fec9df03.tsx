@@ -4,8 +4,8 @@ import { CalendarToggleContainer } from '../../../../packages/features/troublesh
 
 import { trpc } from '@calcom/trpc/react';
 
-// Mock trpc.viewer.connectedCalendars.useQuery
-const mockUseQuery = () => ({
+// Mock data for connected calendars
+const mockConnectedCalendars = {
   data: {
     connectedCalendars: [
       {
@@ -26,18 +26,14 @@ const mockUseQuery = () => ({
     ],
   },
   isLoading: false,
-});
+};
 
-// Mock trpc
-jest.mock('@calcom/trpc/react', () => ({
-  trpc: {
-    viewer: {
-      connectedCalendars: {
-        useQuery: mockUseQuery,
-      },
-    },
-  },
-}));
+// Override trpc.viewer.connectedCalendars.useQuery
+const originalUseQuery = trpc.viewer.connectedCalendars.useQuery;
+trpc.viewer.connectedCalendars.useQuery = () => ({
+  ...mockConnectedCalendars,
+  isLoading: false,
+});
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -48,11 +44,20 @@ export default function ComponentPreview() {
     },
   });
 
-  // Override the mocked useQuery with our state-controlled version
-  trpc.viewer.connectedCalendars.useQuery = () => ({
-    ...mockUseQuery(),
+  // Create a mock query result that uses our state
+  const mockQueryResult = {
+    ...mockConnectedCalendars,
     isLoading: state.isLoading.value,
-  });
+  };
+
+  // Temporarily override the query for this component
+  React.useEffect(() => {
+    trpc.viewer.connectedCalendars.useQuery = () => mockQueryResult;
+    return () => {
+      // Restore original when component unmounts
+      trpc.viewer.connectedCalendars.useQuery = originalUseQuery;
+    };
+  }, [state.isLoading.value]);
 
   return <CalendarToggleContainer />;
 }

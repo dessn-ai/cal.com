@@ -1,20 +1,56 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { DataTable } from '../../../../packages/features/data-table/components/DataTable';
+import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 
+// Sample data type
+type Person = {
+  firstName: string;
+  lastName: string;
+  age: number;
+};
+
+// Sample data
+const defaultData: Person[] = [
+  {
+    firstName: 'John',
+    lastName: 'Doe',
+    age: 30,
+  },
+  {
+    firstName: 'Jane',
+    lastName: 'Smith',
+    age: 25,
+  },
+];
 
 export default function ComponentPreview() {
+  const columnHelper = createColumnHelper<Person>();
+  
+  const columns = [
+    columnHelper.accessor('firstName', {
+      header: 'First Name',
+      cell: info => info.getValue(),
+    }),
+    columnHelper.accessor('lastName', {
+      header: 'Last Name',
+      cell: info => info.getValue(),
+    }),
+    columnHelper.accessor('age', {
+      header: 'Age',
+      cell: info => info.getValue(),
+    }),
+  ];
+
+  const table = useReactTable({
+    data: defaultData,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  const tableContainerRef = React.useRef<HTMLDivElement>(null);
+
   const [state, setState] = useParentState({
-    table: {
-      type: "object",
-      value: {},
-      label: "Table",
-    },
-    tableContainerRef: {
-      type: "object",
-      value: { current: null },
-      label: "Table Container Ref",
-    },
     isPending: {
       type: "boolean",
       value: false,
@@ -40,8 +76,8 @@ export default function ComponentPreview() {
 
   return (
     <DataTable
-      table={state.table.value}
-      tableContainerRef={state.tableContainerRef.value}
+      table={table}
+      tableContainerRef={tableContainerRef}
       isPending={state.isPending.value}
       variant={state.variant.value}
       hideHeader={state.hideHeader.value}

@@ -1,32 +1,42 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { OrganizationBanner } from '../../../../packages/features/users/components/UserTable/EditSheet/OrganizationBanner';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createTRPCReact, httpBatchLink } from '@trpc/react-query';
+import { useState } from 'react';
 
-import { trpc } from "@calcom/trpc/react";
-
-const MockTRPCProvider = ({ children }) => {
-  const mockUseQuery = () => ({
-    data: {
-      bannerUrl: 'https://example.com/banner.jpg',
+// Create a new QueryClient for React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
     },
-    isPending: false,
-    error: null,
-  });
+  },
+});
 
-  const mockTrpc = {
-    viewer: {
-      organizations: {
-        listCurrent: {
-          useQuery: mockUseQuery,
-        },
+// Create mock TRPC client
+const mockTrpcClient = {
+  viewer: {
+    organizations: {
+      listCurrent: {
+        useQuery: () => ({
+          data: {
+            bannerUrl: 'https://example.com/banner.jpg',
+          },
+          isPending: false,
+          error: null,
+          isLoading: false,
+        }),
       },
     },
-  };
+  },
+};
 
+const MockTRPCProvider = ({ children }) => {
   return (
-    <trpc.Provider client={mockTrpc as any}>
+    <QueryClientProvider client={queryClient}>
       {children}
-    </trpc.Provider>
+    </QueryClientProvider>
   );
 };
 

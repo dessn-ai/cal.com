@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { SheetDescription } from '../../../../packages/ui/components/sheet/Sheet';
-
+import { Sheet, SheetContent, SheetDescription } from '../../../../packages/ui/components/sheet/Sheet';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,10 +17,14 @@ export default function ComponentPreview() {
   });
 
   return (
-    <SheetDescription
-      className={state.className.value}
-    >
-      {state.content.value}
-    </SheetDescription>
+    <Sheet defaultOpen>
+      <SheetContent>
+        <SheetDescription
+          className={state.className.value}
+        >
+          {state.content.value}
+        </SheetDescription>
+      </SheetContent>
+    </Sheet>
   );
 }

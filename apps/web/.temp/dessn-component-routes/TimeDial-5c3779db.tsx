@@ -1,11 +1,40 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { TimeDial } from '../../../../packages/features/timezone-buddy/components/TimeDial';
-
 import { TBContext } from '../../../../packages/features/timezone-buddy/store';
 import dayjs from '@calcom/dayjs';
 
+// Create a proper store with all required methods
+const createStore = () => {
+  let state = {
+    browsingDate: dayjs(),
+    emitCellPosition: (position: number) => {},
+  };
+  
+  const listeners = new Set();
+
+  const store = {
+    getState: () => state,
+    setState: (partial) => {
+      state = typeof partial === 'function' ? partial(state) : { ...state, ...partial };
+      listeners.forEach((listener) => listener(state));
+    },
+    subscribe: (listener) => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+    destroy: () => {
+      listeners.clear();
+    },
+  };
+
+  return store;
+};
+
 export default function ComponentPreview() {
+  // Create store instance only once using useRef
+  const storeRef = React.useRef(createStore());
+  
   const [state, setState] = useParentState({
     timezone: {
       type: "string",
@@ -36,18 +65,16 @@ export default function ComponentPreview() {
     }
   }, [state.dateRanges.value]);
 
-  const mockStore = React.useMemo(() => {
-    return {
-      getState: () => ({
-        browsingDate: dayjs(),
-        emitCellPosition: () => {},
-      }),
-      subscribe: () => () => {},
+  // Clean up store on unmount
+  React.useEffect(() => {
+    const currentStore = storeRef.current;
+    return () => {
+      currentStore.destroy();
     };
   }, []);
 
   return (
-    <TBContext.Provider value={mockStore}>
+    <TBContext.Provider value={storeRef.current}>
       <TimeDial 
         timezone={state.timezone.value}
         dateRanges={parsedDateRanges}

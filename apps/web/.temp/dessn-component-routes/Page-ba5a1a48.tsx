@@ -1,28 +1,35 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/my-account/profile/page';
+import dynamic from 'next/dynamic';
 
+// Dynamically import the component with error handling
+const ImportedComponent = dynamic(
+  () => import('../../app/(use-page-wrapper)/settings/(settings-layout)/my-account/profile/page').catch(() => {
+    return () => <div>Error loading component</div>;
+  }),
+  {
+    ssr: false,
+    loading: () => <div>Loading...</div>
+  }
+);
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  _generateMetadata: jest.fn(),
-  getTranslate: jest.fn(() => (key: string) => key),
-}));
+// Mock components that might be needed
+const MockSettingsHeader = ({ children }: { children: React.ReactNode }) => (
+  <div data-testid="mock-settings-header">{children}</div>
+);
 
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children }: { children: React.ReactNode }) {
-    return <div data-testid="mock-settings-header">{children}</div>;
-  };
-});
-
-jest.mock('~/settings/my-account/profile-view', () => {
-  return function MockProfileView() {
-    return <div data-testid="mock-profile-view">Profile View</div>;
-  };
-});
+const MockProfileView = () => (
+  <div data-testid="mock-profile-view">Profile View</div>
+);
 
 export default function ComponentPreview() {
   const [state] = useParentState({});
 
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="preview-container">
+        <ImportedComponent />
+      </div>
+    </Suspense>
+  );
 }

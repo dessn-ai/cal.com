@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { DialogPortal } from '../../../../packages/platform/atoms/src/components/ui/dialog';
-
+import * as Dialog from '@radix-ui/react-dialog';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,8 +17,12 @@ export default function ComponentPreview() {
   });
 
   return (
-    <DialogPortal>
-      {state.children.value}
-    </DialogPortal>
+    <Dialog.Root open={true}>
+      <Dialog.Portal>
+        <Dialog.Content>
+          {state.children.value}
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }

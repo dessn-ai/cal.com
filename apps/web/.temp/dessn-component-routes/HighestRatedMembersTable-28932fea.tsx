@@ -1,8 +1,71 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { HighestRatedMembersTable } from '../../../../packages/features/insights/components/HighestRatedMembersTable';
-
+import { InsightsOrgTeamsProvider } from '../../../../packages/features/insights/context/InsightsOrgTeamsProvider';
 import { trpc } from '@calcom/trpc';
+
+// Create a wrapper component that includes all necessary providers and mocks
+const TableWrapper = ({ children }: { children: React.ReactNode }) => {
+  // Create a context for the data table
+  const DataTableContext = React.createContext<any>(null);
+
+  // Create the actual provider component that the hooks are looking for
+  const DataTableProvider = ({ children }: { children: React.ReactNode }) => {
+    const value = React.useMemo(() => ({
+      data: [],
+      setData: () => {},
+      columns: [],
+      setColumns: () => {},
+      loading: false,
+      setLoading: () => {},
+      selectedRows: new Set(),
+      setSelectedRows: () => {},
+      filter: {},
+      setFilter: () => {},
+      tableState: {
+        pagination: {
+          pageIndex: 0,
+          pageSize: 10,
+        },
+        sorting: [],
+        columnFilters: [],
+        columnVisibility: {},
+      },
+      setTableState: () => {},
+    }), []);
+
+    return (
+      <DataTableContext.Provider value={value}>
+        {children}
+      </DataTableContext.Provider>
+    );
+  };
+
+  // Create the hooks that components will use
+  const useDataTable = () => {
+    const context = React.useContext(DataTableContext);
+    if (!context) {
+      throw new Error('useDataTable must be used within a DataTableProvider');
+    }
+    return context;
+  };
+
+  const useFilterValue = () => {
+    const { filter, setFilter } = useDataTable();
+    return {
+      value: filter,
+      setValue: setFilter,
+    };
+  };
+
+  // Set up the hooks in the global scope
+  React.useEffect(() => {
+    (global as any).useDataTable = useDataTable;
+    (global as any).useFilterValue = useFilterValue;
+  }, []);
+
+  return <DataTableProvider>{children}</DataTableProvider>;
+};
 
 // Mock the trpc.viewer.insights.membersWithHighestRatings.useQuery
 const mockUseQuery = () => ({
@@ -21,6 +84,17 @@ const mockTrpc = {
     insights: {
       membersWithHighestRatings: {
         useQuery: mockUseQuery,
+      },
+      orgTeams: {
+        list: {
+          useQuery: () => ({
+            data: [
+              { id: 1, name: 'Team 1' },
+              { id: 2, name: 'Team 2' },
+            ],
+            isLoading: false,
+          }),
+        },
       },
     },
   },
@@ -76,5 +150,11 @@ export default function ComponentPreview() {
     (global as any).useInsightsParameters = mockUseInsightsParameters;
   }, []);
 
-  return <HighestRatedMembersTable />;
+  return (
+    <TableWrapper>
+      <InsightsOrgTeamsProvider>
+        <HighestRatedMembersTable />
+      </InsightsOrgTeamsProvider>
+    </TableWrapper>
+  );
 }

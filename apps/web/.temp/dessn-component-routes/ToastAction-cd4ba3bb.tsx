@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { ToastAction } from '../../../../packages/platform/atoms/src/components/ui/toast';
-
+import { Toast, ToastAction, ToastProvider } from '../../../../packages/platform/atoms/src/components/ui/toast';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,11 +17,16 @@ export default function ComponentPreview() {
   });
 
   return (
-    <ToastAction
-      className={state.className.value}
-      onClick={() => console.log("ToastAction clicked")}
-    >
-      {state.children.value}
-    </ToastAction>
+    <ToastProvider>
+      <Toast>
+        <ToastAction
+          className={state.className.value}
+          onClick={() => console.log("ToastAction clicked")}
+          altText="Toast Action"
+        >
+          {state.children.value}
+        </ToastAction>
+      </Toast>
+    </ToastProvider>
   );
 }

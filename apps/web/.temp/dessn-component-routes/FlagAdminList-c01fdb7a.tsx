@@ -2,10 +2,9 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { FlagAdminList } from '../../../../packages/features/flags/components/FlagAdminList';
 
-import { trpc } from "@calcom/trpc/react";
-
-// Mock trpc
+// Create a mock trpc object
 const mockTrpc = {
+  Provider: ({ children }) => children,
   viewer: {
     features: {
       list: {
@@ -49,17 +48,12 @@ const mockTrpc = {
   })
 };
 
-// Mock the trpc import
-jest.mock("@calcom/trpc/react", () => ({
-  trpc: mockTrpc
-}));
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({});
 
   return (
-    <trpc.Provider client={mockTrpc}>
-      <FlagAdminList />
-    </trpc.Provider>
+    <div>
+      <FlagAdminList trpc={mockTrpc} />
+    </div>
   );
 }

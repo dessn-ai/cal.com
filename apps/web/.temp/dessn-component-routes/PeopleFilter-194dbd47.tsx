@@ -1,8 +1,17 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { PeopleFilter } from '../../../../packages/features/bookings/components/PeopleFilter';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { TRPCProvider } from '@calcom/trpc/react';
+// Create a new QueryClient instance
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -10,8 +19,10 @@ export default function ComponentPreview() {
   });
 
   return (
-    <TRPCProvider>
-      <PeopleFilter />
-    </TRPCProvider>
+    <QueryClientProvider client={queryClient}>
+      <div className="w-full">
+        <PeopleFilter />
+      </div>
+    </QueryClientProvider>
   );
 }

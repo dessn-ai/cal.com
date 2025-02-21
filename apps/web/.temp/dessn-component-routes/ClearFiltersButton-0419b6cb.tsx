@@ -1,8 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { ClearFiltersButton } from '../../../../packages/features/data-table/components/filters/ClearFiltersButton';
-
 import { DataTableProvider } from '@calcom/features/data-table';
+import { ClearFiltersButton } from '@calcom/features/data-table/components/filters/ClearFiltersButton';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({

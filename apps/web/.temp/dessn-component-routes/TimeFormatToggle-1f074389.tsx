@@ -1,25 +1,35 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { TimeFormatToggle } from '../../../../packages/features/bookings/components/TimeFormatToggle';
-
 import { TimeFormat } from '@calcom/lib/timeFormat';
 import { useTimePreferences } from '../../../../packages/features/bookings/lib';
 import { useLocale } from '@calcom/lib/hooks/useLocale';
 
-// Mock the hooks
-const mockUseTimePreferences = () => ({
-  timeFormat: TimeFormat.TWELVE_HOUR,
-  setTimeFormat: () => {},
+// Create mock implementations
+const MockTimePreferences = () => {
+  const [timeFormat, setTimeFormat] = React.useState(TimeFormat.TWELVE_HOUR);
+  return {
+    timeFormat,
+    setTimeFormat: () => setTimeFormat(timeFormat === TimeFormat.TWELVE_HOUR ? TimeFormat.TWENTY_FOUR_HOUR : TimeFormat.TWELVE_HOUR)
+  };
+};
+
+const MockLocale = () => ({
+  t: (key: string) => key
 });
 
-const mockUseLocale = () => ({
-  t: (key: string) => key,
-});
+// Override the hooks with mock implementations
+const TimeFormatToggleWithMocks = (props: { customClassName?: string }) => {
+  // Mock the required hooks
+  const timePreferences = MockTimePreferences();
+  const locale = MockLocale();
 
-// Override the hooks
-React.useState = () => [TimeFormat.TWELVE_HOUR, () => {}] as const;
-(useTimePreferences as jest.Mock) = mockUseTimePreferences;
-(useLocale as jest.Mock) = mockUseLocale;
+  return (
+    <div>
+      <TimeFormatToggle {...props} />
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -30,5 +40,5 @@ export default function ComponentPreview() {
     },
   });
 
-  return <TimeFormatToggle customClassName={state.customClassName.value} />;
+  return <TimeFormatToggleWithMocks customClassName={state.customClassName.value} />;
 }

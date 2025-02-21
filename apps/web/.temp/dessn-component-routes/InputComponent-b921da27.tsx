@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { InputComponent } from '../../../../packages/ui/components/form/select/components';
-
+import Select from 'react-select';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -12,13 +12,23 @@ export default function ComponentPreview() {
     },
   });
 
+  // Wrap the InputComponent in a Select component to provide the necessary context
   return (
-    <InputComponent<any, false>
-      inputClassName={state.inputClassName.value}
-      onBlur={() => {}}
+    <Select
+      components={{
+        Input: (props) => (
+          <InputComponent
+            {...props}
+            inputClassName={state.inputClassName.value}
+            onBlur={() => {}}
+            onChange={() => {}}
+            onFocus={() => {}}
+            value=""
+          />
+        )
+      }}
       onChange={() => {}}
-      onFocus={() => {}}
-      value=""
+      options={[]}
     />
   );
 }
