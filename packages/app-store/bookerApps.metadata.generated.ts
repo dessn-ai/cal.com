@@ -21,7 +21,7 @@ import { metadata as huddle01video__metadata_ts } from "./huddle01video/_metadat
 import insihts_config_json from "./insihts/config.json";
 import jelly_config_json from "./jelly/config.json";
 import { metadata as jitsivideo__metadata_ts } from "./jitsivideo/_metadata";
-import matomo_config_json from "./matomo/config.json";
+import matomo_config_json from "./analytics/config.json";
 import metapixel_config_json from "./metapixel/config.json";
 import mirotalk_config_json from "./mirotalk/config.json";
 import nextcloudtalk_config_json from "./nextcloudtalk/config.json";

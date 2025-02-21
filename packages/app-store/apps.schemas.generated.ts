@@ -22,7 +22,7 @@ import { appDataSchema as jelly_zod_ts } from "./jelly/zod";
 import { appDataSchema as jitsivideo_zod_ts } from "./jitsivideo/zod";
 import { appDataSchema as larkcalendar_zod_ts } from "./larkcalendar/zod";
 import { appDataSchema as make_zod_ts } from "./make/zod";
-import { appDataSchema as matomo_zod_ts } from "./matomo/zod";
+import { appDataSchema as matomo_zod_ts } from "./analytics/zod";
 import { appDataSchema as metapixel_zod_ts } from "./metapixel/zod";
 import { appDataSchema as mock_payment_app_zod_ts } from "./mock-payment-app/zod";
 import { appDataSchema as nextcloudtalk_zod_ts } from "./nextcloudtalk/zod";

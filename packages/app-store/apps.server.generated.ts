@@ -49,7 +49,7 @@ export const apiHandlers = {
   larkcalendar: import("./larkcalendar/api"),
   linear: import("./linear/api"),
   make: import("./make/api"),
-  matomo: import("./matomo/api"),
+  matomo: import("./analytics/api"),
   metapixel: import("./metapixel/api"),
   mirotalk: import("./mirotalk/api"),
   "mock-payment-app": import("./mock-payment-app/api"),

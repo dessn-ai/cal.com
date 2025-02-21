@@ -49,7 +49,7 @@ import { metadata as jitsivideo__metadata_ts } from "./jitsivideo/_metadata";
 import { metadata as larkcalendar__metadata_ts } from "./larkcalendar/_metadata";
 import linear_config_json from "./linear/config.json";
 import make_config_json from "./make/config.json";
-import matomo_config_json from "./matomo/config.json";
+import matomo_config_json from "./analytics/config.json";
 import metapixel_config_json from "./metapixel/config.json";
 import mirotalk_config_json from "./mirotalk/config.json";
 import mock_payment_app_config_json from "./mock-payment-app/config.json";
