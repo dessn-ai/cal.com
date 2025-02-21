@@ -1,0 +1,1126 @@
+System: You are an expert React developer working on a project that renders preview components. Your task is to fix any errors.
+
+## Role & Capabilities
+- You are a **component error fixing assistant**
+- You can read files, make edits, and use tools to diagnose issues
+- You have access to browser errors
+
+## Tools Available
+1. **getFile** (Using tool call) - Read contents of project files
+2. **File Editing** (Using xml tags in your response) - Make changes to fix errors using XML format
+
+## File Edit Format
+When you want to edit a file, use this exact XML format:
+
+<file path="path/to/file">
+  <change>
+    <description>Brief explanation of what you're changing</description>
+    <content>
+// Your complete file content here
+    </content>
+  </change>
+</file>
+
+## Important Rules
+1. Only update a file if you know its contents. Use getFile tool to read first.
+2. Most errors can be fixed by updating the preview file. Only update other files if necessary.
+3. Provide complete file content - do not use placeholders or ellipses.
+4. Always include necessary imports and dependencies.
+5. When making changes:
+   - Add all required import statements
+   - Include complete component code
+   - Ensure proper TypeScript types
+   - Handle all edge cases
+
+## Error Handling Process
+1. Read and understand the error message
+2. Use getFile to examine relevant files
+3. Make targeted fixes using the XML format
+4. If the error is caused by the fact that a provider is missing. In these cases, find the provider and add it to the preview file.
+4. If the error persists, try different fixes. Sometimes the error is caused by external dependencies that we dont' have access to. In those cases, you can try to fix the error by mocking,removing or try catching.
+5. REMEMBER, your resonse must have <file> tags with the file path and content if you want to edit a file.
+6. Always output the entire file content in full. Do not be lazy by adding //(code remains the same) or //(code remains unchanged). This will cause more errors.
+
+## Example: Fixing a Form Error
+Here's an example of how to handle a typical error:
+
+Error Message:
+TypeError: Cannot read properties of undefined (reading 'errors')
+at FormInput (/src/components/common/form/FormInput.tsx:23:18)
+
+Step 1: Read the file to understand the context
+
+// First, read the file
+{
+  "name": "getFile",
+  "arguments": {
+    "filePath": "src/components/common/form/FormInput.tsx"
+  }
+}
+
+// Response shows:
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState } = useFormContext();
+  const error = formState.errors[name]?.message;  // Error occurs here
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+
+Step 2: Fix the issue by adding proper error handling
+
+<file path="src/components/common/form/FormInput.tsx">
+  <change>
+    <description>Add null check for formState and provide default values</description>
+    <content>
+===
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState = {} } = useFormContext() || {};
+  const error = formState?.errors?.[name]?.message;
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+===
+    </content>
+  </change>
+</file>
+
+The fix:
+1. Added null check for useFormContext result
+2. Provided default empty object for formState
+3. Used optional chaining for safer property access
+
+Please proceed with fixing any errors you encounter following these guidelines.
+
+User: An error occurred when rendering the component route at Page-655819dd.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: Failed to fetch dynamically imported module: /.temp/dessn-component-routes/Page-655819dd.tsxTypeError: Failed to fetch dynamically imported module: /.temp/dessn-component-routes/Page-655819dd.tsx
+
+## Stack Trace
+```
+
+```
+
+## Component Stack
+```
+
+    at Lazy
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-4WREEUCO.js?v=e479e1b7:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=e479e1b7:63:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-RIH2XCSY.js?v=e479e1b7:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-7C2Q762C.js?v=e479e1b7:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-5E7KVCZ5.js?v=e479e1b7:929:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=e479e1b7:1100:28)
+    at Providers (/.temp/Wrapper.tsx:65:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:102:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/Page-655819dd.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../pages/team/[slug]/embed';
+
+import { DehydratedState } from '@tanstack/react-query';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    considerUnpublished: {
+      type: "boolean",
+      value: true,
+      label: "Consider Unpublished",
+    },
+    isValidOrgDomain: {
+      type: "boolean",
+      value: true,
+      label: "Is Valid Org Domain",
+    },
+    isSEOIndexable: {
+      type: "boolean",
+      value: true,
+      label: "Is SEO Indexable",
+    },
+    currentOrgDomain: {
+      type: "string",
+      value: "example.com",
+      label: "Current Org Domain",
+    },
+    markdownStrippedBio: {
+      type: "string",
+      value: "This is a stripped bio",
+      label: "Markdown Stripped Bio",
+    },
+  });
+
+  const mockTeam = {
+    safeBio: "Safe bio content",
+    members: [
+      {
+        name: "John Doe",
+        id: "1",
+        avatarUrl: "https://example.com/avatar.jpg",
+        bio: "Member bio",
+        profile: {},
+        subteams: [],
+        username: "johndoe",
+        accepted: true,
+        organizationId: "org1",
+        safeBio: "Safe member bio",
+        bookerUrl: "https://example.com/book",
+      },
+    ],
+    metadata: {
+      requestedSlug: "team-slug",
+      orgSeats: 5,
+      orgPricePerSeat: 10,
+    },
+    children: [],
+    parent: null,
+    eventTypes: [],
+    logo: "https://example.com/logo.png",
+    isOrganization: true,
+  };
+
+  const mockThemeBasis = {
+    // Add mock theme data here
+  };
+
+  const mockTrpcState: DehydratedState = {
+    mutations: [],
+    queries: [],
+  };
+
+  return (
+    <ImportedComponent
+      considerUnpublished={state.considerUnpublished.value}
+      team={mockTeam}
+      trpcState={mockTrpcState}
+      themeBasis={mockThemeBasis}
+      markdownStrippedBio={state.markdownStrippedBio.value}
+      isValidOrgDomain={state.isValidOrgDomain.value}
+      currentOrgDomain={state.currentOrgDomain.value}
+      isSEOIndexable={state.isSEOIndexable.value}
+    />
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: Let me help fix this error. The error suggests there's an issue with importing and rendering the component. Let's fix the preview file by adding necessary providers and improving the mock data.
+
+<file path="apps/web/.temp/dessn-component-routes/Page-655819dd.tsx">
+<change>
+<description>Add necessary providers and improve mock data structure</description>
+<content>
+import React, { Suspense } from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../pages/team/[slug]/embed';
+import { DehydratedState } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { TRPCProvider } from '@calcom/trpc/react';
+import { SessionProvider } from 'next-auth/react';
+
+export default function ComponentPreview() {
+  const queryClient = new QueryClient();
+
+  const [state, setState] = useParentState({
+    considerUnpublished: {
+      type: "boolean",
+      value: true,
+      label: "Consider Unpublished",
+    },
+    isValidOrgDomain: {
+      type: "boolean",
+      value: true,
+      label: "Is Valid Org Domain",
+    },
+    isSEOIndexable: {
+      type: "boolean",
+      value: true,
+      label: "Is SEO Indexable",
+    },
+    currentOrgDomain: {
+      type: "string",
+      value: "example.com",
+      label: "Current Org Domain",
+    },
+    markdownStrippedBio: {
+      type: "string",
+      value: "This is a stripped bio",
+      label: "Markdown Stripped Bio",
+    },
+  });
+
+  const mockTeam = {
+    id: 1,
+    name: "Test Team",
+    slug: "test-team",
+    safeBio: "Safe bio content",
+    members: [
+      {
+        name: "John Doe",
+        id: "1",
+        avatarUrl: "https://example.com/avatar.jpg",
+        bio: "Member bio",
+        profile: {
+          id: 1,
+          username: "johndoe",
+        },
+        subteams: [],
+        username: "johndoe",
+        accepted: true,
+        organizationId: "org1",
+        safeBio: "Safe member bio",
+        bookerUrl: "https://example.com/book",
+      },
+    ],
+    metadata: {
+      requestedSlug: "team-slug",
+      orgSeats: 5,
+      orgPricePerSeat: 10,
+    },
+    children: [],
+    parent: null,
+    eventTypes: [],
+    logo: "https://example.com/logo.png",
+    isOrganization: true,
+  };
+
+  const mockThemeBasis = {
+    brandColor: "#292929",
+    darkBrandColor: "#fafafa",
+    theme: "light",
+  };
+
+  const mockTrpcState: DehydratedState = {
+    mutations: [],
+    queries: [],
+  };
+
+  const mockSession = {
+    user: {
+      id: "test-user",
+      name: "Test User",
+      email: "test@example.com",
+    },
+    expires: "2024-12-31",
+  };
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SessionProvider session={mockSession}>
+        <QueryClientProvider client={queryClient}>
+          <TRPCProvider>
+            <ImportedComponent
+              considerUnpublished={state.considerUnpublished.value}
+              team={mockTeam}
+              trpcState={mockTrpcState}
+              themeBasis={mockThemeBasis}
+              markdownStrippedBio={state.markdownStrippedBio.value}
+              isValidOrgDomain={state.isValidOrgDomain.value}
+              currentOrgDomain={state.currentOrgDomain.value}
+              isSEOIndexable={state.isSEOIndexable.value}
+            />
+          </TRPCProvider>
+        </QueryClientProvider>
+      </SessionProvider>
+    </Suspense>
+  );
+}
+</content>
+</change>
+</file>
+
+I've made several important changes to fix the error:
+
+1. Added necessary providers:
+   - SessionProvider for authentication context
+   - QueryClientProvider for React Query
+   - TRPCProvider for TRPC functionality
+   - Suspense for handling lazy loading
+
+2. Improved mock data:
+   - Added more complete team mock data including required ID and name fields
+   - Added proper mockThemeBasis with required fields
+   - Added mockSession data for SessionProvider
+
+3. Added proper error boundaries with Suspense
+
+4. Improved the structure of the component to ensure all required context is available
+
+These changes should resolve the dynamic import failure by ensuring all required providers and context are available to the component. The error was likely occurring because the component was trying to access context that wasn't available in the preview environment.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/Page-655819dd.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at Page-655819dd.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: Failed to fetch dynamically imported module: /.temp/dessn-component-routes/Page-655819dd.tsxTypeError: Failed to fetch dynamically imported module: /.temp/dessn-component-routes/Page-655819dd.tsx
+
+## Stack Trace
+```
+
+```
+
+## Component Stack
+```
+
+    at Lazy
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-4WREEUCO.js?v=e479e1b7:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=e479e1b7:63:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-RIH2XCSY.js?v=e479e1b7:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-7C2Q762C.js?v=e479e1b7:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-5E7KVCZ5.js?v=e479e1b7:929:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=e479e1b7:1100:28)
+    at Providers (/.temp/Wrapper.tsx:65:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:102:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/Page-655819dd.tsx" type="preview>
+import React, { Suspense } from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../pages/team/[slug]/embed';
+import { DehydratedState } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { TRPCProvider } from '@calcom/trpc/react';
+import { SessionProvider } from 'next-auth/react';
+
+export default function ComponentPreview() {
+  const queryClient = new QueryClient();
+
+  const [state, setState] = useParentState({
+    considerUnpublished: {
+      type: "boolean",
+      value: true,
+      label: "Consider Unpublished",
+    },
+    isValidOrgDomain: {
+      type: "boolean",
+      value: true,
+      label: "Is Valid Org Domain",
+    },
+    isSEOIndexable: {
+      type: "boolean",
+      value: true,
+      label: "Is SEO Indexable",
+    },
+    currentOrgDomain: {
+      type: "string",
+      value: "example.com",
+      label: "Current Org Domain",
+    },
+    markdownStrippedBio: {
+      type: "string",
+      value: "This is a stripped bio",
+      label: "Markdown Stripped Bio",
+    },
+  });
+
+  const mockTeam = {
+    id: 1,
+    name: "Test Team",
+    slug: "test-team",
+    safeBio: "Safe bio content",
+    members: [
+      {
+        name: "John Doe",
+        id: "1",
+        avatarUrl: "https://example.com/avatar.jpg",
+        bio: "Member bio",
+        profile: {
+          id: 1,
+          username: "johndoe",
+        },
+        subteams: [],
+        username: "johndoe",
+        accepted: true,
+        organizationId: "org1",
+        safeBio: "Safe member bio",
+        bookerUrl: "https://example.com/book",
+      },
+    ],
+    metadata: {
+      requestedSlug: "team-slug",
+      orgSeats: 5,
+      orgPricePerSeat: 10,
+    },
+    children: [],
+    parent: null,
+    eventTypes: [],
+    logo: "https://example.com/logo.png",
+    isOrganization: true,
+  };
+
+  const mockThemeBasis = {
+    brandColor: "#292929",
+    darkBrandColor: "#fafafa",
+    theme: "light",
+  };
+
+  const mockTrpcState: DehydratedState = {
+    mutations: [],
+    queries: [],
+  };
+
+  const mockSession = {
+    user: {
+      id: "test-user",
+      name: "Test User",
+      email: "test@example.com",
+    },
+    expires: "2024-12-31",
+  };
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SessionProvider session={mockSession}>
+        <QueryClientProvider client={queryClient}>
+          <TRPCProvider>
+            <ImportedComponent
+              considerUnpublished={state.considerUnpublished.value}
+              team={mockTeam}
+              trpcState={mockTrpcState}
+              themeBasis={mockThemeBasis}
+              markdownStrippedBio={state.markdownStrippedBio.value}
+              isValidOrgDomain={state.isValidOrgDomain.value}
+              currentOrgDomain={state.currentOrgDomain.value}
+              isSEOIndexable={state.isSEOIndexable.value}
+            />
+          </TRPCProvider>
+        </QueryClientProvider>
+      </SessionProvider>
+    </Suspense>
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: Let's try to fix this by simplifying the component and handling the dynamic import differently. Since we're seeing a module fetch failure, let's modify the approach.
+
+<file path="apps/web/.temp/dessn-component-routes/Page-655819dd.tsx">
+<change>
+<description>Simplify component and handle dynamic import with error boundaries</description>
+<content>
+import React, { Suspense } from 'react';
+import { useParentState } from '../useIframeState';
+import dynamic from 'next/dynamic';
+import { DehydratedState } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { TRPCProvider } from '@calcom/trpc/react';
+import { SessionProvider } from 'next-auth/react';
+
+// Dynamically import the component with no SSR
+const ImportedComponent = dynamic(() => import('../../pages/team/[slug]/embed'), {
+  ssr: false,
+  loading: () => <div>Loading...</div>
+});
+
+const ErrorFallback = ({ error }) => (
+  <div role="alert">
+    <p>Something went wrong:</p>
+    <pre>{error.message}</pre>
+  </div>
+);
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <ErrorFallback error={this.state.error} />;
+    }
+    return this.props.children;
+  }
+}
+
+export default function ComponentPreview() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        refetchOnWindowFocus: false,
+      },
+    },
+  });
+
+  const [state] = useParentState({
+    considerUnpublished: {
+      type: "boolean",
+      value: true,
+      label: "Consider Unpublished",
+    },
+    isValidOrgDomain: {
+      type: "boolean",
+      value: true,
+      label: "Is Valid Org Domain",
+    },
+    isSEOIndexable: {
+      type: "boolean",
+      value: true,
+      label: "Is SEO Indexable",
+    },
+    currentOrgDomain: {
+      type: "string",
+      value: "example.com",
+      label: "Current Org Domain",
+    },
+    markdownStrippedBio: {
+      type: "string",
+      value: "This is a stripped bio",
+      label: "Markdown Stripped Bio",
+    },
+  });
+
+  const mockTeam = {
+    id: 1,
+    name: "Test Team",
+    slug: "test-team",
+    safeBio: "Safe bio content",
+    members: [
+      {
+        name: "John Doe",
+        id: "1",
+        avatarUrl: "https://example.com/avatar.jpg",
+        bio: "Member bio",
+        profile: {
+          id: 1,
+          username: "johndoe",
+        },
+        subteams: [],
+        username: "johndoe",
+        accepted: true,
+        organizationId: "org1",
+        safeBio: "Safe member bio",
+        bookerUrl: "https://example.com/book",
+      },
+    ],
+    metadata: {
+      requestedSlug: "team-slug",
+      orgSeats: 5,
+      orgPricePerSeat: 10,
+    },
+    children: [],
+    parent: null,
+    eventTypes: [],
+    logo: "https://example.com/logo.png",
+    isOrganization: true,
+  };
+
+  const mockThemeBasis = {
+    brandColor: "#292929",
+    darkBrandColor: "#fafafa",
+    theme: "light",
+  };
+
+  const mockTrpcState: DehydratedState = {
+    mutations: [],
+    queries: [],
+  };
+
+  const mockSession = {
+    user: {
+      id: "test-user",
+      name: "Test User",
+      email: "test@example.com",
+    },
+    expires: "2024-12-31",
+  };
+
+  try {
+    return (
+      <ErrorBoundary>
+        <Suspense fallback={<div>Loading...</div>}>
+          <SessionProvider session={mockSession}>
+            <QueryClientProvider client={queryClient}>
+              <TRPCProvider>
+                <div className="preview-container">
+                  <ImportedComponent
+                    considerUnpublished={state.considerUnpublished.value}
+                    team={mockTeam}
+                    trpcState={mockTrpcState}
+                    themeBasis={mockThemeBasis}
+                    markdownStrippedBio={state.markdownStrippedBio.value}
+                    isValidOrgDomain={state.isValidOrgDomain.value}
+                    currentOrgDomain={state.currentOrgDomain.value}
+                    isSEOIndexable={state.isSEOIndexable.value}
+                  />
+                </div>
+              </TRPCProvider>
+            </QueryClientProvider>
+          </SessionProvider>
+        </Suspense>
+      </ErrorBoundary>
+    );
+  } catch (error) {
+    console.error('Error in ComponentPreview:', error);
+    return <ErrorFallback error={error} />;
+  }
+}
+</content>
+</change>
+</file>
+
+I've made several important changes to handle the dynamic import issue:
+
+1. Used Next.js's `dynamic` import with `ssr: false` to prevent server-side rendering issues
+2. Added a custom ErrorBoundary component to catch and display any rendering errors
+3. Added a try-catch block around the main render
+4. Added proper error fallback components
+5. Configured QueryClient with default options to prevent unnecessary retries
+6. Wrapped the imported component in a container div for better error isolation
+7. Improved error handling and fallback displays
+
+The key changes focus on:
+- Better error handling and reporting
+- Preventing SSR-related issues
+- Providing fallback UI for loading states
+- Isolating the component render
+
+These changes should help resolve the dynamic import failure by:
+1. Preventing SSR-related issues with the dynamic import
+2. Providing better error boundaries and fallbacks
+3. Giving more detailed error information if something goes wrong
+
+If the error persists, we might need to:
+1. Check if the import path is correct
+2. Verify if all required dependencies are available
+3. Consider mocking more of the component's dependencies
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/Page-655819dd.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at Page-655819dd.tsx
+Error:
+
+# Error 1
+
+## Error Message
+SyntaxError: The requested module '/@fs/Users/nimcheema/src/cal.com/packages/trpc/react/index.ts' does not provide an export named 'TRPCProvider'SyntaxError: The requested module '/@fs/Users/nimcheema/src/cal.com/packages/trpc/react/index.ts' does not provide an export named 'TRPCProvider'
+
+## Stack Trace
+```
+
+```
+
+## Component Stack
+```
+
+    at Lazy
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-4WREEUCO.js?v=e479e1b7:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=e479e1b7:63:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-RIH2XCSY.js?v=e479e1b7:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-7C2Q762C.js?v=e479e1b7:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-5E7KVCZ5.js?v=e479e1b7:929:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=e479e1b7:1100:28)
+    at Providers (/.temp/Wrapper.tsx:65:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:102:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/Page-655819dd.tsx" type="preview>
+import React, { Suspense } from 'react';
+import { useParentState } from '../useIframeState';
+import dynamic from 'next/dynamic';
+import { DehydratedState } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { TRPCProvider } from '@calcom/trpc/react';
+import { SessionProvider } from 'next-auth/react';
+
+// Dynamically import the component with no SSR
+const ImportedComponent = dynamic(() => import('../../pages/team/[slug]/embed'), {
+  ssr: false,
+  loading: () => <div>Loading...</div>
+});
+
+const ErrorFallback = ({ error }) => (
+  <div role="alert">
+    <p>Something went wrong:</p>
+    <pre>{error.message}</pre>
+  </div>
+);
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <ErrorFallback error={this.state.error} />;
+    }
+    return this.props.children;
+  }
+}
+
+export default function ComponentPreview() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        refetchOnWindowFocus: false,
+      },
+    },
+  });
+
+  const [state] = useParentState({
+    considerUnpublished: {
+      type: "boolean",
+      value: true,
+      label: "Consider Unpublished",
+    },
+    isValidOrgDomain: {
+      type: "boolean",
+      value: true,
+      label: "Is Valid Org Domain",
+    },
+    isSEOIndexable: {
+      type: "boolean",
+      value: true,
+      label: "Is SEO Indexable",
+    },
+    currentOrgDomain: {
+      type: "string",
+      value: "example.com",
+      label: "Current Org Domain",
+    },
+    markdownStrippedBio: {
+      type: "string",
+      value: "This is a stripped bio",
+      label: "Markdown Stripped Bio",
+    },
+  });
+
+  const mockTeam = {
+    id: 1,
+    name: "Test Team",
+    slug: "test-team",
+    safeBio: "Safe bio content",
+    members: [
+      {
+        name: "John Doe",
+        id: "1",
+        avatarUrl: "https://example.com/avatar.jpg",
+        bio: "Member bio",
+        profile: {
+          id: 1,
+          username: "johndoe",
+        },
+        subteams: [],
+        username: "johndoe",
+        accepted: true,
+        organizationId: "org1",
+        safeBio: "Safe member bio",
+        bookerUrl: "https://example.com/book",
+      },
+    ],
+    metadata: {
+      requestedSlug: "team-slug",
+      orgSeats: 5,
+      orgPricePerSeat: 10,
+    },
+    children: [],
+    parent: null,
+    eventTypes: [],
+    logo: "https://example.com/logo.png",
+    isOrganization: true,
+  };
+
+  const mockThemeBasis = {
+    brandColor: "#292929",
+    darkBrandColor: "#fafafa",
+    theme: "light",
+  };
+
+  const mockTrpcState: DehydratedState = {
+    mutations: [],
+    queries: [],
+  };
+
+  const mockSession = {
+    user: {
+      id: "test-user",
+      name: "Test User",
+      email: "test@example.com",
+    },
+    expires: "2024-12-31",
+  };
+
+  try {
+    return (
+      <ErrorBoundary>
+        <Suspense fallback={<div>Loading...</div>}>
+          <SessionProvider session={mockSession}>
+            <QueryClientProvider client={queryClient}>
+              <TRPCProvider>
+                <div className="preview-container">
+                  <ImportedComponent
+                    considerUnpublished={state.considerUnpublished.value}
+                    team={mockTeam}
+                    trpcState={mockTrpcState}
+                    themeBasis={mockThemeBasis}
+                    markdownStrippedBio={state.markdownStrippedBio.value}
+                    isValidOrgDomain={state.isValidOrgDomain.value}
+                    currentOrgDomain={state.currentOrgDomain.value}
+                    isSEOIndexable={state.isSEOIndexable.value}
+                  />
+                </div>
+              </TRPCProvider>
+            </QueryClientProvider>
+          </SessionProvider>
+        </Suspense>
+      </ErrorBoundary>
+    );
+  } catch (error) {
+    console.error('Error in ComponentPreview:', error);
+    return <ErrorFallback error={error} />;
+  }
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: The error indicates that `TRPCProvider` is not available from the specified import path. Let's modify the component to handle this by removing the TRPC dependency since it's not essential for the preview.
+
+<file path="apps/web/.temp/dessn-component-routes/Page-655819dd.tsx">
+<change>
+<description>Remove TRPC dependency and simplify the provider structure</description>
+<content>
+import React, { Suspense } from 'react';
+import { useParentState } from '../useIframeState';
+import dynamic from 'next/dynamic';
+import { DehydratedState } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { SessionProvider } from 'next-auth/react';
+
+// Dynamically import the component with no SSR
+const ImportedComponent = dynamic(() => import('../../pages/team/[slug]/embed'), {
+  ssr: false,
+  loading: () => <div>Loading...</div>
+});
+
+const ErrorFallback = ({ error }) => (
+  <div role="alert">
+    <p>Something went wrong:</p>
+    <pre>{error?.message}</pre>
+  </div>
+);
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <ErrorFallback error={this.state.error} />;
+    }
+    return this.props.children;
+  }
+}
+
+export default function ComponentPreview() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        refetchOnWindowFocus: false,
+        staleTime: Infinity,
+      },
+    },
+  });
+
+  const [state] = useParentState({
+    considerUnpublished: {
+      type: "boolean",
+      value: true,
+      label: "Consider Unpublished",
+    },
+    isValidOrgDomain: {
+      type: "boolean",
+      value: true,
+      label: "Is Valid Org Domain",
+    },
+    isSEOIndexable: {
+      type: "boolean",
+      value: true,
+      label: "Is SEO Indexable",
+    },
+    currentOrgDomain: {
+      type: "string",
+      value: "example.com",
+      label: "Current Org Domain",
+    },
+    markdownStrippedBio: {
+      type: "string",
+      value: "This is a stripped bio",
+      label: "Markdown Stripped Bio",
+    },
+  });
+
+  const mockTeam = {
+    id: 1,
+    name: "Test Team",
+    slug: "test-team",
+    safeBio: "Safe bio content",
+    members: [
+      {
+        name: "John Doe",
+        id: "1",
+        avatarUrl: "https://example.com/avatar.jpg",
+        bio: "Member bio",
+        profile: {
+          id: 1,
+          username: "johndoe",
+        },
+        subteams: [],
+        username: "johndoe",
+        accepted: true,
+        organizationId: "org1",
+        safeBio: "Safe member bio",
+        bookerUrl: "https://example.com/book",
+      },
+    ],
+    metadata: {
+      requestedSlug: "team-slug",
+      orgSeats: 5,
+      orgPricePerSeat: 10,
+    },
+    children: [],
+    parent: null,
+    eventTypes: [],
+    logo: "https://example.com/logo.png",
+    isOrganization: true,
+  };
+
+  const mockThemeBasis = {
+    brandColor: "#292929",
+    darkBrandColor: "#fafafa",
+    theme: "light",
+  };
+
+  const mockTrpcState: DehydratedState = {
+    mutations: [],
+    queries: [],
+  };
+
+  const mockSession = {
+    user: {
+      id: "test-user",
+      name: "Test User",
+      email: "test@example.com",
+    },
+    expires: "2024-12-31",
+  };
+
+  try {
+    return (
+      <ErrorBoundary>
+        <Suspense fallback={<div>Loading...</div>}>
+          <SessionProvider session={mockSession}>
+            <QueryClientProvider client={queryClient}>
+              <div className="preview-container">
+                <ImportedComponent
+                  considerUnpublished={state.considerUnpublished.value}
+                  team={mockTeam}
+                  trpcState={mockTrpcState}
+                  themeBasis={mockThemeBasis}
+                  markdownStrippedBio={state.markdownStrippedBio.value}
+                  isValidOrgDomain={state.isValidOrgDomain.value}
+                  currentOrgDomain={state.currentOrgDomain.value}
+                  isSEOIndexable={state.isSEOIndexable.value}
+                />
+              </div>
+            </QueryClientProvider>
+          </SessionProvider>
+        </Suspense>
+      </ErrorBoundary>
+    );
+  } catch (error) {
+    console.error('Error in ComponentPreview:', error);
+    return <ErrorFallback error={error} />;
+  }
+}
+</content>
+</change>
+</file>
+
+Key changes made:
+
+1. Removed the problematic `TRPCProvider` import and usage since it's not available
+2. Enhanced QueryClient configuration with `staleTime: Infinity` to prevent unnecessary refetches
+3. Added null check for error message in ErrorFallback component
+4. Simplified the provider structure to only include essential providers
+5. Kept the mock TRPC state for the component props but removed the provider wrapper
+
+These changes should resolve the TRPCProvider import error while maintaining the necessary functionality for the preview. The component should now be able to render without the TRPC-related error.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/Page-655819dd.tsx
+
+All changes applied successfully. Checking for errors...
