@@ -5,6 +5,7 @@
 export const apiHandlers = {
   alby: import("./alby/api"),
   amie: import("./amie/api"),
+  analytics: import("./analytics/api"),
   applecalendar: import("./applecalendar/api"),
   around: import("./around/api"),
   attio: import("./attio/api"),
@@ -49,7 +50,6 @@ export const apiHandlers = {
   larkcalendar: import("./larkcalendar/api"),
   linear: import("./linear/api"),
   make: import("./make/api"),
-  matomo: import("./analytics/api"),
   metapixel: import("./metapixel/api"),
   mirotalk: import("./mirotalk/api"),
   "mock-payment-app": import("./mock-payment-app/api"),
