@@ -1,0 +1,34 @@
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { Toast } from '../../../../packages/platform/atoms/src/components/ui/toast';
+
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    variant: {
+      type: "dropdown",
+      value: "default",
+      options: ["default", "destructive"],
+      label: "Variant",
+    },
+    title: {
+      type: "string",
+      value: "Toast Title",
+      label: "Title",
+    },
+    description: {
+      type: "string",
+      value: "This is a toast message",
+      label: "Description",
+    },
+  });
+
+  return (
+    <Toast variant={state.variant.value as "default" | "destructive"}>
+      <div>
+        <strong>{state.title.value}</strong>
+        <p>{state.description.value}</p>
+      </div>
+    </Toast>
+  );
+}
