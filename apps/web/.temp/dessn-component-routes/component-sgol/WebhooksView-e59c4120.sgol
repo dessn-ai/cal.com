@@ -1,0 +1,674 @@
+System: You are an expert React developer working on a project that renders preview components. Your task is to fix any errors.
+
+## Role & Capabilities
+- You are a **component error fixing assistant**
+- You can read files, make edits, and use tools to diagnose issues
+- You have access to browser errors
+
+## Tools Available
+1. **getFile** (Using tool call) - Read contents of project files
+2. **File Editing** (Using xml tags in your response) - Make changes to fix errors using XML format
+
+## File Edit Format
+When you want to edit a file, use this exact XML format:
+
+<file path="path/to/file">
+  <change>
+    <description>Brief explanation of what you're changing</description>
+    <content>
+// Your complete file content here
+    </content>
+  </change>
+</file>
+
+## Important Rules
+1. Only update a file if you know its contents. Use getFile tool to read first.
+2. Most errors can be fixed by updating the preview file. Only update other files if necessary.
+3. Provide complete file content - do not use placeholders or ellipses.
+4. Always include necessary imports and dependencies.
+5. When making changes:
+   - Add all required import statements
+   - Include complete component code
+   - Ensure proper TypeScript types
+   - Handle all edge cases
+
+## Error Handling Process
+1. Read and understand the error message
+2. Use getFile to examine relevant files
+3. Make targeted fixes using the XML format
+4. If the error is caused by the fact that a provider is missing. In these cases, find the provider and add it to the preview file.
+4. If the error persists, try different fixes. Sometimes the error is caused by external dependencies that we dont' have access to. In those cases, you can try to fix the error by mocking,removing or try catching.
+5. REMEMBER, your resonse must have <file> tags with the file path and content if you want to edit a file.
+6. Always output the entire file content in full. Do not be lazy by adding //(code remains the same) or //(code remains unchanged). This will cause more errors.
+
+## Example: Fixing a Form Error
+Here's an example of how to handle a typical error:
+
+Error Message:
+TypeError: Cannot read properties of undefined (reading 'errors')
+at FormInput (/src/components/common/form/FormInput.tsx:23:18)
+
+Step 1: Read the file to understand the context
+
+// First, read the file
+{
+  "name": "getFile",
+  "arguments": {
+    "filePath": "src/components/common/form/FormInput.tsx"
+  }
+}
+
+// Response shows:
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState } = useFormContext();
+  const error = formState.errors[name]?.message;  // Error occurs here
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+
+Step 2: Fix the issue by adding proper error handling
+
+<file path="src/components/common/form/FormInput.tsx">
+  <change>
+    <description>Add null check for formState and provide default values</description>
+    <content>
+===
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState = {} } = useFormContext() || {};
+  const error = formState?.errors?.[name]?.message;
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+===
+    </content>
+  </change>
+</file>
+
+The fix:
+1. Added null check for useFormContext result
+2. Provided default empty object for formState
+3. Used optional chaining for safer property access
+
+Please proceed with fixing any errors you encounter following these guidelines.
+
+User: An error occurred when rendering the component route at WebhooksView-e59c4120.tsx
+Error:
+
+# Error 1
+
+## Error Message
+SyntaxError: The requested module '/@fs/Users/nimcheema/src/cal.com/packages/trpc/react/index.ts' does not provide an export named 'TrpcProvider'SyntaxError: The requested module '/@fs/Users/nimcheema/src/cal.com/packages/trpc/react/index.ts' does not provide an export named 'TrpcProvider'
+
+## Stack Trace
+```
+
+```
+
+## Component Stack
+```
+
+    at Lazy
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at OrgBrandingProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/organizations/context/provider.ts:9:77)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=313d142d:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=313d142d:63:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-RIH2XCSY.js?v=313d142d:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-7C2Q762C.js?v=313d142d:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-5E7KVCZ5.js?v=313d142d:929:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=313d142d:1100:28)
+    at Providers (/.temp/Wrapper.tsx:74:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:115:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/WebhooksView-e59c4120.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/webhooks/pages/webhooks-view';
+
+import { SessionProvider } from 'next-auth/react';
+import { TrpcProvider } from '@calcom/trpc/react';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    isAdmin: {
+      type: "boolean",
+      value: true,
+      label: "Is Admin",
+    },
+  });
+
+  const mockSession = {
+    data: {
+      user: {
+        role: state.isAdmin.value ? 'ADMIN' : 'USER',
+      },
+    },
+    status: "authenticated",
+  };
+
+  return (
+    <SessionProvider session={mockSession as any}>
+      <TrpcProvider>
+        <ImportedComponent />
+      </TrpcProvider>
+    </SessionProvider>
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: [object Object],[object Object]
+
+
+Assistant: I see the issue. The correct provider should be imported from '@trpc/react-query'. Let me fix the preview file:
+
+<file path="apps/web/.temp/dessn-component-routes/WebhooksView-e59c4120.tsx">
+<change>
+<description>Fix the TrpcProvider import and use the correct provider name</description>
+<content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/webhooks/pages/webhooks-view';
+import { SessionProvider } from 'next-auth/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { httpBatchLink } from '@trpc/client';
+import { trpc } from '@calcom/trpc/react';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    isAdmin: {
+      type: "boolean",
+      value: true,
+      label: "Is Admin",
+    },
+  });
+
+  const mockSession = {
+    data: {
+      user: {
+        role: state.isAdmin.value ? 'ADMIN' : 'USER',
+      },
+    },
+    status: "authenticated",
+  };
+
+  const [queryClient] = React.useState(() => new QueryClient());
+  const [trpcClient] = React.useState(() =>
+    trpc.createClient({
+      links: [
+        httpBatchLink({
+          url: '/api/trpc',
+        }),
+      ],
+    })
+  );
+
+  return (
+    <SessionProvider session={mockSession as any}>
+      <trpc.Provider client={trpcClient} queryClient={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <ImportedComponent />
+        </QueryClientProvider>
+      </trpc.Provider>
+    </SessionProvider>
+  );
+}
+</content>
+</change>
+</file>
+
+I've made the following changes:
+1. Removed the incorrect `TrpcProvider` import
+2. Added the correct imports for trpc, QueryClient, and QueryClientProvider
+3. Set up the trpc client with proper configuration
+4. Wrapped the component with the correct provider structure: trpc.Provider and QueryClientProvider
+
+This setup should properly provide the TRPC context to your component. The error should now be resolved as we're using the correct provider structure and imports.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/WebhooksView-e59c4120.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at WebhooksView-e59c4120.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: Cannot read properties of undefined (reading 'map')TypeError: Cannot read properties of undefined (reading 'map')
+
+## Stack Trace
+```
+    at new TRPCUntypedClient (/node_modules/.vite/deps/chunk-TGIKPQ5R.js?v=313d142d:436:29)
+    at createTRPCUntypedClient (/node_modules/.vite/deps/chunk-TGIKPQ5R.js?v=313d142d:442:10)
+    at Object.createClient (/node_modules/.vite/deps/chunk-7C2Q762C.js?v=313d142d:324:12)
+    at /node_modules/.vite/deps/chunk-7C2Q762C.js?v=313d142d:51:26
+    at Object.apply (/node_modules/.vite/deps/chunk-YK5XD4KG.js?v=313d142d:217:14)
+    at /.temp/dessn-component-routes/WebhooksView-e59c4120.tsx:27:16
+    at mountState (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=313d142d:12061:28)
+    at Object.useState (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=313d142d:12601:24)
+    at Object.useState (/node_modules/.vite/deps/chunk-D5D6DJEK.js?v=313d142d:1070:29)
+    at ComponentPreview (/.temp/dessn-component-routes/WebhooksView-e59c4120.tsx:26:30)
+```
+
+## Component Stack
+```
+
+    at ComponentPreview (/.temp/dessn-component-routes/WebhooksView-e59c4120.tsx:10:29)
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at OrgBrandingProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/organizations/context/provider.ts:9:77)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=313d142d:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=313d142d:63:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-RIH2XCSY.js?v=313d142d:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-7C2Q762C.js?v=313d142d:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-5E7KVCZ5.js?v=313d142d:929:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=313d142d:1100:28)
+    at Providers (/.temp/Wrapper.tsx:74:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:115:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/WebhooksView-e59c4120.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/webhooks/pages/webhooks-view';
+import { SessionProvider } from 'next-auth/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { httpBatchLink } from '@trpc/client';
+import { trpc } from '@calcom/trpc/react';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    isAdmin: {
+      type: "boolean",
+      value: true,
+      label: "Is Admin",
+    },
+  });
+
+  const mockSession = {
+    data: {
+      user: {
+        role: state.isAdmin.value ? 'ADMIN' : 'USER',
+      },
+    },
+    status: "authenticated",
+  };
+
+  const [queryClient] = React.useState(() => new QueryClient());
+  const [trpcClient] = React.useState(() =>
+    trpc.createClient({
+      links: [
+        httpBatchLink({
+          url: '/api/trpc',
+        }),
+      ],
+    })
+  );
+
+  return (
+    <SessionProvider session={mockSession as any}>
+      <trpc.Provider client={trpcClient} queryClient={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <ImportedComponent />
+        </QueryClientProvider>
+      </trpc.Provider>
+    </SessionProvider>
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: The error suggests there's an issue with the TRPC client initialization. Let's modify the preview file to use a simpler TRPC setup and mock the necessary data:
+
+<file path="apps/web/.temp/dessn-component-routes/WebhooksView-e59c4120.tsx">
+<change>
+<description>Simplify TRPC setup and add error handling</description>
+<content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/webhooks/pages/webhooks-view';
+import { SessionProvider } from 'next-auth/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createTRPCReact } from '@trpc/react-query';
+import superjson from 'superjson';
+
+// Create a simple TRPC instance
+const api = createTRPCReact({
+  transformer: superjson,
+});
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    isAdmin: {
+      type: "boolean",
+      value: true,
+      label: "Is Admin",
+    },
+  });
+
+  const mockSession = {
+    data: {
+      user: {
+        role: state.isAdmin.value ? 'ADMIN' : 'USER',
+      },
+    },
+    status: "authenticated",
+  };
+
+  const [queryClient] = React.useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        refetchOnWindowFocus: false,
+      },
+    },
+  }));
+
+  // Create a minimal TRPC client with error handling
+  const [trpcClient] = React.useState(() => {
+    return {
+      query: () => Promise.resolve([]),
+      mutation: () => Promise.resolve({}),
+      subscription: () => ({
+        unsubscribe: () => {},
+      }),
+    };
+  });
+
+  return (
+    <SessionProvider session={mockSession as any}>
+      <api.Provider client={trpcClient} queryClient={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <ImportedComponent />
+        </QueryClientProvider>
+      </api.Provider>
+    </SessionProvider>
+  );
+}
+</content>
+</change>
+</file>
+
+I've made the following changes:
+1. Removed the problematic `trpc` import and replaced it with a direct creation of TRPC React instance
+2. Created a minimal TRPC client with mock implementations
+3. Added proper error handling and configuration for the QueryClient
+4. Used superjson transformer which is commonly used with TRPC
+5. Simplified the provider setup while maintaining the necessary context
+
+This setup should prevent the "map of undefined" error by providing a basic mock implementation of the TRPC client. The component should now render without the previous error, though you might see other errors if the component requires specific TRPC queries that we'll need to mock.
+
+If you see any specific TRPC query errors after this, please let me know and I can help mock those specific queries.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/WebhooksView-e59c4120.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at WebhooksView-e59c4120.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: Cannot read properties of undefined (reading 'role')TypeError: Cannot read properties of undefined (reading 'role')
+
+## Stack Trace
+```
+    at WebhooksView (/@fs/Users/nimcheema/src/cal.com/packages/features/webhooks/pages/webhooks-view.tsx:39:37)
+    at renderWithHooks (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=313d142d:11604:26)
+    at mountIndeterminateComponent (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=313d142d:14982:21)
+    at beginWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=313d142d:15970:22)
+    at beginWork$1 (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=313d142d:19814:22)
+    at performUnitOfWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=313d142d:19262:20)
+    at workLoopSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=313d142d:19198:13)
+    at renderRootSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=313d142d:19177:15)
+    at recoverFromConcurrentError (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=313d142d:18794:28)
+    at performConcurrentWorkOnRoot (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=313d142d:18742:30)
+```
+
+## Component Stack
+```
+
+    at WebhooksView (/@fs/Users/nimcheema/src/cal.com/packages/features/webhooks/pages/webhooks-view.tsx:37:17)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-RIH2XCSY.js?v=313d142d:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-7C2Q762C.js?v=313d142d:327:13)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=313d142d:1100:28)
+    at ComponentPreview (/.temp/dessn-component-routes/WebhooksView-e59c4120.tsx:13:29)
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at OrgBrandingProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/organizations/context/provider.ts:9:77)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-CBFOD3GN.js?v=313d142d:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=313d142d:63:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-RIH2XCSY.js?v=313d142d:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-7C2Q762C.js?v=313d142d:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-5E7KVCZ5.js?v=313d142d:929:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=313d142d:1100:28)
+    at Providers (/.temp/Wrapper.tsx:74:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:115:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/WebhooksView-e59c4120.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/webhooks/pages/webhooks-view';
+import { SessionProvider } from 'next-auth/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createTRPCReact } from '@trpc/react-query';
+import superjson from 'superjson';
+
+// Create a simple TRPC instance
+const api = createTRPCReact({
+  transformer: superjson,
+});
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    isAdmin: {
+      type: "boolean",
+      value: true,
+      label: "Is Admin",
+    },
+  });
+
+  const mockSession = {
+    data: {
+      user: {
+        role: state.isAdmin.value ? 'ADMIN' : 'USER',
+      },
+    },
+    status: "authenticated",
+  };
+
+  const [queryClient] = React.useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        refetchOnWindowFocus: false,
+      },
+    },
+  }));
+
+  // Create a minimal TRPC client with error handling
+  const [trpcClient] = React.useState(() => {
+    return {
+      query: () => Promise.resolve([]),
+      mutation: () => Promise.resolve({}),
+      subscription: () => ({
+        unsubscribe: () => {},
+      }),
+    };
+  });
+
+  return (
+    <SessionProvider session={mockSession as any}>
+      <api.Provider client={trpcClient} queryClient={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <ImportedComponent />
+        </QueryClientProvider>
+      </api.Provider>
+    </SessionProvider>
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: [object Object],[object Object]
+
+
+Assistant: I see the issue now. The component expects a more complete session object with user data including the UserPermissionRole. Let's update the mock session data to match what the component expects:
+
+<file path="apps/web/.temp/dessn-component-routes/WebhooksView-e59c4120.tsx">
+<change>
+<description>Update mock session with complete user data and proper role enum</description>
+<content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../../../packages/features/webhooks/pages/webhooks-view';
+import { SessionProvider } from 'next-auth/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createTRPCReact } from '@trpc/react-query';
+import superjson from 'superjson';
+import { UserPermissionRole } from '@calcom/prisma/enums';
+
+// Create a simple TRPC instance
+const api = createTRPCReact({
+  transformer: superjson,
+});
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    isAdmin: {
+      type: "boolean",
+      value: true,
+      label: "Is Admin",
+    },
+  });
+
+  const mockSession = {
+    data: {
+      user: {
+        id: 1,
+        name: "Test User",
+        email: "test@example.com",
+        username: "testuser",
+        role: state.isAdmin.value ? UserPermissionRole.ADMIN : UserPermissionRole.USER,
+        locale: "en",
+        defaultScheduleId: null,
+        timeZone: "UTC",
+        weekStart: "Monday",
+        startTime: 0,
+        endTime: 1440,
+        bufferTime: 0,
+        theme: null,
+        createdDate: new Date().toISOString(),
+        trialEndsAt: null,
+        completedOnboarding: true,
+        twoFactorEnabled: false,
+        identityProvider: "CAL",
+        brandColor: "#292929",
+        darkBrandColor: "#fafafa",
+        away: false,
+        avatar: "",
+        plan: "PRO"
+      },
+      expires: new Date(Date.now() + 2 * 86400000).toISOString(),
+    },
+    status: "authenticated",
+  };
+
+  const [queryClient] = React.useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        refetchOnWindowFocus: false,
+      },
+    },
+  }));
+
+  // Create a minimal TRPC client with error handling
+  const [trpcClient] = React.useState(() => {
+    return {
+      query: () => Promise.resolve({
+        webhookGroups: [],
+        profiles: [{
+          name: "Default Profile",
+          slug: "default",
+          image: null
+        }]
+      }),
+      mutation: () => Promise.resolve({}),
+      subscription: () => ({
+        unsubscribe: () => {},
+      }),
+    };
+  });
+
+  return (
+    <SessionProvider session={mockSession as any}>
+      <api.Provider client={trpcClient} queryClient={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <ImportedComponent />
+        </QueryClientProvider>
+      </api.Provider>
+    </SessionProvider>
+  );
+}
+</content>
+</change>
+</file>
+
+I've made the following changes:
+1. Added a complete mock session object with all required user properties
+2. Imported and used proper UserPermissionRole enum for the role property
+3. Added mock data for the TRPC query response that the component expects
+4. Added more user properties that might be needed by the component
+5. Added proper date handling for session expiration
+6. Added mock profiles data that the component expects
+
+This should resolve the "Cannot read properties of undefined (reading 'role')" error because we're now providing a complete session object with all the required user properties, including the proper role enum value.
+
+The component should now render properly with the mock data. If you see any other specific errors related to missing data or TRPC queries, please let me know and I can help adjust the mock data further.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/WebhooksView-e59c4120.tsx
+
+All changes applied successfully. Checking for errors...
