@@ -1,0 +1,1605 @@
+System: You are an expert React developer working on a project that renders preview components. Your task is to fix any errors.
+
+## Role & Capabilities
+- You are a **component error fixing assistant**
+- You can read files, make edits, and use tools to diagnose issues
+- You have access to browser errors
+
+## Tools Available
+1. **getFile** (Using tool call) - Read contents of project files
+2. **File Editing** (Using xml tags in your response) - Make changes to fix errors using XML format
+
+## File Edit Format
+When you want to edit a file, use this exact XML format:
+
+<file path="path/to/file">
+  <change>
+    <description>Brief explanation of what you're changing</description>
+    <content>
+// Your complete file content here
+    </content>
+  </change>
+</file>
+
+## Important Rules
+1. Only update a file if you know its contents. Use getFile tool to read first.
+2. Most errors can be fixed by updating the preview file. Only update other files if necessary.
+3. Provide complete file content - do not use placeholders or ellipses.
+4. Always include necessary imports and dependencies.
+5. When making changes:
+   - Add all required import statements
+   - Include complete component code
+   - Ensure proper TypeScript types
+   - Handle all edge cases
+
+## Error Handling Process
+1. Read and understand the error message
+2. Use getFile to examine relevant files
+3. Make targeted fixes using the XML format
+4. If the error is caused by the fact that a provider is missing. In these cases, find the provider and add it to the preview file.
+4. If the error persists, try different fixes. Sometimes the error is caused by external dependencies that we dont' have access to. In those cases, you can try to fix the error by mocking,removing or try catching.
+5. REMEMBER, your resonse must have <file> tags with the file path and content if you want to edit a file.
+6. Always output the entire file content in full. Do not be lazy by adding //(code remains the same) or //(code remains unchanged). This will cause more errors.
+
+## Example: Fixing a Form Error
+Here's an example of how to handle a typical error:
+
+Error Message:
+TypeError: Cannot read properties of undefined (reading 'errors')
+at FormInput (/src/components/common/form/FormInput.tsx:23:18)
+
+Step 1: Read the file to understand the context
+
+// First, read the file
+{
+  "name": "getFile",
+  "arguments": {
+    "filePath": "src/components/common/form/FormInput.tsx"
+  }
+}
+
+// Response shows:
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState } = useFormContext();
+  const error = formState.errors[name]?.message;  // Error occurs here
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+
+Step 2: Fix the issue by adding proper error handling
+
+<file path="src/components/common/form/FormInput.tsx">
+  <change>
+    <description>Add null check for formState and provide default values</description>
+    <content>
+===
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState = {} } = useFormContext() || {};
+  const error = formState?.errors?.[name]?.message;
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+===
+    </content>
+  </change>
+</file>
+
+The fix:
+1. Added null check for useFormContext result
+2. Provided default empty object for formState
+3. Used optional chaining for safer property access
+
+Please proceed with fixing any errors you encounter following these guidelines.
+
+User: An error occurred when rendering the component route at Page-7eabd6b1.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: Failed to fetch dynamically imported module: /.temp/dessn-component-routes/Page-7eabd6b1.tsxTypeError: Failed to fetch dynamically imported module: /.temp/dessn-component-routes/Page-7eabd6b1.tsx
+
+## Stack Trace
+```
+
+```
+
+## Component Stack
+```
+
+    at Lazy
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-4WREEUCO.js?v=cc4c7ad5:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=cc4c7ad5:63:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-RIH2XCSY.js?v=cc4c7ad5:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-XSQK3CUC.js?v=cc4c7ad5:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-SS6AEBT7.js?v=cc4c7ad5:929:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=cc4c7ad5:1100:28)
+    at Providers (/.temp/Wrapper.tsx:66:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:103:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/Page-7eabd6b1.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../app/(use-page-wrapper)/(main-nav)/event-types/page';
+
+import { ShellMainAppDir } from '../../app/(use-page-wrapper)/(main-nav)/ShellMainAppDir';
+
+// Mock components and functions
+const EventTypes = () => <div>Event Types Component</div>;
+const EventTypesCTA = () => <div>Event Types CTA</div>;
+
+const mockGetTranslate = () => (key: string) => key;
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    params: {
+      type: "string",
+      value: JSON.stringify({}),
+      label: "Params",
+    },
+    searchParams: {
+      type: "string",
+      value: JSON.stringify({}),
+      label: "Search Params",
+    },
+  });
+
+  const mockProps = {
+    params: JSON.parse(state.params.value),
+    searchParams: JSON.parse(state.searchParams.value),
+  };
+
+  return (
+    <React.Suspense fallback={<div>Loading...</div>}>
+      <ImportedComponent {...mockProps} />
+    </React.Suspense>
+  );
+}
+
+// Mock the necessary modules
+jest.mock('next/headers', () => ({
+  headers: () => ({}),
+  cookies: () => ({}),
+}));
+
+jest.mock('next/navigation', () => ({
+  redirect: jest.fn(),
+}));
+
+jest.mock('@calcom/features/auth/lib/getServerSession', () => ({
+  getServerSession: jest.fn(() => Promise.resolve({ user: { id: '1' } })),
+}));
+
+jest.mock('@lib/buildLegacyCtx', () => ({
+  buildLegacyCtx: jest.fn(),
+}));
+
+jest.mock('@server/lib/ssr', () => ({
+  ssrInit: jest.fn(),
+}));
+
+jest.mock('app/_utils', () => ({
+  _generateMetadata: jest.fn(),
+  getTranslate: () => mockGetTranslate,
+}));
+
+jest.mock('app/(use-page-wrapper)/(main-nav)/ShellMainAppDir', () => ({
+  ShellMainAppDir: ({ children, heading, subtitle, CTA }) => (
+    <div>
+      <h1>{heading}</h1>
+      <p>{subtitle}</p>
+      {CTA}
+      {children}
+    </div>
+  ),
+}));
+
+jest.mock('~/event-types/views/event-types-listing-view', () => ({
+  __esModule: true,
+  default: EventTypes,
+  EventTypesCTA: EventTypesCTA,
+}));
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: The error indicates a failure to fetch the dynamically imported module. Looking at the preview file, I notice several issues that need to be addressed. The main issues are:
+
+1. Missing providers that are shown in the component stack
+2. Improper mocking of dependencies
+3. Need to wrap the component with necessary providers
+
+Let me fix this by updating the preview file:
+
+<file path="apps/web/.temp/dessn-component-routes/Page-7eabd6b1.tsx">
+  <change>
+    <description>Add required providers and fix component structure</description>
+    <content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../app/(use-page-wrapper)/(main-nav)/event-types/page';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { SessionProvider } from 'next-auth/react';
+import { I18nextProvider } from 'react-i18next';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
+import { TRPCProvider } from '@calcom/trpc/react';
+import { FeatureProvider } from '@calcom/features/flags/context/provider';
+
+// Create a client
+const queryClient = new QueryClient();
+
+// Mock components and functions
+const EventTypes = () => <div>Event Types Component</div>;
+const EventTypesCTA = () => <div>Event Types CTA</div>;
+
+const mockGetTranslate = () => (key: string) => key;
+
+// Mock i18n instance
+const i18n = {
+  language: 'en',
+  languages: ['en'],
+  options: {},
+  // Add other required i18n properties and methods
+  t: (key: string) => key,
+};
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    params: {
+      type: "string",
+      value: JSON.stringify({}),
+      label: "Params",
+    },
+    searchParams: {
+      type: "string",
+      value: JSON.stringify({}),
+      label: "Search Params",
+    },
+  });
+
+  const mockProps = {
+    params: JSON.parse(state.params.value),
+    searchParams: JSON.parse(state.searchParams.value),
+  };
+
+  return (
+    <SessionProvider>
+      <I18nextProvider i18n={i18n}>
+        <TRPCProvider>
+          <QueryClientProvider client={queryClient}>
+            <TooltipProvider>
+              <FeatureProvider>
+                <React.Suspense fallback={<div>Loading...</div>}>
+                  <ImportedComponent {...mockProps} />
+                </React.Suspense>
+              </FeatureProvider>
+            </TooltipProvider>
+          </QueryClientProvider>
+        </TRPCProvider>
+      </I18nextProvider>
+    </SessionProvider>
+  );
+}
+
+// Mock the necessary modules
+jest.mock('next/headers', () => ({
+  headers: () => ({}),
+  cookies: () => ({}),
+}));
+
+jest.mock('next/navigation', () => ({
+  redirect: jest.fn(),
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    refresh: jest.fn(),
+  }),
+  useSearchParams: () => new URLSearchParams(),
+  usePathname: () => "",
+}));
+
+jest.mock('@calcom/features/auth/lib/getServerSession', () => ({
+  getServerSession: jest.fn(() => Promise.resolve({ user: { id: '1' } })),
+}));
+
+jest.mock('@lib/buildLegacyCtx', () => ({
+  buildLegacyCtx: jest.fn(),
+}));
+
+jest.mock('@server/lib/ssr', () => ({
+  ssrInit: jest.fn(),
+}));
+
+jest.mock('app/_utils', () => ({
+  _generateMetadata: jest.fn(),
+  getTranslate: () => mockGetTranslate,
+}));
+
+jest.mock('app/(use-page-wrapper)/(main-nav)/ShellMainAppDir', () => ({
+  ShellMainAppDir: ({ children, heading, subtitle, CTA }) => (
+    <div>
+      <h1>{heading}</h1>
+      <p>{subtitle}</p>
+      {CTA}
+      {children}
+    </div>
+  ),
+}));
+
+jest.mock('~/event-types/views/event-types-listing-view', () => ({
+  __esModule: true,
+  default: EventTypes,
+  EventTypesCTA: EventTypesCTA,
+}));
+</content>
+  </change>
+</file>
+
+The changes I made include:
+
+1. Added all the necessary providers that were shown in the component stack:
+   - SessionProvider
+   - I18nextProvider
+   - TRPCProvider
+   - QueryClientProvider
+   - TooltipProvider
+   - FeatureProvider
+
+2. Added required imports for the providers
+
+3. Created a basic mock for i18n instance required by I18nextProvider
+
+4. Added QueryClient instance required by QueryClientProvider
+
+5. Enhanced the navigation mocks to include more commonly used functions
+
+6. Wrapped the ImportedComponent with all the necessary providers in the correct order as shown in the component stack
+
+These changes should resolve the module fetching error by providing all the required context providers and proper mocking of dependencies. The component should now render properly within its preview environment.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/Page-7eabd6b1.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at Page-7eabd6b1.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: Failed to fetch dynamically imported module: /.temp/dessn-component-routes/Page-7eabd6b1.tsxTypeError: Failed to fetch dynamically imported module: /.temp/dessn-component-routes/Page-7eabd6b1.tsx
+
+## Stack Trace
+```
+
+```
+
+## Component Stack
+```
+
+    at Lazy
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-4WREEUCO.js?v=cc4c7ad5:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=cc4c7ad5:63:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-RIH2XCSY.js?v=cc4c7ad5:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-XSQK3CUC.js?v=cc4c7ad5:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-SS6AEBT7.js?v=cc4c7ad5:929:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=cc4c7ad5:1100:28)
+    at Providers (/.temp/Wrapper.tsx:66:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:103:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/Page-7eabd6b1.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../app/(use-page-wrapper)/(main-nav)/event-types/page';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { SessionProvider } from 'next-auth/react';
+import { I18nextProvider } from 'react-i18next';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
+import { TRPCProvider } from '@calcom/trpc/react';
+import { FeatureProvider } from '@calcom/features/flags/context/provider';
+
+// Create a client
+const queryClient = new QueryClient();
+
+// Mock components and functions
+const EventTypes = () => <div>Event Types Component</div>;
+const EventTypesCTA = () => <div>Event Types CTA</div>;
+
+const mockGetTranslate = () => (key: string) => key;
+
+// Mock i18n instance
+const i18n = {
+  language: 'en',
+  languages: ['en'],
+  options: {},
+  // Add other required i18n properties and methods
+  t: (key: string) => key,
+};
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    params: {
+      type: "string",
+      value: JSON.stringify({}),
+      label: "Params",
+    },
+    searchParams: {
+      type: "string",
+      value: JSON.stringify({}),
+      label: "Search Params",
+    },
+  });
+
+  const mockProps = {
+    params: JSON.parse(state.params.value),
+    searchParams: JSON.parse(state.searchParams.value),
+  };
+
+  return (
+    <SessionProvider>
+      <I18nextProvider i18n={i18n}>
+        <TRPCProvider>
+          <QueryClientProvider client={queryClient}>
+            <TooltipProvider>
+              <FeatureProvider>
+                <React.Suspense fallback={<div>Loading...</div>}>
+                  <ImportedComponent {...mockProps} />
+                </React.Suspense>
+              </FeatureProvider>
+            </TooltipProvider>
+          </QueryClientProvider>
+        </TRPCProvider>
+      </I18nextProvider>
+    </SessionProvider>
+  );
+}
+
+// Mock the necessary modules
+jest.mock('next/headers', () => ({
+  headers: () => ({}),
+  cookies: () => ({}),
+}));
+
+jest.mock('next/navigation', () => ({
+  redirect: jest.fn(),
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    refresh: jest.fn(),
+  }),
+  useSearchParams: () => new URLSearchParams(),
+  usePathname: () => "",
+}));
+
+jest.mock('@calcom/features/auth/lib/getServerSession', () => ({
+  getServerSession: jest.fn(() => Promise.resolve({ user: { id: '1' } })),
+}));
+
+jest.mock('@lib/buildLegacyCtx', () => ({
+  buildLegacyCtx: jest.fn(),
+}));
+
+jest.mock('@server/lib/ssr', () => ({
+  ssrInit: jest.fn(),
+}));
+
+jest.mock('app/_utils', () => ({
+  _generateMetadata: jest.fn(),
+  getTranslate: () => mockGetTranslate,
+}));
+
+jest.mock('app/(use-page-wrapper)/(main-nav)/ShellMainAppDir', () => ({
+  ShellMainAppDir: ({ children, heading, subtitle, CTA }) => (
+    <div>
+      <h1>{heading}</h1>
+      <p>{subtitle}</p>
+      {CTA}
+      {children}
+    </div>
+  ),
+}));
+
+jest.mock('~/event-types/views/event-types-listing-view', () => ({
+  __esModule: true,
+  default: EventTypes,
+  EventTypesCTA: EventTypesCTA,
+}));
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: Let's try a different approach. Since we're still getting the module fetching error, let's try to simplify the component and handle the imports differently. We'll also add error boundaries and try to mock more dependencies:
+
+<file path="apps/web/.temp/dessn-component-routes/Page-7eabd6b1.tsx">
+  <change>
+    <description>Simplify component and add better error handling</description>
+    <content>
+import React, { Suspense } from 'react';
+import { useParentState } from '../useIframeState';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { SessionProvider } from 'next-auth/react';
+import { I18nextProvider } from 'react-i18next';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
+import { TRPCProvider } from '@calcom/trpc/react';
+import { FeatureProvider } from '@calcom/features/flags/context/provider';
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Error: {this.state.error?.message || 'Something went wrong'}</div>;
+    }
+    return this.props.children;
+  }
+}
+
+// Mock i18n instance
+const i18n = {
+  language: 'en',
+  languages: ['en'],
+  options: {},
+  t: (key: string) => key,
+  changeLanguage: () => Promise.resolve(),
+  on: () => {},
+  off: () => {},
+  init: () => {},
+};
+
+const mockTrpcClient = {
+  query: () => Promise.resolve({}),
+  mutation: () => Promise.resolve({}),
+};
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    params: {
+      type: "string",
+      value: JSON.stringify({}),
+      label: "Params",
+    },
+    searchParams: {
+      type: "string",
+      value: JSON.stringify({}),
+      label: "Search Params",
+    },
+  });
+
+  const mockProps = {
+    params: JSON.parse(state.params.value),
+    searchParams: JSON.parse(state.searchParams.value),
+  };
+
+  // Lazy load the ImportedComponent
+  const ImportedComponent = React.lazy(() => 
+    import('../../app/(use-page-wrapper)/(main-nav)/event-types/page')
+      .catch(error => ({
+        default: () => <div>Error loading component: {error.message}</div>
+      }))
+  );
+
+  return (
+    <ErrorBoundary>
+      <SessionProvider session={{ expires: "1" }}>
+        <I18nextProvider i18n={i18n}>
+          <TRPCProvider client={mockTrpcClient}>
+            <QueryClientProvider client={queryClient}>
+              <TooltipProvider>
+                <FeatureProvider features={{}}>
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <ImportedComponent {...mockProps} />
+                  </Suspense>
+                </FeatureProvider>
+              </TooltipProvider>
+            </QueryClientProvider>
+          </TRPCProvider>
+        </I18nextProvider>
+      </SessionProvider>
+    </ErrorBoundary>
+  );
+}
+
+// Global mocks
+global.fetch = () => Promise.resolve(new Response(JSON.stringify({})));
+
+// Mock modules
+jest.mock('next/headers', () => ({
+  headers: () => new Map(),
+  cookies: () => new Map(),
+}));
+
+jest.mock('next/navigation', () => ({
+  redirect: jest.fn(),
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    refresh: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    prefetch: jest.fn(),
+  }),
+  useSearchParams: () => new URLSearchParams(),
+  usePathname: () => "",
+  useParams: () => ({}),
+}));
+
+jest.mock('@calcom/features/auth/lib/getServerSession', () => ({
+  getServerSession: jest.fn(() => Promise.resolve({ 
+    user: { 
+      id: '1',
+      email: 'test@test.com',
+      name: 'Test User'
+    } 
+  })),
+}));
+
+jest.mock('@lib/buildLegacyCtx', () => ({
+  buildLegacyCtx: jest.fn(() => ({})),
+}));
+
+jest.mock('@server/lib/ssr', () => ({
+  ssrInit: jest.fn(() => Promise.resolve({})),
+}));
+
+jest.mock('@calcom/trpc/react', () => ({
+  TRPCProvider: ({ children }) => children,
+}));
+
+jest.mock('@calcom/features/flags/context/provider', () => ({
+  FeatureProvider: ({ children }) => children,
+}));
+
+// Mock window properties
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: jest.fn().mockImplementation(query => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    })),
+  });
+}
+</content>
+  </change>
+</file>
+
+Key changes made:
+
+1. Added a custom ErrorBoundary component to catch and display errors
+2. Implemented lazy loading with error handling for the ImportedComponent
+3. Enhanced the i18n mock with more required methods
+4. Added a mock TRPC client
+5. Provided better session data to SessionProvider
+6. Added global fetch mock
+7. Enhanced navigation mocks with more methods
+8. Added window.matchMedia mock
+9. Simplified provider mocks to just render children
+10. Added better QueryClient configuration
+11. Removed unnecessary component mocks that might interfere with the actual implementation
+
+The changes focus on:
+- Better error handling and reporting
+- More complete mocking of required dependencies
+- Simplified provider structure
+- Proper lazy loading with fallbacks
+
+This should help resolve the module fetching error by providing better error handling and more complete mocking of the environment.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/Page-7eabd6b1.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at Page-7eabd6b1.tsx
+Error:
+
+# Error 1
+
+## Error Message
+SyntaxError: The requested module '/@fs/Users/nimcheema/src/cal.com/packages/trpc/react/index.ts' does not provide an export named 'TRPCProvider'SyntaxError: The requested module '/@fs/Users/nimcheema/src/cal.com/packages/trpc/react/index.ts' does not provide an export named 'TRPCProvider'
+
+## Stack Trace
+```
+
+```
+
+## Component Stack
+```
+
+    at Lazy
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-4WREEUCO.js?v=cc4c7ad5:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=cc4c7ad5:63:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-RIH2XCSY.js?v=cc4c7ad5:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-XSQK3CUC.js?v=cc4c7ad5:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-SS6AEBT7.js?v=cc4c7ad5:929:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=cc4c7ad5:1100:28)
+    at Providers (/.temp/Wrapper.tsx:66:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:103:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/Page-7eabd6b1.tsx" type="preview>
+import React, { Suspense } from 'react';
+import { useParentState } from '../useIframeState';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { SessionProvider } from 'next-auth/react';
+import { I18nextProvider } from 'react-i18next';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
+import { TRPCProvider } from '@calcom/trpc/react';
+import { FeatureProvider } from '@calcom/features/flags/context/provider';
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Error: {this.state.error?.message || 'Something went wrong'}</div>;
+    }
+    return this.props.children;
+  }
+}
+
+// Mock i18n instance
+const i18n = {
+  language: 'en',
+  languages: ['en'],
+  options: {},
+  t: (key: string) => key,
+  changeLanguage: () => Promise.resolve(),
+  on: () => {},
+  off: () => {},
+  init: () => {},
+};
+
+const mockTrpcClient = {
+  query: () => Promise.resolve({}),
+  mutation: () => Promise.resolve({}),
+};
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    params: {
+      type: "string",
+      value: JSON.stringify({}),
+      label: "Params",
+    },
+    searchParams: {
+      type: "string",
+      value: JSON.stringify({}),
+      label: "Search Params",
+    },
+  });
+
+  const mockProps = {
+    params: JSON.parse(state.params.value),
+    searchParams: JSON.parse(state.searchParams.value),
+  };
+
+  // Lazy load the ImportedComponent
+  const ImportedComponent = React.lazy(() => 
+    import('../../app/(use-page-wrapper)/(main-nav)/event-types/page')
+      .catch(error => ({
+        default: () => <div>Error loading component: {error.message}</div>
+      }))
+  );
+
+  return (
+    <ErrorBoundary>
+      <SessionProvider session={{ expires: "1" }}>
+        <I18nextProvider i18n={i18n}>
+          <TRPCProvider client={mockTrpcClient}>
+            <QueryClientProvider client={queryClient}>
+              <TooltipProvider>
+                <FeatureProvider features={{}}>
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <ImportedComponent {...mockProps} />
+                  </Suspense>
+                </FeatureProvider>
+              </TooltipProvider>
+            </QueryClientProvider>
+          </TRPCProvider>
+        </I18nextProvider>
+      </SessionProvider>
+    </ErrorBoundary>
+  );
+}
+
+// Global mocks
+global.fetch = () => Promise.resolve(new Response(JSON.stringify({})));
+
+// Mock modules
+jest.mock('next/headers', () => ({
+  headers: () => new Map(),
+  cookies: () => new Map(),
+}));
+
+jest.mock('next/navigation', () => ({
+  redirect: jest.fn(),
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    refresh: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    prefetch: jest.fn(),
+  }),
+  useSearchParams: () => new URLSearchParams(),
+  usePathname: () => "",
+  useParams: () => ({}),
+}));
+
+jest.mock('@calcom/features/auth/lib/getServerSession', () => ({
+  getServerSession: jest.fn(() => Promise.resolve({ 
+    user: { 
+      id: '1',
+      email: 'test@test.com',
+      name: 'Test User'
+    } 
+  })),
+}));
+
+jest.mock('@lib/buildLegacyCtx', () => ({
+  buildLegacyCtx: jest.fn(() => ({})),
+}));
+
+jest.mock('@server/lib/ssr', () => ({
+  ssrInit: jest.fn(() => Promise.resolve({})),
+}));
+
+jest.mock('@calcom/trpc/react', () => ({
+  TRPCProvider: ({ children }) => children,
+}));
+
+jest.mock('@calcom/features/flags/context/provider', () => ({
+  FeatureProvider: ({ children }) => children,
+}));
+
+// Mock window properties
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: jest.fn().mockImplementation(query => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    })),
+  });
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: The error indicates that TRPCProvider is not properly exported from '@calcom/trpc/react'. Let's modify the code to remove the TRPC dependency since it's causing issues:
+
+<file path="apps/web/.temp/dessn-component-routes/Page-7eabd6b1.tsx">
+  <change>
+    <description>Remove TRPC provider and simplify the component structure</description>
+    <content>
+import React, { Suspense } from 'react';
+import { useParentState } from '../useIframeState';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { SessionProvider } from 'next-auth/react';
+import { I18nextProvider } from 'react-i18next';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
+import { FeatureProvider } from '@calcom/features/flags/context/provider';
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Error: {this.state.error?.message || 'Something went wrong'}</div>;
+    }
+    return this.props.children;
+  }
+}
+
+// Mock i18n instance
+const i18n = {
+  language: 'en',
+  languages: ['en'],
+  options: {},
+  t: (key: string) => key,
+  changeLanguage: () => Promise.resolve(),
+  on: () => {},
+  off: () => {},
+  init: () => {},
+};
+
+// Create a mock Provider component to replace TRPC
+const MockTRPCProvider = ({ children }) => <>{children}</>;
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    params: {
+      type: "string",
+      value: JSON.stringify({}),
+      label: "Params",
+    },
+    searchParams: {
+      type: "string",
+      value: JSON.stringify({}),
+      label: "Search Params",
+    },
+  });
+
+  const mockProps = {
+    params: JSON.parse(state.params.value),
+    searchParams: JSON.parse(state.searchParams.value),
+  };
+
+  // Lazy load the ImportedComponent
+  const ImportedComponent = React.lazy(() => 
+    import('../../app/(use-page-wrapper)/(main-nav)/event-types/page')
+      .catch(error => ({
+        default: () => <div>Error loading component: {error.message}</div>
+      }))
+  );
+
+  return (
+    <ErrorBoundary>
+      <SessionProvider session={{ expires: "1" }}>
+        <I18nextProvider i18n={i18n}>
+          <MockTRPCProvider>
+            <QueryClientProvider client={queryClient}>
+              <TooltipProvider>
+                <FeatureProvider features={{}}>
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <ImportedComponent {...mockProps} />
+                  </Suspense>
+                </FeatureProvider>
+              </TooltipProvider>
+            </QueryClientProvider>
+          </MockTRPCProvider>
+        </I18nextProvider>
+      </SessionProvider>
+    </ErrorBoundary>
+  );
+}
+
+// Global mocks
+global.fetch = () => Promise.resolve(new Response(JSON.stringify({})));
+
+// Mock modules
+jest.mock('next/headers', () => ({
+  headers: () => new Map(),
+  cookies: () => new Map(),
+}));
+
+jest.mock('next/navigation', () => ({
+  redirect: jest.fn(),
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    refresh: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    prefetch: jest.fn(),
+  }),
+  useSearchParams: () => new URLSearchParams(),
+  usePathname: () => "",
+  useParams: () => ({}),
+}));
+
+jest.mock('@calcom/features/auth/lib/getServerSession', () => ({
+  getServerSession: jest.fn(() => Promise.resolve({ 
+    user: { 
+      id: '1',
+      email: 'test@test.com',
+      name: 'Test User'
+    } 
+  })),
+}));
+
+jest.mock('@lib/buildLegacyCtx', () => ({
+  buildLegacyCtx: jest.fn(() => ({})),
+}));
+
+jest.mock('@server/lib/ssr', () => ({
+  ssrInit: jest.fn(() => Promise.resolve({})),
+}));
+
+// Mock TRPC related functions and hooks
+jest.mock('@calcom/trpc/react', () => ({
+  trpc: {
+    viewer: {
+      me: {
+        useQuery: () => ({
+          data: {
+            id: 1,
+            username: 'testuser',
+            email: 'test@example.com',
+          },
+          isLoading: false,
+        }),
+      },
+      eventTypes: {
+        list: {
+          useQuery: () => ({
+            data: [],
+            isLoading: false,
+          }),
+        },
+      },
+    },
+  },
+}));
+
+jest.mock('@calcom/features/flags/context/provider', () => ({
+  FeatureProvider: ({ children }) => children,
+}));
+
+// Mock window properties
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: jest.fn().mockImplementation(query => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    })),
+  });
+}
+</content>
+  </change>
+</file>
+
+Key changes made:
+
+1. Removed the TRPCProvider import and replaced it with a simple MockTRPCProvider
+2. Added more comprehensive TRPC mocks in the jest.mock section
+3. Removed the TRPCProvider import that was causing the error
+4. Added mock implementations for common TRPC hooks and queries
+5. Kept the provider structure but simplified it with the mock version
+
+The main change is removing the dependency on the actual TRPC provider and replacing it with a simple mock component. This should resolve the export error while still maintaining the component structure expected by the application.
+
+Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/Page-7eabd6b1.tsx
+
+All changes applied successfully. Checking for errors...
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/Page-7eabd6b1.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at Page-7eabd6b1.tsx
+Error:
+
+# Error 1
+
+## Error Message
+ReferenceError: jest is not definedReferenceError: jest is not defined
+
+## Stack Trace
+```
+    at /.temp/dessn-component-routes/Page-7eabd6b1.tsx:129:1
+```
+
+## Component Stack
+```
+
+    at Lazy
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-KNZ2WZMC.js?v=0dc291c8:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=0dc291c8:63:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-RIH2XCSY.js?v=0dc291c8:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-LFO6WWZZ.js?v=0dc291c8:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-5E7KVCZ5.js?v=0dc291c8:929:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=0dc291c8:1100:28)
+    at Providers (/.temp/Wrapper.tsx:66:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:103:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/Page-7eabd6b1.tsx" type="preview>
+import React, { Suspense } from 'react';
+import { useParentState } from '../useIframeState';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { SessionProvider } from 'next-auth/react';
+import { I18nextProvider } from 'react-i18next';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
+import { FeatureProvider } from '@calcom/features/flags/context/provider';
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Error: {this.state.error?.message || 'Something went wrong'}</div>;
+    }
+    return this.props.children;
+  }
+}
+
+// Mock i18n instance
+const i18n = {
+  language: 'en',
+  languages: ['en'],
+  options: {},
+  t: (key: string) => key,
+  changeLanguage: () => Promise.resolve(),
+  on: () => {},
+  off: () => {},
+  init: () => {},
+};
+
+// Create a mock Provider component to replace TRPC
+const MockTRPCProvider = ({ children }) => <>{children}</>;
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    params: {
+      type: "string",
+      value: JSON.stringify({}),
+      label: "Params",
+    },
+    searchParams: {
+      type: "string",
+      value: JSON.stringify({}),
+      label: "Search Params",
+    },
+  });
+
+  const mockProps = {
+    params: JSON.parse(state.params.value),
+    searchParams: JSON.parse(state.searchParams.value),
+  };
+
+  // Lazy load the ImportedComponent
+  const ImportedComponent = React.lazy(() => 
+    import('../../app/(use-page-wrapper)/(main-nav)/event-types/page')
+      .catch(error => ({
+        default: () => <div>Error loading component: {error.message}</div>
+      }))
+  );
+
+  return (
+    <ErrorBoundary>
+      <SessionProvider session={{ expires: "1" }}>
+        <I18nextProvider i18n={i18n}>
+          <MockTRPCProvider>
+            <QueryClientProvider client={queryClient}>
+              <TooltipProvider>
+                <FeatureProvider features={{}}>
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <ImportedComponent {...mockProps} />
+                  </Suspense>
+                </FeatureProvider>
+              </TooltipProvider>
+            </QueryClientProvider>
+          </MockTRPCProvider>
+        </I18nextProvider>
+      </SessionProvider>
+    </ErrorBoundary>
+  );
+}
+
+// Global mocks
+global.fetch = () => Promise.resolve(new Response(JSON.stringify({})));
+
+// Mock modules
+jest.mock('next/headers', () => ({
+  headers: () => new Map(),
+  cookies: () => new Map(),
+}));
+
+jest.mock('next/navigation', () => ({
+  redirect: jest.fn(),
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    refresh: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    prefetch: jest.fn(),
+  }),
+  useSearchParams: () => new URLSearchParams(),
+  usePathname: () => "",
+  useParams: () => ({}),
+}));
+
+jest.mock('@calcom/features/auth/lib/getServerSession', () => ({
+  getServerSession: jest.fn(() => Promise.resolve({ 
+    user: { 
+      id: '1',
+      email: 'test@test.com',
+      name: 'Test User'
+    } 
+  })),
+}));
+
+jest.mock('@lib/buildLegacyCtx', () => ({
+  buildLegacyCtx: jest.fn(() => ({})),
+}));
+
+jest.mock('@server/lib/ssr', () => ({
+  ssrInit: jest.fn(() => Promise.resolve({})),
+}));
+
+// Mock TRPC related functions and hooks
+jest.mock('@calcom/trpc/react', () => ({
+  trpc: {
+    viewer: {
+      me: {
+        useQuery: () => ({
+          data: {
+            id: 1,
+            username: 'testuser',
+            email: 'test@example.com',
+          },
+          isLoading: false,
+        }),
+      },
+      eventTypes: {
+        list: {
+          useQuery: () => ({
+            data: [],
+            isLoading: false,
+          }),
+        },
+      },
+    },
+  },
+}));
+
+jest.mock('@calcom/features/flags/context/provider', () => ({
+  FeatureProvider: ({ children }) => children,
+}));
+
+// Mock window properties
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: jest.fn().mockImplementation(query => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    })),
+  });
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: The error occurs because we're using Jest's mocking functionality, but Jest isn't available in this environment. Let's remove the Jest-specific code and use regular module mocks instead:
+
+<file path="apps/web/.temp/dessn-component-routes/Page-7eabd6b1.tsx">
+  <change>
+    <description>Remove Jest mocks and replace with regular module exports</description>
+    <content>
+import React, { Suspense } from 'react';
+import { useParentState } from '../useIframeState';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { SessionProvider } from 'next-auth/react';
+import { I18nextProvider } from 'react-i18next';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
+import { FeatureProvider } from '@calcom/features/flags/context/provider';
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Error: {this.state.error?.message || 'Something went wrong'}</div>;
+    }
+    return this.props.children;
+  }
+}
+
+// Mock i18n instance
+const i18n = {
+  language: 'en',
+  languages: ['en'],
+  options: {},
+  t: (key: string) => key,
+  changeLanguage: () => Promise.resolve(),
+  on: () => {},
+  off: () => {},
+  init: () => {},
+};
+
+// Mock components and providers
+const MockTRPCProvider = ({ children }) => <>{children}</>;
+
+// Mock functions and hooks
+const mockRouter = {
+  push: () => Promise.resolve(),
+  replace: () => Promise.resolve(),
+  refresh: () => Promise.resolve(),
+  back: () => Promise.resolve(),
+  forward: () => Promise.resolve(),
+  prefetch: () => Promise.resolve(),
+};
+
+const mockSession = {
+  user: { 
+    id: '1',
+    email: 'test@test.com',
+    name: 'Test User'
+  },
+  expires: "1"
+};
+
+// Mock TRPC hooks
+const mockTrpc = {
+  viewer: {
+    me: {
+      useQuery: () => ({
+        data: {
+          id: 1,
+          username: 'testuser',
+          email: 'test@example.com',
+        },
+        isLoading: false,
+      }),
+    },
+    eventTypes: {
+      list: {
+        useQuery: () => ({
+          data: [],
+          isLoading: false,
+        }),
+      },
+    },
+  },
+};
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    params: {
+      type: "string",
+      value: JSON.stringify({}),
+      label: "Params",
+    },
+    searchParams: {
+      type: "string",
+      value: JSON.stringify({}),
+      label: "Search Params",
+    },
+  });
+
+  const mockProps = {
+    params: JSON.parse(state.params.value),
+    searchParams: JSON.parse(state.searchParams.value),
+  };
+
+  // Lazy load the ImportedComponent
+  const ImportedComponent = React.lazy(() => 
+    import('../../app/(use-page-wrapper)/(main-nav)/event-types/page')
+      .catch(error => ({
+        default: () => <div>Error loading component: {error.message}</div>
+      }))
+  );
+
+  return (
+    <ErrorBoundary>
+      <SessionProvider session={mockSession}>
+        <I18nextProvider i18n={i18n}>
+          <MockTRPCProvider>
+            <QueryClientProvider client={queryClient}>
+              <TooltipProvider>
+                <FeatureProvider features={{}}>
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <ImportedComponent {...mockProps} />
+                  </Suspense>
+                </FeatureProvider>
+              </TooltipProvider>
+            </QueryClientProvider>
+          </MockTRPCProvider>
+        </I18nextProvider>
+      </SessionProvider>
+    </ErrorBoundary>
+  );
+}
+
+// Add window.matchMedia mock if needed
+if (typeof window !== 'undefined') {
+  window.matchMedia = window.matchMedia || function() {
+    return {
+      matches: false,
+      addListener: function() {},
+      removeListener: function() {},
+      addEventListener: function() {},
+      removeEventListener: function() {},
+      dispatchEvent: function() {},
+    };
+  };
+}
+
+// Mock modules directly
+import('next/headers').then((mod) => {
+  Object.defineProperty(mod, 'headers', { value: () => new Map() });
+  Object.defineProperty(mod, 'cookies', { value: () => new Map() });
+});
+
+import('next/navigation').then((mod) => {
+  Object.defineProperty(mod, 'useRouter', { value: () => mockRouter });
+  Object.defineProperty(mod, 'useSearchParams', { value: () => new URLSearchParams() });
+  Object.defineProperty(mod, 'usePathname', { value: () => "" });
+  Object.defineProperty(mod, 'useParams', { value: () => ({}) });
+});
+
+// Export mocked modules for other components to use
+export const mockModules = {
+  trpc: mockTrpc,
+  router: mockRouter,
+  session: mockSession,
+};
+</content>
+  </change>
+</file>
+
+Key changes made:
+
+1. Removed all Jest-specific mocking (`jest.mock()`)
+2. Replaced with regular module exports and mock objects
+3. Added direct module mocking using dynamic imports
+4. Created a mockModules export for other components to use
+5. Simplified the window.matchMedia mock
+6. Added proper session mock for SessionProvider
+7. Kept the core component structure but removed Jest dependencies
+
+The main change is removing all Jest-related code and replacing it with standard JavaScript module mocking. This should resolve the "jest is not defined" error while still providing the necessary mocked functionality for the component to work.
+
+The mock implementations are now done through regular objects and functions, which should work in any JavaScript environment without requiring Jest. The component structure remains the same, but the mocking approach has been simplified and made more compatible with the runtime environment.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/Page-7eabd6b1.tsx
+
+All changes applied successfully. Checking for errors...
