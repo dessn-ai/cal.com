@@ -1,0 +1,12 @@
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { NotFound } from '../../../../packages/features/bookings/Booker/components/Unavailable';
+
+
+export default function ComponentPreview() {
+  // Since NotFound doesn't have any props, we don't need to use useParentState
+  // However, we'll keep it here in case we want to add any configurable options in the future
+  const [state, setState] = useParentState({});
+
+  return <NotFound />;
+}

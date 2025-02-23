@@ -1,0 +1,39 @@
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { LocationInfo } from '../../../../packages/emails/src/components/LocationInfo';
+
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    calEvent: {
+      type: 'string',
+      value: JSON.stringify({
+        type: 'default',
+        title: 'Meeting with John Doe',
+        startTime: '2023-06-15T10:00:00',
+        endTime: '2023-06-15T11:00:00',
+        organizer: {
+          name: 'Jane Smith',
+          email: 'jane@example.com',
+          timeZone: 'America/New_York',
+          language: {
+            translate: (key: string) => key,
+            locale: 'en',
+          },
+        },
+        attendees: [],
+        location: 'https://zoom.us/j/123456789',
+      }),
+      label: 'Calendar Event',
+    },
+  });
+
+  const mockT = (key: string) => key;
+
+  return (
+    <LocationInfo
+      calEvent={JSON.parse(state.calEvent.value)}
+      t={mockT}
+    />
+  );
+}
