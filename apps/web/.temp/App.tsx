@@ -56,6 +56,7 @@ export const App: React.FC<AppProps> = ({ routes }) => {
                 width: "100%",
                 height: "100%",
                 display: "flex",
+                flexFlow:'column',
                 justifyContent: "center",
                 alignItems: "center",
               }}
