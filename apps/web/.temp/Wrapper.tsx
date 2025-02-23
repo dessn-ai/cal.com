@@ -6,25 +6,26 @@ import { AppRouterContext } from "next/dist/shared/lib/app-router-context.shared
 import { useState, type PropsWithChildren } from "react";
 import { initReactI18next, I18nextProvider } from "react-i18next";
 
-import { FeatureProvider } from "@calcom/features/flags/context/provider";
 import { OrgBrandingProvider } from "@calcom/features/ee/organizations/context/provider";
+import { FeatureProvider } from "@calcom/features/flags/context/provider";
 import { httpBatchLink } from "@calcom/trpc";
 import type { AppRouter } from "@calcom/trpc/server/routers/_app";
 
+import SVG from "react-inlinesvg";
+
 import { createTRPCReact } from "@trpc/react-query";
 
-import enCommon from "../public/static/locales/en/common.json";
-
+import "../../../packages/config/theme/colors.css";
+import "../../../packages/embeds/embed-core/src/embed.css";
+import "../../../packages/features/calendars/weeklyview/styles/styles.css";
+import "../../../packages/features/insights/components/tremor.css";
+import "../../../packages/ui/components/form/date-range-picker/styles.css";
 // Import CSS files
 import "../../../packages/ui/styles/shared-globals.css";
-import "../../../packages/config/theme/colors.css";
-import "../../../packages/features/insights/components/tremor.css";
-import "../../../packages/features/calendars/weeklyview/styles/styles.css";
-import "../../../packages/ui/components/form/date-range-picker/styles.css";
-import "../../../packages/embeds/embed-core/src/embed.css";
-import "../styles/raqb.css";
+import "../../storybook/styles/globals.css";
+import enCommon from "../public/static/locales/en/common.json";
 import "../styles/globals.css";
-import '../../storybook/styles/globals.css'
+import "../styles/raqb.css";
 
 // Initialize i18n
 const ns = ["common"];
@@ -98,9 +99,7 @@ const Providers = ({ children }: PropsWithChildren) => {
             <QueryClientProvider client={queryClient}>
               <TooltipProvider>
                 <FeatureProvider value={{}}>
-                  <OrgBrandingProvider orgBranding={mockOrgBranding}>
-                    {children}
-                  </OrgBrandingProvider>
+                  <OrgBrandingProvider orgBranding={mockOrgBranding}>{children}</OrgBrandingProvider>
                 </FeatureProvider>
               </TooltipProvider>
             </QueryClientProvider>
@@ -115,6 +114,9 @@ export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
       <body>
+        <SVG
+          src={`/icons/sprite.svg`}
+        />
         <Providers>{children}</Providers>
       </body>
     </html>
