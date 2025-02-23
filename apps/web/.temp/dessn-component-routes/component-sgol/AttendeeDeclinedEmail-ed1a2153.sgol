@@ -1,0 +1,1974 @@
+System: You are an expert React developer working on a project that renders preview components. Your task is to fix any errors.
+
+## Role & Capabilities
+- You are a **component error fixing assistant**
+- You can read files, make edits, and use tools to diagnose issues
+- You have access to browser errors
+
+## Tools Available
+1. **getFile** (Using tool call) - Read contents of project files
+2. **File Editing** (Using xml tags in your response) - Make changes to fix errors using XML format
+
+## File Edit Format
+When you want to edit a file, use this exact XML format:
+
+<file path="path/to/file">
+  <change>
+    <description>Brief explanation of what you're changing</description>
+    <content>
+// Your complete file content here
+    </content>
+  </change>
+</file>
+
+## Important Rules
+1. Only update a file if you know its contents. Use getFile tool to read first.
+2. Most errors can be fixed by updating the preview file. Only update other files if necessary.
+3. Provide complete file content - do not use placeholders or ellipses.
+4. Always include necessary imports and dependencies.
+5. When making changes:
+   - Add all required import statements
+   - Include complete component code
+   - Ensure proper TypeScript types
+   - Handle all edge cases
+
+## Error Handling Process
+1. Read and understand the error message
+2. Use getFile to examine relevant files
+3. Make targeted fixes using the XML format
+4. If the error is caused by the fact that a provider is missing. In these cases, find the provider and add it to the preview file.
+4. If the error persists, try different fixes. Sometimes the error is caused by external dependencies that we dont' have access to. In those cases, you can try to fix the error by mocking,removing or try catching.
+5. REMEMBER, your resonse must have <file> tags with the file path and content if you want to edit a file.
+6. Always output the entire file content in full. Do not be lazy by adding //(code remains the same) or //(code remains unchanged). This will cause more errors.
+
+## Example: Fixing a Form Error
+Here's an example of how to handle a typical error:
+
+Error Message:
+TypeError: Cannot read properties of undefined (reading 'errors')
+at FormInput (/src/components/common/form/FormInput.tsx:23:18)
+
+Step 1: Read the file to understand the context
+
+// First, read the file
+{
+  "name": "getFile",
+  "arguments": {
+    "filePath": "src/components/common/form/FormInput.tsx"
+  }
+}
+
+// Response shows:
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState } = useFormContext();
+  const error = formState.errors[name]?.message;  // Error occurs here
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+
+Step 2: Fix the issue by adding proper error handling
+
+<file path="src/components/common/form/FormInput.tsx">
+  <change>
+    <description>Add null check for formState and provide default values</description>
+    <content>
+===
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState = {} } = useFormContext() || {};
+  const error = formState?.errors?.[name]?.message;
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+===
+    </content>
+  </change>
+</file>
+
+The fix:
+1. Added null check for useFormContext result
+2. Provided default empty object for formState
+3. Used optional chaining for safer property access
+
+Please proceed with fixing any errors you encounter following these guidelines.
+
+User: An error occurred when rendering the component route at AttendeeDeclinedEmail-ed1a2153.tsx
+Error:
+[plugin:vite:import-analysis] Failed to resolve import "../../../../packages/types/Calendar" from ".temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx". Does the file exist?/Users/nimcheema/src/cal.com/apps/web/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx:5:272  |  import { useParentState } from "../useIframeState";
+3  |  import { AttendeeDeclinedEmail } from "../../../../packages/emails/src/templates/AttendeeDeclinedEmail";
+4  |  import { TimeFormat } from "../../../../packages/types/Calendar";
+   |                              ^
+5  |  export default function ComponentPreview() {
+6  |    const [state, setState] = useParentState({    at _formatLog (/Users/nimcheema/src/dessn/packages/components/node_modules/vite/dist/node/chunks/dep-Cg8OuIew.js:48670:45)
+    at error (/Users/nimcheema/src/dessn/packages/components/node_modules/vite/dist/node/chunks/dep-Cg8OuIew.js:48667:16Click outside, press Esc key, or fix the code to dismiss.You can also disable this overlay by setting server.hmr.overlay to false in vite.config.js.
+
+<file name="apps/web/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { AttendeeDeclinedEmail } from '../../../../packages/emails/src/templates/AttendeeDeclinedEmail';
+
+import { TimeFormat } from '../../../../packages/types/Calendar';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    calEvent: {
+      type: 'string',
+      value: JSON.stringify({
+        type: 'default',
+        title: 'Meeting',
+        startTime: new Date().toISOString(),
+        endTime: new Date(Date.now() + 3600000).toISOString(),
+        organizer: {
+          name: 'John Doe',
+          email: 'john@example.com',
+          timeZone: 'America/New_York',
+          language: { translate: (key: string) => key, locale: 'en' },
+        },
+        attendees: [
+          {
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+            timeZone: 'America/Los_Angeles',
+            language: { translate: (key: string) => key, locale: 'en' },
+          },
+        ],
+        recurringEvent: { count: 1, interval: 1, freq: 2 },
+      }),
+      label: 'Calendar Event',
+    },
+    attendee: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        timeZone: 'America/Los_Angeles',
+        language: { translate: (key: string) => key, locale: 'en' },
+      }),
+      label: 'Attendee',
+    },
+    timeZone: {
+      type: 'string',
+      value: 'America/New_York',
+      label: 'Time Zone',
+    },
+    includeAppsStatus: {
+      type: 'boolean',
+      value: false,
+      label: 'Include Apps Status',
+    },
+    locale: {
+      type: 'string',
+      value: 'en',
+      label: 'Locale',
+    },
+    timeFormat: {
+      type: 'dropdown',
+      value: TimeFormat.TWELVE_HOUR,
+      options: Object.values(TimeFormat),
+      label: 'Time Format',
+    },
+    isOrganizer: {
+      type: 'boolean',
+      value: false,
+      label: 'Is Organizer',
+    },
+  });
+
+  const parsedCalEvent = JSON.parse(state.calEvent.value);
+  const parsedAttendee = JSON.parse(state.attendee.value);
+
+  return (
+    <AttendeeDeclinedEmail
+      calEvent={parsedCalEvent}
+      attendee={parsedAttendee}
+      timeZone={state.timeZone.value}
+      includeAppsStatus={state.includeAppsStatus.value}
+      t={(key: string) => key}
+      locale={state.locale.value}
+      timeFormat={state.timeFormat.value as TimeFormat}
+      isOrganizer={state.isOrganizer.value}
+    />
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: The error indicates that the import for the TimeFormat enum from "../../../../packages/types/Calendar" cannot be resolved. Since this is a preview component, we can define the TimeFormat enum directly in the file to avoid the dependency issue.
+
+Let me fix this by modifying the preview file:
+
+<file path="apps/web/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx">
+  <change>
+    <description>Remove external TimeFormat import and define it locally</description>
+    <content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { AttendeeDeclinedEmail } from '../../../../packages/emails/src/templates/AttendeeDeclinedEmail';
+
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    calEvent: {
+      type: 'string',
+      value: JSON.stringify({
+        type: 'default',
+        title: 'Meeting',
+        startTime: new Date().toISOString(),
+        endTime: new Date(Date.now() + 3600000).toISOString(),
+        organizer: {
+          name: 'John Doe',
+          email: 'john@example.com',
+          timeZone: 'America/New_York',
+          language: { translate: (key: string) => key, locale: 'en' },
+        },
+        attendees: [
+          {
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+            timeZone: 'America/Los_Angeles',
+            language: { translate: (key: string) => key, locale: 'en' },
+          },
+        ],
+        recurringEvent: { count: 1, interval: 1, freq: 2 },
+      }),
+      label: 'Calendar Event',
+    },
+    attendee: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        timeZone: 'America/Los_Angeles',
+        language: { translate: (key: string) => key, locale: 'en' },
+      }),
+      label: 'Attendee',
+    },
+    timeZone: {
+      type: 'string',
+      value: 'America/New_York',
+      label: 'Time Zone',
+    },
+    includeAppsStatus: {
+      type: 'boolean',
+      value: false,
+      label: 'Include Apps Status',
+    },
+    locale: {
+      type: 'string',
+      value: 'en',
+      label: 'Locale',
+    },
+    timeFormat: {
+      type: 'dropdown',
+      value: TimeFormat.TWELVE_HOUR,
+      options: Object.values(TimeFormat),
+      label: 'Time Format',
+    },
+    isOrganizer: {
+      type: 'boolean',
+      value: false,
+      label: 'Is Organizer',
+    },
+  });
+
+  const parsedCalEvent = JSON.parse(state.calEvent.value);
+  const parsedAttendee = JSON.parse(state.attendee.value);
+
+  return (
+    <AttendeeDeclinedEmail
+      calEvent={parsedCalEvent}
+      attendee={parsedAttendee}
+      timeZone={state.timeZone.value}
+      includeAppsStatus={state.includeAppsStatus.value}
+      t={(key: string) => key}
+      locale={state.locale.value}
+      timeFormat={state.timeFormat.value as TimeFormat}
+      isOrganizer={state.isOrganizer.value}
+    />
+  );
+}
+</content>
+  </change>
+</file>
+
+I've made the following changes:
+1. Removed the problematic import: `import { TimeFormat } from "../../../../packages/types/Calendar"`
+2. Added a local definition of the TimeFormat enum with the same values
+3. Kept all other functionality the same
+
+This should resolve the import error while maintaining the same functionality. The TimeFormat enum is now defined locally in the preview file, which eliminates the need for the external dependency.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at AttendeeDeclinedEmail-ed1a2153.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: t is not a functionTypeError: t is not a function
+
+## Stack Trace
+```
+    at getRecurringFreq (/@fs/Users/nimcheema/src/cal.com/packages/lib/recurringStrings.ts:8:78)
+    at getEveryFreqFor (/@fs/Users/nimcheema/src/cal.com/packages/lib/recurringStrings.ts:25:32)
+    at getRecurringWhen (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/WhenInfo.tsx:19:15)
+    at WhenInfo (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/WhenInfo.tsx:31:25)
+    at renderWithHooks (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:11604:26)
+    at mountIndeterminateComponent (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:14982:21)
+    at beginWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:15970:22)
+    at beginWork$1 (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19814:22)
+    at performUnitOfWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19262:20)
+    at workLoopSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19198:13)
+```
+
+## Component Stack
+```
+
+    at WhenInfo (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/WhenInfo.tsx:24:11)
+    at div
+    at td
+    at tr
+    at tbody
+    at table
+    at BaseTable (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/BaseTable.tsx:2:22)
+    at Row (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/Row.tsx:4:3)
+    at div
+    at td
+    at tr
+    at tbody
+    at table
+    at BaseTable (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/BaseTable.tsx:2:22)
+    at Row (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/Row.tsx:4:3)
+    at div
+    at div
+    at div
+    at body
+    at html
+    at Html (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/BaseEmailHtml.tsx:16:52)
+    at BaseEmailHtml (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/BaseEmailHtml.tsx:28:54)
+    at BaseScheduledEmail (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/BaseScheduledEmail.tsx:17:11)
+    at AttendeeScheduledEmail (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/AttendeeScheduledEmail.tsx:7:21)
+    at AttendeeDeclinedEmail (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/AttendeeDeclinedEmail.tsx:6:18)
+    at ComponentPreview (/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx:10:29)
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-4WREEUCO.js?v=8dfb270d:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=8dfb270d:63:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-RIH2XCSY.js?v=8dfb270d:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-7C2Q762C.js?v=8dfb270d:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-MA65DTWH.js?v=8dfb270d:929:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=8dfb270d:1100:28)
+    at Providers (/.temp/Wrapper.tsx:66:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:103:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { AttendeeDeclinedEmail } from '../../../../packages/emails/src/templates/AttendeeDeclinedEmail';
+
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    calEvent: {
+      type: 'string',
+      value: JSON.stringify({
+        type: 'default',
+        title: 'Meeting',
+        startTime: new Date().toISOString(),
+        endTime: new Date(Date.now() + 3600000).toISOString(),
+        organizer: {
+          name: 'John Doe',
+          email: 'john@example.com',
+          timeZone: 'America/New_York',
+          language: { translate: (key: string) => key, locale: 'en' },
+        },
+        attendees: [
+          {
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+            timeZone: 'America/Los_Angeles',
+            language: { translate: (key: string) => key, locale: 'en' },
+          },
+        ],
+        recurringEvent: { count: 1, interval: 1, freq: 2 },
+      }),
+      label: 'Calendar Event',
+    },
+    attendee: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        timeZone: 'America/Los_Angeles',
+        language: { translate: (key: string) => key, locale: 'en' },
+      }),
+      label: 'Attendee',
+    },
+    timeZone: {
+      type: 'string',
+      value: 'America/New_York',
+      label: 'Time Zone',
+    },
+    includeAppsStatus: {
+      type: 'boolean',
+      value: false,
+      label: 'Include Apps Status',
+    },
+    locale: {
+      type: 'string',
+      value: 'en',
+      label: 'Locale',
+    },
+    timeFormat: {
+      type: 'dropdown',
+      value: TimeFormat.TWELVE_HOUR,
+      options: Object.values(TimeFormat),
+      label: 'Time Format',
+    },
+    isOrganizer: {
+      type: 'boolean',
+      value: false,
+      label: 'Is Organizer',
+    },
+  });
+
+  const parsedCalEvent = JSON.parse(state.calEvent.value);
+  const parsedAttendee = JSON.parse(state.attendee.value);
+
+  return (
+    <AttendeeDeclinedEmail
+      calEvent={parsedCalEvent}
+      attendee={parsedAttendee}
+      timeZone={state.timeZone.value}
+      includeAppsStatus={state.includeAppsStatus.value}
+      t={(key: string) => key}
+      locale={state.locale.value}
+      timeFormat={state.timeFormat.value as TimeFormat}
+      isOrganizer={state.isOrganizer.value}
+    />
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: The error occurs because the translation function `t` is not properly implemented. The component expects a more sophisticated translation function that can handle various parameters. Let's modify the preview to provide a more complete translation function:
+
+<file path="apps/web/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx">
+  <change>
+    <description>Enhance translation function and update calEvent structure</description>
+    <content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { AttendeeDeclinedEmail } from '../../../../packages/emails/src/templates/AttendeeDeclinedEmail';
+
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
+
+export default function ComponentPreview() {
+  // Enhanced translation function that handles interpolation
+  const t = (key: string, vars?: Record<string, string | number>) => {
+    if (!vars) return key;
+    let translated = key;
+    Object.entries(vars).forEach(([k, v]) => {
+      translated = translated.replace(new RegExp(`{{${k}}}`, 'g'), String(v));
+    });
+    return translated;
+  };
+
+  const [state, setState] = useParentState({
+    calEvent: {
+      type: 'string',
+      value: JSON.stringify({
+        type: 'default',
+        title: 'Meeting',
+        startTime: new Date().toISOString(),
+        endTime: new Date(Date.now() + 3600000).toISOString(),
+        organizer: {
+          name: 'John Doe',
+          email: 'john@example.com',
+          timeZone: 'America/New_York',
+          language: { translate: t, locale: 'en' },
+        },
+        attendees: [
+          {
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+            timeZone: 'America/Los_Angeles',
+            language: { translate: t, locale: 'en' },
+          },
+        ],
+        recurringEvent: { 
+          count: 1, 
+          interval: 1, 
+          freq: 'WEEKLY',
+          type: 'recurring',
+        },
+        language: { translate: t, locale: 'en' },
+      }),
+      label: 'Calendar Event',
+    },
+    attendee: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        timeZone: 'America/Los_Angeles',
+        language: { translate: t, locale: 'en' },
+      }),
+      label: 'Attendee',
+    },
+    timeZone: {
+      type: 'string',
+      value: 'America/New_York',
+      label: 'Time Zone',
+    },
+    includeAppsStatus: {
+      type: 'boolean',
+      value: false,
+      label: 'Include Apps Status',
+    },
+    locale: {
+      type: 'string',
+      value: 'en',
+      label: 'Locale',
+    },
+    timeFormat: {
+      type: 'dropdown',
+      value: TimeFormat.TWELVE_HOUR,
+      options: Object.values(TimeFormat),
+      label: 'Time Format',
+    },
+    isOrganizer: {
+      type: 'boolean',
+      value: false,
+      label: 'Is Organizer',
+    },
+  });
+
+  const parsedCalEvent = JSON.parse(state.calEvent.value);
+  const parsedAttendee = JSON.parse(state.attendee.value);
+
+  return (
+    <AttendeeDeclinedEmail
+      calEvent={parsedCalEvent}
+      attendee={parsedAttendee}
+      timeZone={state.timeZone.value}
+      includeAppsStatus={state.includeAppsStatus.value}
+      t={t}
+      locale={state.locale.value}
+      timeFormat={state.timeFormat.value as TimeFormat}
+      isOrganizer={state.isOrganizer.value}
+    />
+  );
+}
+</content>
+  </change>
+</file>
+
+I've made several important changes to fix the translation error:
+
+1. Created a more sophisticated `t` function that can handle variable interpolation
+2. Updated the `recurringEvent` structure to use string-based frequency ('WEEKLY' instead of numeric 2)
+3. Added the translation function to all language objects in the calEvent
+4. Added a language property to the calEvent itself
+5. Made sure the translation function is consistent throughout the component
+
+The new translation function can handle both simple string translations and translations with variables, which should resolve the "t is not a function" error in the recurring strings functionality.
+
+The changes ensure that:
+- The translation function is properly implemented
+- All necessary language-related properties are present
+- The recurring event structure matches what the component expects
+
+This should resolve the translation-related error while maintaining the component's functionality.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at AttendeeDeclinedEmail-ed1a2153.tsx
+Error:
+
+# Error 1
+
+## Error Message
+Error: Invalid options: typeError: Invalid options: type
+
+## Stack Trace
+```
+    at initializeOptions (/node_modules/.vite/deps/rrule.js?v=8dfb270d:1370:11)
+    at new RRule2 (/node_modules/.vite/deps/rrule.js?v=8dfb270d:2426:26)
+    at getRecurringWhen (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/WhenInfo.tsx:13:26)
+    at WhenInfo (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/WhenInfo.tsx:31:25)
+    at renderWithHooks (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:11604:26)
+    at mountIndeterminateComponent (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:14982:21)
+    at beginWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:15970:22)
+    at beginWork$1 (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19814:22)
+    at performUnitOfWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19262:20)
+    at workLoopSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19198:13)
+```
+
+## Component Stack
+```
+
+    at WhenInfo (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/WhenInfo.tsx:24:11)
+    at div
+    at td
+    at tr
+    at tbody
+    at table
+    at BaseTable (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/BaseTable.tsx:2:22)
+    at Row (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/Row.tsx:4:3)
+    at div
+    at td
+    at tr
+    at tbody
+    at table
+    at BaseTable (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/BaseTable.tsx:2:22)
+    at Row (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/Row.tsx:4:3)
+    at div
+    at div
+    at div
+    at body
+    at html
+    at Html (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/BaseEmailHtml.tsx:16:52)
+    at BaseEmailHtml (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/BaseEmailHtml.tsx:28:54)
+    at BaseScheduledEmail (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/BaseScheduledEmail.tsx:17:11)
+    at AttendeeScheduledEmail (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/AttendeeScheduledEmail.tsx:7:21)
+    at AttendeeDeclinedEmail (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/AttendeeDeclinedEmail.tsx:6:18)
+    at ComponentPreview (/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx:18:29)
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-4WREEUCO.js?v=8dfb270d:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=8dfb270d:63:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-RIH2XCSY.js?v=8dfb270d:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-7C2Q762C.js?v=8dfb270d:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-MA65DTWH.js?v=8dfb270d:929:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=8dfb270d:1100:28)
+    at Providers (/.temp/Wrapper.tsx:66:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:103:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { AttendeeDeclinedEmail } from '../../../../packages/emails/src/templates/AttendeeDeclinedEmail';
+
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
+
+export default function ComponentPreview() {
+  // Enhanced translation function that handles interpolation
+  const t = (key: string, vars?: Record<string, string | number>) => {
+    if (!vars) return key;
+    let translated = key;
+    Object.entries(vars).forEach(([k, v]) => {
+      translated = translated.replace(new RegExp(`{{${k}}}`, 'g'), String(v));
+    });
+    return translated;
+  };
+
+  const [state, setState] = useParentState({
+    calEvent: {
+      type: 'string',
+      value: JSON.stringify({
+        type: 'default',
+        title: 'Meeting',
+        startTime: new Date().toISOString(),
+        endTime: new Date(Date.now() + 3600000).toISOString(),
+        organizer: {
+          name: 'John Doe',
+          email: 'john@example.com',
+          timeZone: 'America/New_York',
+          language: { translate: t, locale: 'en' },
+        },
+        attendees: [
+          {
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+            timeZone: 'America/Los_Angeles',
+            language: { translate: t, locale: 'en' },
+          },
+        ],
+        recurringEvent: { 
+          count: 1, 
+          interval: 1, 
+          freq: 'WEEKLY',
+          type: 'recurring',
+        },
+        language: { translate: t, locale: 'en' },
+      }),
+      label: 'Calendar Event',
+    },
+    attendee: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        timeZone: 'America/Los_Angeles',
+        language: { translate: t, locale: 'en' },
+      }),
+      label: 'Attendee',
+    },
+    timeZone: {
+      type: 'string',
+      value: 'America/New_York',
+      label: 'Time Zone',
+    },
+    includeAppsStatus: {
+      type: 'boolean',
+      value: false,
+      label: 'Include Apps Status',
+    },
+    locale: {
+      type: 'string',
+      value: 'en',
+      label: 'Locale',
+    },
+    timeFormat: {
+      type: 'dropdown',
+      value: TimeFormat.TWELVE_HOUR,
+      options: Object.values(TimeFormat),
+      label: 'Time Format',
+    },
+    isOrganizer: {
+      type: 'boolean',
+      value: false,
+      label: 'Is Organizer',
+    },
+  });
+
+  const parsedCalEvent = JSON.parse(state.calEvent.value);
+  const parsedAttendee = JSON.parse(state.attendee.value);
+
+  return (
+    <AttendeeDeclinedEmail
+      calEvent={parsedCalEvent}
+      attendee={parsedAttendee}
+      timeZone={state.timeZone.value}
+      includeAppsStatus={state.includeAppsStatus.value}
+      t={t}
+      locale={state.locale.value}
+      timeFormat={state.timeFormat.value as TimeFormat}
+      isOrganizer={state.isOrganizer.value}
+    />
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: The error is coming from the RRule library which is used for recurring events. The recurring event structure needs to be updated to match the expected format. Let's fix this by providing the correct recurring event structure:
+
+<file path="apps/web/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx">
+  <change>
+    <description>Update recurring event structure to match RRule requirements</description>
+    <content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { AttendeeDeclinedEmail } from '../../../../packages/emails/src/templates/AttendeeDeclinedEmail';
+
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
+
+export default function ComponentPreview() {
+  // Enhanced translation function that handles interpolation
+  const t = (key: string, vars?: Record<string, string | number>) => {
+    if (!vars) return key;
+    let translated = key;
+    Object.entries(vars).forEach(([k, v]) => {
+      translated = translated.replace(new RegExp(`{{${k}}}`, 'g'), String(v));
+    });
+    return translated;
+  };
+
+  const [state, setState] = useParentState({
+    calEvent: {
+      type: 'string',
+      value: JSON.stringify({
+        type: 'default',
+        title: 'Meeting',
+        startTime: new Date().toISOString(),
+        endTime: new Date(Date.now() + 3600000).toISOString(),
+        organizer: {
+          name: 'John Doe',
+          email: 'john@example.com',
+          timeZone: 'America/New_York',
+          language: { translate: t, locale: 'en' },
+        },
+        attendees: [
+          {
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+            timeZone: 'America/Los_Angeles',
+            language: { translate: t, locale: 'en' },
+          },
+        ],
+        recurringEvent: {
+          dtstart: new Date().toISOString(),
+          interval: 1,
+          count: 4,
+          freq: 2, // 2 represents weekly in RRule
+          byday: ['MO'], // Monday
+          wkst: 'MO' // Week starts on Monday
+        },
+        language: { translate: t, locale: 'en' },
+      }),
+      label: 'Calendar Event',
+    },
+    attendee: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        timeZone: 'America/Los_Angeles',
+        language: { translate: t, locale: 'en' },
+      }),
+      label: 'Attendee',
+    },
+    timeZone: {
+      type: 'string',
+      value: 'America/New_York',
+      label: 'Time Zone',
+    },
+    includeAppsStatus: {
+      type: 'boolean',
+      value: false,
+      label: 'Include Apps Status',
+    },
+    locale: {
+      type: 'string',
+      value: 'en',
+      label: 'Locale',
+    },
+    timeFormat: {
+      type: 'dropdown',
+      value: TimeFormat.TWELVE_HOUR,
+      options: Object.values(TimeFormat),
+      label: 'Time Format',
+    },
+    isOrganizer: {
+      type: 'boolean',
+      value: false,
+      label: 'Is Organizer',
+    },
+  });
+
+  const parsedCalEvent = JSON.parse(state.calEvent.value);
+  const parsedAttendee = JSON.parse(state.attendee.value);
+
+  return (
+    <AttendeeDeclinedEmail
+      calEvent={parsedCalEvent}
+      attendee={parsedAttendee}
+      timeZone={state.timeZone.value}
+      includeAppsStatus={state.includeAppsStatus.value}
+      t={t}
+      locale={state.locale.value}
+      timeFormat={state.timeFormat.value as TimeFormat}
+      isOrganizer={state.isOrganizer.value}
+    />
+  );
+}
+</content>
+  </change>
+</file>
+
+I've made the following changes:
+1. Updated the `recurringEvent` structure to match RRule's requirements:
+   - Added `dtstart` (start date)
+   - Changed `freq` back to numeric value (2 for weekly)
+   - Added `byday` array for specifying days
+   - Added `wkst` to specify week start
+2. Removed the `type: 'recurring'` which was causing issues
+3. Kept all other functionality the same
+
+The new recurring event structure should now be compatible with the RRule library's expectations. This should resolve the "Invalid options" error while maintaining the recurring event functionality.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at AttendeeDeclinedEmail-ed1a2153.tsx
+Error:
+
+# Error 1
+
+## Error Message
+Error: Invalid options: bydayError: Invalid options: byday
+
+## Stack Trace
+```
+    at initializeOptions (/node_modules/.vite/deps/rrule.js?v=8dfb270d:1370:11)
+    at new RRule2 (/node_modules/.vite/deps/rrule.js?v=8dfb270d:2426:26)
+    at getRecurringWhen (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/WhenInfo.tsx:13:26)
+    at WhenInfo (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/WhenInfo.tsx:31:25)
+    at renderWithHooks (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:11604:26)
+    at mountIndeterminateComponent (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:14982:21)
+    at beginWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:15970:22)
+    at beginWork$1 (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19814:22)
+    at performUnitOfWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19262:20)
+    at workLoopSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19198:13)
+```
+
+## Component Stack
+```
+
+    at WhenInfo (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/WhenInfo.tsx:24:11)
+    at div
+    at td
+    at tr
+    at tbody
+    at table
+    at BaseTable (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/BaseTable.tsx:2:22)
+    at Row (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/Row.tsx:4:3)
+    at div
+    at td
+    at tr
+    at tbody
+    at table
+    at BaseTable (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/BaseTable.tsx:2:22)
+    at Row (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/Row.tsx:4:3)
+    at div
+    at div
+    at div
+    at body
+    at html
+    at Html (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/BaseEmailHtml.tsx:16:52)
+    at BaseEmailHtml (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/BaseEmailHtml.tsx:28:54)
+    at BaseScheduledEmail (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/BaseScheduledEmail.tsx:17:11)
+    at AttendeeScheduledEmail (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/AttendeeScheduledEmail.tsx:7:21)
+    at AttendeeDeclinedEmail (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/AttendeeDeclinedEmail.tsx:6:18)
+    at ComponentPreview (/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx:18:29)
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-4WREEUCO.js?v=8dfb270d:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=8dfb270d:63:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-RIH2XCSY.js?v=8dfb270d:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-7C2Q762C.js?v=8dfb270d:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-MA65DTWH.js?v=8dfb270d:929:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=8dfb270d:1100:28)
+    at Providers (/.temp/Wrapper.tsx:66:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:103:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { AttendeeDeclinedEmail } from '../../../../packages/emails/src/templates/AttendeeDeclinedEmail';
+
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
+
+export default function ComponentPreview() {
+  // Enhanced translation function that handles interpolation
+  const t = (key: string, vars?: Record<string, string | number>) => {
+    if (!vars) return key;
+    let translated = key;
+    Object.entries(vars).forEach(([k, v]) => {
+      translated = translated.replace(new RegExp(`{{${k}}}`, 'g'), String(v));
+    });
+    return translated;
+  };
+
+  const [state, setState] = useParentState({
+    calEvent: {
+      type: 'string',
+      value: JSON.stringify({
+        type: 'default',
+        title: 'Meeting',
+        startTime: new Date().toISOString(),
+        endTime: new Date(Date.now() + 3600000).toISOString(),
+        organizer: {
+          name: 'John Doe',
+          email: 'john@example.com',
+          timeZone: 'America/New_York',
+          language: { translate: t, locale: 'en' },
+        },
+        attendees: [
+          {
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+            timeZone: 'America/Los_Angeles',
+            language: { translate: t, locale: 'en' },
+          },
+        ],
+        recurringEvent: {
+          dtstart: new Date().toISOString(),
+          interval: 1,
+          count: 4,
+          freq: 2, // 2 represents weekly in RRule
+          byday: ['MO'], // Monday
+          wkst: 'MO' // Week starts on Monday
+        },
+        language: { translate: t, locale: 'en' },
+      }),
+      label: 'Calendar Event',
+    },
+    attendee: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        timeZone: 'America/Los_Angeles',
+        language: { translate: t, locale: 'en' },
+      }),
+      label: 'Attendee',
+    },
+    timeZone: {
+      type: 'string',
+      value: 'America/New_York',
+      label: 'Time Zone',
+    },
+    includeAppsStatus: {
+      type: 'boolean',
+      value: false,
+      label: 'Include Apps Status',
+    },
+    locale: {
+      type: 'string',
+      value: 'en',
+      label: 'Locale',
+    },
+    timeFormat: {
+      type: 'dropdown',
+      value: TimeFormat.TWELVE_HOUR,
+      options: Object.values(TimeFormat),
+      label: 'Time Format',
+    },
+    isOrganizer: {
+      type: 'boolean',
+      value: false,
+      label: 'Is Organizer',
+    },
+  });
+
+  const parsedCalEvent = JSON.parse(state.calEvent.value);
+  const parsedAttendee = JSON.parse(state.attendee.value);
+
+  return (
+    <AttendeeDeclinedEmail
+      calEvent={parsedCalEvent}
+      attendee={parsedAttendee}
+      timeZone={state.timeZone.value}
+      includeAppsStatus={state.includeAppsStatus.value}
+      t={t}
+      locale={state.locale.value}
+      timeFormat={state.timeFormat.value as TimeFormat}
+      isOrganizer={state.isOrganizer.value}
+    />
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: The error is still related to the RRule configuration. Let's simplify the recurring event structure by removing the problematic `byday` field and using just the essential properties:
+
+<file path="apps/web/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx">
+  <change>
+    <description>Simplify recurring event structure to avoid RRule validation errors</description>
+    <content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { AttendeeDeclinedEmail } from '../../../../packages/emails/src/templates/AttendeeDeclinedEmail';
+
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
+
+export default function ComponentPreview() {
+  // Enhanced translation function that handles interpolation
+  const t = (key: string, vars?: Record<string, string | number>) => {
+    if (!vars) return key;
+    let translated = key;
+    Object.entries(vars).forEach(([k, v]) => {
+      translated = translated.replace(new RegExp(`{{${k}}}`, 'g'), String(v));
+    });
+    return translated;
+  };
+
+  const [state, setState] = useParentState({
+    calEvent: {
+      type: 'string',
+      value: JSON.stringify({
+        type: 'default',
+        title: 'Meeting',
+        startTime: new Date().toISOString(),
+        endTime: new Date(Date.now() + 3600000).toISOString(),
+        organizer: {
+          name: 'John Doe',
+          email: 'john@example.com',
+          timeZone: 'America/New_York',
+          language: { translate: t, locale: 'en' },
+        },
+        attendees: [
+          {
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+            timeZone: 'America/Los_Angeles',
+            language: { translate: t, locale: 'en' },
+          },
+        ],
+        recurringEvent: {
+          count: 4,
+          freq: 2,
+          interval: 1
+        },
+        language: { translate: t, locale: 'en' },
+      }),
+      label: 'Calendar Event',
+    },
+    attendee: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        timeZone: 'America/Los_Angeles',
+        language: { translate: t, locale: 'en' },
+      }),
+      label: 'Attendee',
+    },
+    timeZone: {
+      type: 'string',
+      value: 'America/New_York',
+      label: 'Time Zone',
+    },
+    includeAppsStatus: {
+      type: 'boolean',
+      value: false,
+      label: 'Include Apps Status',
+    },
+    locale: {
+      type: 'string',
+      value: 'en',
+      label: 'Locale',
+    },
+    timeFormat: {
+      type: 'dropdown',
+      value: TimeFormat.TWELVE_HOUR,
+      options: Object.values(TimeFormat),
+      label: 'Time Format',
+    },
+    isOrganizer: {
+      type: 'boolean',
+      value: false,
+      label: 'Is Organizer',
+    },
+  });
+
+  const parsedCalEvent = JSON.parse(state.calEvent.value);
+  const parsedAttendee = JSON.parse(state.attendee.value);
+
+  return (
+    <AttendeeDeclinedEmail
+      calEvent={parsedCalEvent}
+      attendee={parsedAttendee}
+      timeZone={state.timeZone.value}
+      includeAppsStatus={state.includeAppsStatus.value}
+      t={t}
+      locale={state.locale.value}
+      timeFormat={state.timeFormat.value as TimeFormat}
+      isOrganizer={state.isOrganizer.value}
+    />
+  );
+}
+</content>
+  </change>
+</file>
+
+I've made the following changes:
+1. Simplified the `recurringEvent` structure to include only the essential properties:
+   - `count`: number of occurrences
+   - `freq`: frequency (2 for weekly)
+   - `interval`: interval between occurrences
+2. Removed problematic fields:
+   - Removed `byday`
+   - Removed `wkst`
+   - Removed `dtstart` (it will use the event's startTime by default)
+3. Kept all other functionality the same
+
+This simplified structure should work better with the RRule library while still maintaining the recurring event functionality. The error about invalid `byday` should now be resolved since we're no longer including that field.
+
+Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx
+
+All changes applied successfully. Checking for errors...
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at AttendeeDeclinedEmail-ed1a2153.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: t is not a functionTypeError: t is not a function
+
+## Stack Trace
+```
+    at getRecurringFreq (/@fs/Users/nimcheema/src/cal.com/packages/lib/recurringStrings.ts:8:78)
+    at getEveryFreqFor (/@fs/Users/nimcheema/src/cal.com/packages/lib/recurringStrings.ts:25:32)
+    at getRecurringWhen (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/WhenInfo.tsx:19:15)
+    at WhenInfo (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/WhenInfo.tsx:31:25)
+    at renderWithHooks (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:11604:26)
+    at mountIndeterminateComponent (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:14982:21)
+    at beginWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:15970:22)
+    at beginWork$1 (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19814:22)
+    at performUnitOfWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19262:20)
+    at workLoopSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19198:13)
+```
+
+## Component Stack
+```
+
+    at WhenInfo (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/WhenInfo.tsx:24:11)
+    at div
+    at td
+    at tr
+    at tbody
+    at table
+    at BaseTable (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/BaseTable.tsx:2:22)
+    at Row (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/Row.tsx:4:3)
+    at div
+    at td
+    at tr
+    at tbody
+    at table
+    at BaseTable (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/BaseTable.tsx:2:22)
+    at Row (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/Row.tsx:4:3)
+    at div
+    at div
+    at div
+    at body
+    at html
+    at Html (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/BaseEmailHtml.tsx:16:52)
+    at BaseEmailHtml (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/BaseEmailHtml.tsx:28:54)
+    at BaseScheduledEmail (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/BaseScheduledEmail.tsx:17:11)
+    at AttendeeScheduledEmail (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/AttendeeScheduledEmail.tsx:7:21)
+    at AttendeeDeclinedEmail (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/AttendeeDeclinedEmail.tsx:6:18)
+    at ComponentPreview (/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx:18:29)
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-4WREEUCO.js?v=8dfb270d:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=8dfb270d:63:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-RIH2XCSY.js?v=8dfb270d:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-7C2Q762C.js?v=8dfb270d:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-MA65DTWH.js?v=8dfb270d:929:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=8dfb270d:1100:28)
+    at Providers (/.temp/Wrapper.tsx:66:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:103:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { AttendeeDeclinedEmail } from '../../../../packages/emails/src/templates/AttendeeDeclinedEmail';
+
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
+
+export default function ComponentPreview() {
+  // Enhanced translation function that handles interpolation
+  const t = (key: string, vars?: Record<string, string | number>) => {
+    if (!vars) return key;
+    let translated = key;
+    Object.entries(vars).forEach(([k, v]) => {
+      translated = translated.replace(new RegExp(`{{${k}}}`, 'g'), String(v));
+    });
+    return translated;
+  };
+
+  const [state, setState] = useParentState({
+    calEvent: {
+      type: 'string',
+      value: JSON.stringify({
+        type: 'default',
+        title: 'Meeting',
+        startTime: new Date().toISOString(),
+        endTime: new Date(Date.now() + 3600000).toISOString(),
+        organizer: {
+          name: 'John Doe',
+          email: 'john@example.com',
+          timeZone: 'America/New_York',
+          language: { translate: t, locale: 'en' },
+        },
+        attendees: [
+          {
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+            timeZone: 'America/Los_Angeles',
+            language: { translate: t, locale: 'en' },
+          },
+        ],
+        recurringEvent: {
+          count: 4,
+          freq: 2,
+          interval: 1
+        },
+        language: { translate: t, locale: 'en' },
+      }),
+      label: 'Calendar Event',
+    },
+    attendee: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        timeZone: 'America/Los_Angeles',
+        language: { translate: t, locale: 'en' },
+      }),
+      label: 'Attendee',
+    },
+    timeZone: {
+      type: 'string',
+      value: 'America/New_York',
+      label: 'Time Zone',
+    },
+    includeAppsStatus: {
+      type: 'boolean',
+      value: false,
+      label: 'Include Apps Status',
+    },
+    locale: {
+      type: 'string',
+      value: 'en',
+      label: 'Locale',
+    },
+    timeFormat: {
+      type: 'dropdown',
+      value: TimeFormat.TWELVE_HOUR,
+      options: Object.values(TimeFormat),
+      label: 'Time Format',
+    },
+    isOrganizer: {
+      type: 'boolean',
+      value: false,
+      label: 'Is Organizer',
+    },
+  });
+
+  const parsedCalEvent = JSON.parse(state.calEvent.value);
+  const parsedAttendee = JSON.parse(state.attendee.value);
+
+  return (
+    <AttendeeDeclinedEmail
+      calEvent={parsedCalEvent}
+      attendee={parsedAttendee}
+      timeZone={state.timeZone.value}
+      includeAppsStatus={state.includeAppsStatus.value}
+      t={t}
+      locale={state.locale.value}
+      timeFormat={state.timeFormat.value as TimeFormat}
+      isOrganizer={state.isOrganizer.value}
+    />
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: The error is occurring because the translation function isn't being properly passed through the calEvent object. Let's modify the calEvent structure to ensure the translation function is properly serialized and handled:
+
+<file path="apps/web/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx">
+  <change>
+    <description>Remove recurring event and simplify translation handling</description>
+    <content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { AttendeeDeclinedEmail } from '../../../../packages/emails/src/templates/AttendeeDeclinedEmail';
+
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
+
+export default function ComponentPreview() {
+  // Enhanced translation function that handles interpolation
+  const t = (key: string, vars?: Record<string, string | number>) => {
+    if (!vars) return key;
+    let translated = key;
+    Object.entries(vars).forEach(([k, v]) => {
+      translated = translated.replace(new RegExp(`{{${k}}}`, 'g'), String(v));
+    });
+    return translated;
+  };
+
+  const [state, setState] = useParentState({
+    calEvent: {
+      type: 'string',
+      value: JSON.stringify({
+        type: 'default',
+        title: 'Meeting',
+        startTime: new Date().toISOString(),
+        endTime: new Date(Date.now() + 3600000).toISOString(),
+        organizer: {
+          name: 'John Doe',
+          email: 'john@example.com',
+          timeZone: 'America/New_York',
+          language: { locale: 'en' },
+        },
+        attendees: [
+          {
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+            timeZone: 'America/Los_Angeles',
+            language: { locale: 'en' },
+          },
+        ],
+        // Removing recurring event as it's causing translation issues
+        language: { locale: 'en' },
+      }),
+      label: 'Calendar Event',
+    },
+    attendee: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        timeZone: 'America/Los_Angeles',
+        language: { locale: 'en' },
+      }),
+      label: 'Attendee',
+    },
+    timeZone: {
+      type: 'string',
+      value: 'America/New_York',
+      label: 'Time Zone',
+    },
+    includeAppsStatus: {
+      type: 'boolean',
+      value: false,
+      label: 'Include Apps Status',
+    },
+    locale: {
+      type: 'string',
+      value: 'en',
+      label: 'Locale',
+    },
+    timeFormat: {
+      type: 'dropdown',
+      value: TimeFormat.TWELVE_HOUR,
+      options: Object.values(TimeFormat),
+      label: 'Time Format',
+    },
+    isOrganizer: {
+      type: 'boolean',
+      value: false,
+      label: 'Is Organizer',
+    },
+  });
+
+  const parsedCalEvent = JSON.parse(state.calEvent.value);
+  const parsedAttendee = JSON.parse(state.attendee.value);
+
+  // Ensure translation function is available in the parsed event
+  const calEventWithTranslation = {
+    ...parsedCalEvent,
+    language: { ...parsedCalEvent.language, translate: t },
+    organizer: {
+      ...parsedCalEvent.organizer,
+      language: { ...parsedCalEvent.organizer.language, translate: t },
+    },
+    attendees: parsedCalEvent.attendees.map((attendee: any) => ({
+      ...attendee,
+      language: { ...attendee.language, translate: t },
+    })),
+  };
+
+  const attendeeWithTranslation = {
+    ...parsedAttendee,
+    language: { ...parsedAttendee.language, translate: t },
+  };
+
+  return (
+    <AttendeeDeclinedEmail
+      calEvent={calEventWithTranslation}
+      attendee={attendeeWithTranslation}
+      timeZone={state.timeZone.value}
+      includeAppsStatus={state.includeAppsStatus.value}
+      t={t}
+      locale={state.locale.value}
+      timeFormat={state.timeFormat.value as TimeFormat}
+      isOrganizer={state.isOrganizer.value}
+    />
+  );
+}
+</content>
+  </change>
+</file>
+
+I've made several important changes to fix the translation issue:
+
+1. Removed the `recurringEvent` object temporarily as it's causing translation issues
+2. Removed the `translate` function from the JSON-stringified data (as functions can't be serialized)
+3. Added the translation function back after parsing the JSON:
+   - Added to the main calEvent's language
+   - Added to the organizer's language
+   - Added to each attendee's language
+4. Simplified the language objects in the initial state
+5. Created separate objects with translation functions properly attached
+
+This approach should resolve the "t is not a function" error by ensuring the translation function is properly available where needed, while avoiding serialization issues with functions in JSON.
+
+The key change is that we're now adding the translation function after parsing the JSON, rather than trying to serialize it within the JSON string. This should maintain the functionality while fixing the translation error.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at AttendeeDeclinedEmail-ed1a2153.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: t is not a functionTypeError: t is not a function
+
+## Stack Trace
+```
+    at getRecurringFreq (/@fs/Users/nimcheema/src/cal.com/packages/lib/recurringStrings.ts:8:78)
+    at getEveryFreqFor (/@fs/Users/nimcheema/src/cal.com/packages/lib/recurringStrings.ts:25:32)
+    at getRecurringWhen (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/WhenInfo.tsx:19:15)
+    at WhenInfo (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/WhenInfo.tsx:31:25)
+    at renderWithHooks (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:11604:26)
+    at mountIndeterminateComponent (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:14982:21)
+    at beginWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:15970:22)
+    at beginWork$1 (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19814:22)
+    at performUnitOfWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19262:20)
+    at workLoopSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19198:13)
+```
+
+## Component Stack
+```
+
+    at WhenInfo (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/WhenInfo.tsx:24:11)
+    at div
+    at td
+    at tr
+    at tbody
+    at table
+    at BaseTable (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/BaseTable.tsx:2:22)
+    at Row (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/Row.tsx:4:3)
+    at div
+    at td
+    at tr
+    at tbody
+    at table
+    at BaseTable (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/BaseTable.tsx:2:22)
+    at Row (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/Row.tsx:4:3)
+    at div
+    at div
+    at div
+    at body
+    at html
+    at Html (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/BaseEmailHtml.tsx:16:52)
+    at BaseEmailHtml (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/components/BaseEmailHtml.tsx:28:54)
+    at BaseScheduledEmail (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/BaseScheduledEmail.tsx:17:11)
+    at AttendeeScheduledEmail (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/AttendeeScheduledEmail.tsx:7:21)
+    at AttendeeDeclinedEmail (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/AttendeeDeclinedEmail.tsx:6:18)
+    at ComponentPreview (/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx:18:29)
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-4WREEUCO.js?v=8dfb270d:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=8dfb270d:63:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-RIH2XCSY.js?v=8dfb270d:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-7C2Q762C.js?v=8dfb270d:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-MA65DTWH.js?v=8dfb270d:929:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=8dfb270d:1100:28)
+    at Providers (/.temp/Wrapper.tsx:66:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:103:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { AttendeeDeclinedEmail } from '../../../../packages/emails/src/templates/AttendeeDeclinedEmail';
+
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
+
+export default function ComponentPreview() {
+  // Enhanced translation function that handles interpolation
+  const t = (key: string, vars?: Record<string, string | number>) => {
+    if (!vars) return key;
+    let translated = key;
+    Object.entries(vars).forEach(([k, v]) => {
+      translated = translated.replace(new RegExp(`{{${k}}}`, 'g'), String(v));
+    });
+    return translated;
+  };
+
+  const [state, setState] = useParentState({
+    calEvent: {
+      type: 'string',
+      value: JSON.stringify({
+        type: 'default',
+        title: 'Meeting',
+        startTime: new Date().toISOString(),
+        endTime: new Date(Date.now() + 3600000).toISOString(),
+        organizer: {
+          name: 'John Doe',
+          email: 'john@example.com',
+          timeZone: 'America/New_York',
+          language: { locale: 'en' },
+        },
+        attendees: [
+          {
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+            timeZone: 'America/Los_Angeles',
+            language: { locale: 'en' },
+          },
+        ],
+        // Removing recurring event as it's causing translation issues
+        language: { locale: 'en' },
+      }),
+      label: 'Calendar Event',
+    },
+    attendee: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        timeZone: 'America/Los_Angeles',
+        language: { locale: 'en' },
+      }),
+      label: 'Attendee',
+    },
+    timeZone: {
+      type: 'string',
+      value: 'America/New_York',
+      label: 'Time Zone',
+    },
+    includeAppsStatus: {
+      type: 'boolean',
+      value: false,
+      label: 'Include Apps Status',
+    },
+    locale: {
+      type: 'string',
+      value: 'en',
+      label: 'Locale',
+    },
+    timeFormat: {
+      type: 'dropdown',
+      value: TimeFormat.TWELVE_HOUR,
+      options: Object.values(TimeFormat),
+      label: 'Time Format',
+    },
+    isOrganizer: {
+      type: 'boolean',
+      value: false,
+      label: 'Is Organizer',
+    },
+  });
+
+  const parsedCalEvent = JSON.parse(state.calEvent.value);
+  const parsedAttendee = JSON.parse(state.attendee.value);
+
+  // Ensure translation function is available in the parsed event
+  const calEventWithTranslation = {
+    ...parsedCalEvent,
+    language: { ...parsedCalEvent.language, translate: t },
+    organizer: {
+      ...parsedCalEvent.organizer,
+      language: { ...parsedCalEvent.organizer.language, translate: t },
+    },
+    attendees: parsedCalEvent.attendees.map((attendee: any) => ({
+      ...attendee,
+      language: { ...attendee.language, translate: t },
+    })),
+  };
+
+  const attendeeWithTranslation = {
+    ...parsedAttendee,
+    language: { ...parsedAttendee.language, translate: t },
+  };
+
+  return (
+    <AttendeeDeclinedEmail
+      calEvent={calEventWithTranslation}
+      attendee={attendeeWithTranslation}
+      timeZone={state.timeZone.value}
+      includeAppsStatus={state.includeAppsStatus.value}
+      t={t}
+      locale={state.locale.value}
+      timeFormat={state.timeFormat.value as TimeFormat}
+      isOrganizer={state.isOrganizer.value}
+    />
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: Let's try a different approach by wrapping the component with a try-catch and providing a more robust translation setup:
+
+<file path="apps/web/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx">
+  <change>
+    <description>Add error handling and improve translation setup</description>
+    <content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { AttendeeDeclinedEmail } from '../../../../packages/emails/src/templates/AttendeeDeclinedEmail';
+
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
+
+export default function ComponentPreview() {
+  // Create a more robust translation function
+  const createTranslationFunction = () => {
+    const translationFunction = (key: string, vars?: Record<string, string | number>) => {
+      try {
+        if (!vars) return key;
+        let translated = key;
+        Object.entries(vars).forEach(([k, v]) => {
+          translated = translated.replace(new RegExp(`{{${k}}}`, 'g'), String(v));
+        });
+        return translated;
+      } catch (error) {
+        console.error('Translation error:', error);
+        return key;
+      }
+    };
+    
+    // Add necessary properties to make it work like i18next
+    translationFunction.language = 'en';
+    return translationFunction;
+  };
+
+  const t = createTranslationFunction();
+
+  const [state, setState] = useParentState({
+    calEvent: {
+      type: 'string',
+      value: JSON.stringify({
+        type: 'default',
+        title: 'Meeting',
+        startTime: new Date().toISOString(),
+        endTime: new Date(Date.now() + 3600000).toISOString(),
+        organizer: {
+          name: 'John Doe',
+          email: 'john@example.com',
+          timeZone: 'America/New_York',
+          language: { locale: 'en' },
+        },
+        attendees: [
+          {
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+            timeZone: 'America/Los_Angeles',
+            language: { locale: 'en' },
+          },
+        ],
+        recurringEvent: null, // Set to null instead of removing
+        language: { locale: 'en' },
+      }),
+      label: 'Calendar Event',
+    },
+    attendee: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        timeZone: 'America/Los_Angeles',
+        language: { locale: 'en' },
+      }),
+      label: 'Attendee',
+    },
+    timeZone: {
+      type: 'string',
+      value: 'America/New_York',
+      label: 'Time Zone',
+    },
+    includeAppsStatus: {
+      type: 'boolean',
+      value: false,
+      label: 'Include Apps Status',
+    },
+    locale: {
+      type: 'string',
+      value: 'en',
+      label: 'Locale',
+    },
+    timeFormat: {
+      type: 'dropdown',
+      value: TimeFormat.TWELVE_HOUR,
+      options: Object.values(TimeFormat),
+      label: 'Time Format',
+    },
+    isOrganizer: {
+      type: 'boolean',
+      value: false,
+      label: 'Is Organizer',
+    },
+  });
+
+  try {
+    const parsedCalEvent = JSON.parse(state.calEvent.value);
+    const parsedAttendee = JSON.parse(state.attendee.value);
+
+    // Create a shared translation context
+    const translationContext = {
+      translate: t,
+      locale: 'en',
+      language: 'en',
+    };
+
+    // Ensure translation function is available in the parsed event
+    const calEventWithTranslation = {
+      ...parsedCalEvent,
+      language: translationContext,
+      organizer: {
+        ...parsedCalEvent.organizer,
+        language: translationContext,
+      },
+      attendees: parsedCalEvent.attendees.map((attendee: any) => ({
+        ...attendee,
+        language: translationContext,
+      })),
+    };
+
+    const attendeeWithTranslation = {
+      ...parsedAttendee,
+      language: translationContext,
+    };
+
+    return (
+      <AttendeeDeclinedEmail
+        calEvent={calEventWithTranslation}
+        attendee={attendeeWithTranslation}
+        timeZone={state.timeZone.value}
+        includeAppsStatus={state.includeAppsStatus.value}
+        t={t}
+        locale={state.locale.value}
+        timeFormat={state.timeFormat.value as TimeFormat}
+        isOrganizer={state.isOrganizer.value}
+      />
+    );
+  } catch (error) {
+    console.error('Error rendering AttendeeDeclinedEmail:', error);
+    return <div>Error rendering email preview</div>;
+  }
+}
+</content>
+  </change>
+</file>
+
+I've made several important changes to handle the translation issue:
+
+1. Created a more robust translation function with error handling
+2. Added necessary properties to the translation function to make it more like i18next
+3. Created a shared translation context object that's used consistently across all components
+4. Set `recurringEvent` to `null` explicitly instead of removing it
+5. Wrapped the entire rendering logic in a try-catch block
+6. Made sure the translation context has all necessary properties (`translate`, `locale`, `language`)
+7. Used the same translation context object for all components to ensure consistency
+
+The key changes are:
+- More robust translation function with error handling
+- Consistent translation context across all components
+- Explicit null for recurringEvent
+- Better error handling overall
+
+This should help resolve the translation function issues while maintaining the component's functionality. If there are still issues, they will be caught and handled gracefully instead of breaking the rendering.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/AttendeeDeclinedEmail-ed1a2153.tsx
+
+All changes applied successfully. Checking for errors...

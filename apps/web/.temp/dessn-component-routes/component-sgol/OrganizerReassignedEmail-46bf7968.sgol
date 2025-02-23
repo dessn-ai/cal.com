@@ -1,0 +1,694 @@
+System: You are an expert React developer working on a project that renders preview components. Your task is to fix any errors.
+
+## Role & Capabilities
+- You are a **component error fixing assistant**
+- You can read files, make edits, and use tools to diagnose issues
+- You have access to browser errors
+
+## Tools Available
+1. **getFile** (Using tool call) - Read contents of project files
+2. **File Editing** (Using xml tags in your response) - Make changes to fix errors using XML format
+
+## File Edit Format
+When you want to edit a file, use this exact XML format:
+
+<file path="path/to/file">
+  <change>
+    <description>Brief explanation of what you're changing</description>
+    <content>
+// Your complete file content here
+    </content>
+  </change>
+</file>
+
+## Important Rules
+1. Only update a file if you know its contents. Use getFile tool to read first.
+2. Most errors can be fixed by updating the preview file. Only update other files if necessary.
+3. Provide complete file content - do not use placeholders or ellipses.
+4. Always include necessary imports and dependencies.
+5. When making changes:
+   - Add all required import statements
+   - Include complete component code
+   - Ensure proper TypeScript types
+   - Handle all edge cases
+
+## Error Handling Process
+1. Read and understand the error message
+2. Use getFile to examine relevant files
+3. Make targeted fixes using the XML format
+4. If the error is caused by the fact that a provider is missing. In these cases, find the provider and add it to the preview file.
+4. If the error persists, try different fixes. Sometimes the error is caused by external dependencies that we dont' have access to. In those cases, you can try to fix the error by mocking,removing or try catching.
+5. REMEMBER, your resonse must have <file> tags with the file path and content if you want to edit a file.
+6. Always output the entire file content in full. Do not be lazy by adding //(code remains the same) or //(code remains unchanged). This will cause more errors.
+
+## Example: Fixing a Form Error
+Here's an example of how to handle a typical error:
+
+Error Message:
+TypeError: Cannot read properties of undefined (reading 'errors')
+at FormInput (/src/components/common/form/FormInput.tsx:23:18)
+
+Step 1: Read the file to understand the context
+
+// First, read the file
+{
+  "name": "getFile",
+  "arguments": {
+    "filePath": "src/components/common/form/FormInput.tsx"
+  }
+}
+
+// Response shows:
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState } = useFormContext();
+  const error = formState.errors[name]?.message;  // Error occurs here
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+
+Step 2: Fix the issue by adding proper error handling
+
+<file path="src/components/common/form/FormInput.tsx">
+  <change>
+    <description>Add null check for formState and provide default values</description>
+    <content>
+===
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState = {} } = useFormContext() || {};
+  const error = formState?.errors?.[name]?.message;
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+===
+    </content>
+  </change>
+</file>
+
+The fix:
+1. Added null check for useFormContext result
+2. Provided default empty object for formState
+3. Used optional chaining for safer property access
+
+Please proceed with fixing any errors you encounter following these guidelines.
+
+User: An error occurred when rendering the component route at OrganizerReassignedEmail-46bf7968.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: t is not a functionTypeError: t is not a function
+
+## Stack Trace
+```
+    at OrganizerReassignedEmail (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/OrganizerReassignedEmail.tsx:11:62)
+    at renderWithHooks (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:11604:26)
+    at mountIndeterminateComponent (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:14982:21)
+    at beginWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:15970:22)
+    at beginWork$1 (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19814:22)
+    at performUnitOfWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19262:20)
+    at workLoopSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19198:13)
+    at renderRootSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19177:15)
+    at recoverFromConcurrentError (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:18794:28)
+    at performConcurrentWorkOnRoot (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:18742:30)
+```
+
+## Component Stack
+```
+
+    at OrganizerReassignedEmail (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/OrganizerReassignedEmail.tsx:4:19)
+    at ComponentPreview (/.temp/dessn-component-routes/OrganizerReassignedEmail-46bf7968.tsx:5:29)
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-4WREEUCO.js?v=8dfb270d:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=8dfb270d:63:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-RIH2XCSY.js?v=8dfb270d:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-7C2Q762C.js?v=8dfb270d:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-MA65DTWH.js?v=8dfb270d:929:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=8dfb270d:1100:28)
+    at Providers (/.temp/Wrapper.tsx:66:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:103:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/OrganizerReassignedEmail-46bf7968.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { OrganizerReassignedEmail } from '../../../../packages/emails/src/templates/OrganizerReassignedEmail';
+
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    calEvent: {
+      type: 'string',
+      value: JSON.stringify({
+        type: 'default',
+        title: 'Meeting',
+        startTime: '2023-06-01T10:00:00',
+        endTime: '2023-06-01T11:00:00',
+        organizer: {
+          name: 'John Doe',
+          email: 'john@example.com',
+          timeZone: 'America/New_York',
+          language: {
+            translate: (key: string) => key,
+            locale: 'en',
+          },
+        },
+        attendees: [
+          {
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+            timeZone: 'America/Los_Angeles',
+            language: {
+              translate: (key: string) => key,
+              locale: 'en',
+            },
+          },
+        ],
+      }),
+      label: 'Calendar Event',
+    },
+    attendee: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        timeZone: 'America/Los_Angeles',
+        language: {
+          translate: (key: string) => key,
+          locale: 'en',
+        },
+      }),
+      label: 'Attendee',
+    },
+    newSeat: {
+      type: 'boolean',
+      value: false,
+      label: 'New Seat',
+    },
+    attendeeCancelled: {
+      type: 'boolean',
+      value: false,
+      label: 'Attendee Cancelled',
+    },
+    teamMember: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Team Member',
+        email: 'team@example.com',
+        timeZone: 'Europe/London',
+        language: {
+          translate: (key: string) => key,
+          locale: 'en',
+        },
+      }),
+      label: 'Team Member',
+    },
+    reassigned: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'New Organizer',
+        email: 'new@example.com',
+        reason: 'Availability change',
+        byUser: 'Admin',
+      }),
+      label: 'Reassigned',
+    },
+  });
+
+  return (
+    <OrganizerReassignedEmail
+      calEvent={JSON.parse(state.calEvent.value)}
+      attendee={JSON.parse(state.attendee.value)}
+      newSeat={state.newSeat.value}
+      attendeeCancelled={state.attendeeCancelled.value}
+      teamMember={JSON.parse(state.teamMember.value)}
+      reassigned={JSON.parse(state.reassigned.value)}
+    />
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: [object Object],[object Object]
+
+
+Assistant: I see the issue. The error occurs because we're trying to use the translate function from the language object, but in the preview component, we're passing a string representation of a function which doesn't work. Let's fix the preview component by providing a proper translate function.
+
+<file path="apps/web/.temp/dessn-component-routes/OrganizerReassignedEmail-46bf7968.tsx">
+<change>
+<description>Fix the language.translate implementation in the preview data</description>
+<content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { OrganizerReassignedEmail } from '../../../../packages/emails/src/templates/OrganizerReassignedEmail';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    calEvent: {
+      type: 'string',
+      value: JSON.stringify({
+        type: 'default',
+        title: 'Meeting',
+        startTime: '2023-06-01T10:00:00',
+        endTime: '2023-06-01T11:00:00',
+        organizer: {
+          name: 'John Doe',
+          email: 'john@example.com',
+          timeZone: 'America/New_York',
+          language: {
+            translate: function(key: string) { return key; },
+            locale: 'en',
+          },
+        },
+        attendees: [
+          {
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+            timeZone: 'America/Los_Angeles',
+            language: {
+              translate: function(key: string) { return key; },
+              locale: 'en',
+            },
+          },
+        ],
+      }),
+      label: 'Calendar Event',
+    },
+    attendee: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        timeZone: 'America/Los_Angeles',
+        language: {
+          translate: function(key: string) { return key; },
+          locale: 'en',
+        },
+      }),
+      label: 'Attendee',
+    },
+    newSeat: {
+      type: 'boolean',
+      value: false,
+      label: 'New Seat',
+    },
+    attendeeCancelled: {
+      type: 'boolean',
+      value: false,
+      label: 'Attendee Cancelled',
+    },
+    teamMember: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Team Member',
+        email: 'team@example.com',
+        timeZone: 'Europe/London',
+        language: {
+          translate: function(key: string) { return key; },
+          locale: 'en',
+        },
+      }),
+      label: 'Team Member',
+    },
+    reassigned: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'New Organizer',
+        email: 'new@example.com',
+        reason: 'Availability change',
+        byUser: 'Admin',
+      }),
+      label: 'Reassigned',
+    },
+  });
+
+  const parsedCalEvent = JSON.parse(state.calEvent.value);
+  const parsedAttendee = JSON.parse(state.attendee.value);
+  const parsedTeamMember = JSON.parse(state.teamMember.value);
+  const parsedReassigned = JSON.parse(state.reassigned.value);
+
+  // Ensure the translate function is properly set
+  parsedCalEvent.organizer.language.translate = (key: string) => key;
+  if (parsedTeamMember?.language) {
+    parsedTeamMember.language.translate = (key: string) => key;
+  }
+
+  return (
+    <OrganizerReassignedEmail
+      calEvent={parsedCalEvent}
+      attendee={parsedAttendee}
+      newSeat={state.newSeat.value}
+      attendeeCancelled={state.attendeeCancelled.value}
+      teamMember={parsedTeamMember}
+      reassigned={parsedReassigned}
+    />
+  );
+}
+</content>
+</change>
+</file>
+
+The main changes I made to fix the error:
+
+1. Changed the language.translate implementation from a string to an actual function in the JSON data
+2. Added proper parsing of the state values before passing them to the component
+3. Ensured that the translate functions are properly set after parsing the JSON
+4. Used proper function implementations instead of string representations for the translate function
+
+The error was occurring because when we JSON.stringify a function, it gets lost in the serialization. By providing actual functions after parsing the JSON data, we ensure that the translate function is available and callable when the component needs it.
+
+This should resolve the "t is not a function" error while maintaining the functionality of the preview component.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/OrganizerReassignedEmail-46bf7968.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at OrganizerReassignedEmail-46bf7968.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: t is not a functionTypeError: t is not a function
+
+## Stack Trace
+```
+    at OrganizerReassignedEmail (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/OrganizerReassignedEmail.tsx:11:62)
+    at renderWithHooks (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:11604:26)
+    at mountIndeterminateComponent (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:14982:21)
+    at beginWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:15970:22)
+    at beginWork$1 (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19814:22)
+    at performUnitOfWork (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19262:20)
+    at workLoopSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19198:13)
+    at renderRootSync (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:19177:15)
+    at recoverFromConcurrentError (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:18794:28)
+    at performConcurrentWorkOnRoot (/node_modules/.vite/deps/chunk-GQJOA2IY.js?v=8dfb270d:18742:30)
+```
+
+## Component Stack
+```
+
+    at OrganizerReassignedEmail (/@fs/Users/nimcheema/src/cal.com/packages/emails/src/templates/OrganizerReassignedEmail.tsx:4:19)
+    at ComponentPreview (/.temp/dessn-component-routes/OrganizerReassignedEmail-46bf7968.tsx:5:29)
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-4WREEUCO.js?v=8dfb270d:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=8dfb270d:63:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-RIH2XCSY.js?v=8dfb270d:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-7C2Q762C.js?v=8dfb270d:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-MA65DTWH.js?v=8dfb270d:929:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=8dfb270d:1100:28)
+    at Providers (/.temp/Wrapper.tsx:66:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:103:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/OrganizerReassignedEmail-46bf7968.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { OrganizerReassignedEmail } from '../../../../packages/emails/src/templates/OrganizerReassignedEmail';
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({
+    calEvent: {
+      type: 'string',
+      value: JSON.stringify({
+        type: 'default',
+        title: 'Meeting',
+        startTime: '2023-06-01T10:00:00',
+        endTime: '2023-06-01T11:00:00',
+        organizer: {
+          name: 'John Doe',
+          email: 'john@example.com',
+          timeZone: 'America/New_York',
+          language: {
+            translate: function(key: string) { return key; },
+            locale: 'en',
+          },
+        },
+        attendees: [
+          {
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+            timeZone: 'America/Los_Angeles',
+            language: {
+              translate: function(key: string) { return key; },
+              locale: 'en',
+            },
+          },
+        ],
+      }),
+      label: 'Calendar Event',
+    },
+    attendee: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        timeZone: 'America/Los_Angeles',
+        language: {
+          translate: function(key: string) { return key; },
+          locale: 'en',
+        },
+      }),
+      label: 'Attendee',
+    },
+    newSeat: {
+      type: 'boolean',
+      value: false,
+      label: 'New Seat',
+    },
+    attendeeCancelled: {
+      type: 'boolean',
+      value: false,
+      label: 'Attendee Cancelled',
+    },
+    teamMember: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Team Member',
+        email: 'team@example.com',
+        timeZone: 'Europe/London',
+        language: {
+          translate: function(key: string) { return key; },
+          locale: 'en',
+        },
+      }),
+      label: 'Team Member',
+    },
+    reassigned: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'New Organizer',
+        email: 'new@example.com',
+        reason: 'Availability change',
+        byUser: 'Admin',
+      }),
+      label: 'Reassigned',
+    },
+  });
+
+  const parsedCalEvent = JSON.parse(state.calEvent.value);
+  const parsedAttendee = JSON.parse(state.attendee.value);
+  const parsedTeamMember = JSON.parse(state.teamMember.value);
+  const parsedReassigned = JSON.parse(state.reassigned.value);
+
+  // Ensure the translate function is properly set
+  parsedCalEvent.organizer.language.translate = (key: string) => key;
+  if (parsedTeamMember?.language) {
+    parsedTeamMember.language.translate = (key: string) => key;
+  }
+
+  return (
+    <OrganizerReassignedEmail
+      calEvent={parsedCalEvent}
+      attendee={parsedAttendee}
+      newSeat={state.newSeat.value}
+      attendeeCancelled={state.attendeeCancelled.value}
+      teamMember={parsedTeamMember}
+      reassigned={parsedReassigned}
+    />
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: [object Object],[object Object]
+
+
+Assistant: I see the issue now. The problem is that when we JSON.stringify and then JSON.parse the objects, we lose the function references. Let's modify the preview component to properly handle the translation function and match the expected types.
+
+<file path="apps/web/.temp/dessn-component-routes/OrganizerReassignedEmail-46bf7968.tsx">
+<change>
+<description>Fix the translation function handling and match expected types</description>
+<content>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import { OrganizerReassignedEmail } from '../../../../packages/emails/src/templates/OrganizerReassignedEmail';
+
+export default function ComponentPreview() {
+  // Create a translate function that will be used consistently
+  const translate = (key: string) => key;
+
+  const [state, setState] = useParentState({
+    calEvent: {
+      type: 'string',
+      value: JSON.stringify({
+        type: 'default',
+        title: 'Meeting',
+        startTime: '2023-06-01T10:00:00',
+        endTime: '2023-06-01T11:00:00',
+        organizer: {
+          name: 'John Doe',
+          email: 'john@example.com',
+          timeZone: 'America/New_York',
+          language: {
+            locale: 'en',
+          },
+        },
+        attendees: [
+          {
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+            timeZone: 'America/Los_Angeles',
+            language: {
+              locale: 'en',
+            },
+          },
+        ],
+      }),
+      label: 'Calendar Event',
+    },
+    attendee: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        timeZone: 'America/Los_Angeles',
+        language: {
+          locale: 'en',
+        },
+      }),
+      label: 'Attendee',
+    },
+    newSeat: {
+      type: 'boolean',
+      value: false,
+      label: 'New Seat',
+    },
+    attendeeCancelled: {
+      type: 'boolean',
+      value: false,
+      label: 'Attendee Cancelled',
+    },
+    teamMember: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'Team Member',
+        email: 'team@example.com',
+        timeZone: 'Europe/London',
+        language: {
+          locale: 'en',
+        },
+      }),
+      label: 'Team Member',
+    },
+    reassigned: {
+      type: 'string',
+      value: JSON.stringify({
+        name: 'New Organizer',
+        email: 'new@example.com',
+        reason: 'Availability change',
+        byUser: 'Admin',
+      }),
+      label: 'Reassigned',
+    },
+  });
+
+  const parsedCalEvent = JSON.parse(state.calEvent.value);
+  const parsedAttendee = JSON.parse(state.attendee.value);
+  const parsedTeamMember = JSON.parse(state.teamMember.value);
+  const parsedReassigned = JSON.parse(state.reassigned.value);
+
+  // Add translate function to the required objects
+  parsedCalEvent.organizer.language.translate = translate;
+  parsedAttendee.language.translate = translate;
+  parsedTeamMember.language.translate = translate;
+
+  return (
+    <OrganizerReassignedEmail
+      calEvent={{
+        ...parsedCalEvent,
+        organizer: {
+          ...parsedCalEvent.organizer,
+          language: {
+            ...parsedCalEvent.organizer.language,
+            translate,
+          },
+        },
+      }}
+      attendee={{
+        ...parsedAttendee,
+        language: {
+          ...parsedAttendee.language,
+          translate,
+        },
+      }}
+      newSeat={state.newSeat.value}
+      attendeeCancelled={state.attendeeCancelled.value}
+      teamMember={{
+        ...parsedTeamMember,
+        language: {
+          ...parsedTeamMember.language,
+          translate,
+        },
+      }}
+      reassigned={parsedReassigned}
+    />
+  );
+}
+</content>
+</change>
+</file>
+
+The main changes I made:
+
+1. Created a single translate function at the component level to ensure consistency
+2. Removed the function from the JSON strings since they can't be properly serialized
+3. Added the translate function to the parsed objects after they're created
+4. Properly spread and nested the translate function in the required objects
+5. Ensured the language objects have the correct structure with both locale and translate properties
+
+This should resolve the "t is not a function" error by ensuring that the translate function is properly available where it's needed. The function is now added after parsing the JSON, which avoids the serialization issues we were encountering before.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/OrganizerReassignedEmail-46bf7968.tsx
+
+All changes applied successfully. Checking for errors...
