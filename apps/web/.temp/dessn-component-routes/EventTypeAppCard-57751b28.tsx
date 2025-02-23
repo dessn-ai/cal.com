@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/mock-payment-app/components/EventTypeAppCardInterface';
-
+import EventTypeAppContext from '@calcom/app-store/EventTypeAppContext';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -28,7 +28,12 @@ export default function ComponentPreview() {
         description: "This is a mock payment app for testing",
         logo: "https://example.com/logo.png",
         category: "payment",
-        url: "https://example.com/app"
+        categories: ["payment"],
+        slug: "mock-payment-app",
+        url: "https://example.com/app",
+        isInstalled: true,
+        enabled: true,
+        isSetupAlready: true
       },
       label: "App"
     },
@@ -39,11 +44,21 @@ export default function ComponentPreview() {
     }
   });
 
+  const appContextValue = {
+    appData: {},
+    setAppData: () => {},
+    getAppData: () => undefined,
+    disabled: state.disabled.value,
+    LockedIcon: null
+  };
+
   return (
-    <ImportedComponent
-      eventType={state.eventType.value}
-      app={state.app.value}
-      disabled={state.disabled.value}
-    />
+    <EventTypeAppContext.Provider value={appContextValue}>
+      <ImportedComponent
+        eventType={state.eventType.value}
+        app={state.app.value}
+        disabled={state.disabled.value}
+      />
+    </EventTypeAppContext.Provider>
   );
 }

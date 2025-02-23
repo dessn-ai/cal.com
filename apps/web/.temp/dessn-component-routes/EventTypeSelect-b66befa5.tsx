@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParentState } from '../useIframeState';
 import { EventTypeSelect } from '../../../../packages/features/troubleshooter/components/EventTypeSelect';
-
-import { TroubleshooterStoreProvider } from '../../../../packages/features/troubleshooter/store';
+import { useTroubleshooterStore } from '../../../../packages/features/troubleshooter/store';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -21,6 +20,14 @@ export default function ComponentPreview() {
     },
   });
 
+  const setEvent = useTroubleshooterStore((state) => state.setEvent);
+
+  // Initialize the store with the selected event
+  useEffect(() => {
+    const selectedEvent = JSON.parse(state.selectedEventType.value);
+    setEvent(selectedEvent);
+  }, [state.selectedEventType.value, setEvent]);
+
   const mockTrpc = {
     viewer: {
       eventTypes: {
@@ -34,13 +41,5 @@ export default function ComponentPreview() {
     },
   };
 
-  return (
-    <TroubleshooterStoreProvider
-      initialState={{
-        event: JSON.parse(state.selectedEventType.value),
-        setEvent: (event) => setState('selectedEventType', JSON.stringify(event)),
-      }}>
-      <EventTypeSelect />
-    </TroubleshooterStoreProvider>
-  );
+  return <EventTypeSelect />;
 }

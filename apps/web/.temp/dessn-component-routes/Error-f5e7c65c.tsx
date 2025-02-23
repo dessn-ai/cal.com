@@ -1,10 +1,29 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/error';
 
+// Mock ErrorPage component
+const ErrorPage = ({ 
+  statusCode, 
+  message, 
+  error 
+}: { 
+  statusCode: number; 
+  message: string; 
+  error: { name: string; message: string; } 
+}) => {
+  return (
+    <div className="flex min-h-[500px] flex-col items-center justify-center">
+      <h1 className="font-cal mb-4 text-[250px] font-semibold text-gray-900">
+        {statusCode}
+      </h1>
+      <h2 className="mb-4 text-3xl text-gray-900">{error.name}</h2>
+      <p className="mb-4 max-w-md text-center text-gray-600">{message}</p>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
-  const [state, setState] = useParentState({
+  const [state] = useParentState({
     errorMessage: {
       type: "string",
       value: "An unexpected error occurred",
@@ -22,9 +41,17 @@ export default function ComponentPreview() {
     },
   });
 
-  const error = new Error(state.errorMessage.value);
-  error.name = state.errorName.value;
-  (error as any).statusCode = state.statusCode.value;
+  const error = {
+    name: state.errorName.value,
+    message: state.errorMessage.value,
+    statusCode: state.statusCode.value
+  };
 
-  return <ImportedComponent error={error} />;
+  return (
+    <ErrorPage 
+      statusCode={error.statusCode} 
+      message={error.message} 
+      error={error}
+    />
+  );
 }

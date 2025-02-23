@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/templates/booking-pages-tag/components/EventTypeAppCardInterface';
-
+import EventTypeAppContext from '@calcom/app-store/EventTypeAppContext';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -27,8 +27,13 @@ export default function ComponentPreview() {
         name: "Sample App",
         description: "This is a sample app",
         logo: "https://example.com/logo.png",
+        categories: ["calendar"],
         category: "calendar",
         url: "https://example.com",
+        slug: "sample-app",
+        enabled: true,
+        isInstalled: true,
+        isSetupAlready: true,
         credentialOwner: {
           name: "John Doe",
           avatar: "https://example.com/avatar.png"
@@ -44,11 +49,29 @@ export default function ComponentPreview() {
     }
   });
 
+  // Create initial app data context
+  const appContextValue = {
+    appData: {
+      enabled: true,
+      trackingId: "",
+    },
+    setAppData: () => {},
+    getAppData: (key: string) => {
+      if (key === "enabled") return true;
+      if (key === "trackingId") return "";
+      return null;
+    },
+    disabled: false,
+    LockedIcon: null,
+  };
+
   return (
-    <ImportedComponent
-      eventType={state.eventType.value}
-      app={state.app.value}
-      disabled={state.disabled.value}
-    />
+    <EventTypeAppContext.Provider value={appContextValue}>
+      <ImportedComponent
+        eventType={state.eventType.value}
+        app={state.app.value}
+        disabled={state.disabled.value}
+      />
+    </EventTypeAppContext.Provider>
   );
 }

@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { ScheduleDay } from '../../../../packages/features/schedules/components/Schedule';
-
 import { useForm, FormProvider } from 'react-hook-form';
 
 export default function ComponentPreview() {
@@ -30,20 +29,32 @@ export default function ComponentPreview() {
 
   const methods = useForm({
     defaultValues: {
-      [state.name.value]: [{ start: new Date(), end: new Date() }],
-    },
+      schedule: {
+        0: [{
+          start: new Date(2024, 0, 1, 9, 0), // 9:00 AM
+          end: new Date(2024, 0, 1, 17, 0)   // 5:00 PM
+        }]
+      }
+    }
   });
 
   return (
-    <FormProvider {...methods}>
-      <ScheduleDay
-        name={state.name.value}
-        weekday={state.weekday.value}
-        control={methods.control}
-        CopyButton={<div />}
-        disabled={state.disabled.value}
-        userTimeFormat={state.userTimeFormat.value}
-      />
-    </FormProvider>
+    <div className="p-4">
+      <FormProvider {...methods}>
+        <ScheduleDay
+          name="schedule.0"
+          weekday={state.weekday.value}
+          control={methods.control}
+          CopyButton={<div />}
+          disabled={state.disabled.value}
+          userTimeFormat={state.userTimeFormat.value}
+          labels={{
+            addTime: "Add time",
+            copyTime: "Copy time",
+            deleteTime: "Delete time"
+          }}
+        />
+      </FormProvider>
+    </div>
   );
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { RoutingFormEmbedButton } from '../../../../packages/features/embed/RoutingFormEmbed';
-
+import { EmbedDialogProvider } from '../../../../packages/features/embed/lib/hooks/useEmbedDialogCtx';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -28,12 +28,14 @@ export default function ComponentPreview() {
   });
 
   return (
-    <RoutingFormEmbedButton
-      embedUrl={state.embedUrl.value}
-      namespace={state.namespace.value}
-      className={state.className.value}
-      eventId={state.eventId.value}
-      noQueryParamMode={true}
-    />
+    <EmbedDialogProvider>
+      <RoutingFormEmbedButton
+        embedUrl={state.embedUrl.value}
+        namespace={state.namespace.value}
+        className={state.className.value}
+        eventId={state.eventId.value}
+        noQueryParamMode={true}
+      />
+    </EmbedDialogProvider>
   );
 }

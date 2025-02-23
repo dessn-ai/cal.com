@@ -2,6 +2,23 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../components/booking/BookingListItem';
 
+// Mock the getPaymentAppData function directly in the module scope
+global.getPaymentAppData = () => ({
+  id: "pay_123",
+  price: "100",
+  currency: "USD",
+  success: true,
+  paymentOption: "HOLD",
+  type: "stripe",
+  appId: "stripe-payment-app",
+  paymentFee: "0",
+  meta: {
+    stripe: {
+      paymentIntentId: "pi_123",
+      publishableKey: "pk_test_123"
+    }
+  }
+});
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -20,17 +37,41 @@ export default function ComponentPreview() {
         user: { id: 1, name: "Host User", email: "host@example.com" },
         status: "ACCEPTED",
         paid: true,
-        payment: [{ success: true, paymentOption: "HOLD" }],
+        payment: [{
+          success: true,
+          paymentOption: "HOLD",
+          amount: "100",
+          currency: "USD",
+          data: {
+            id: "pay_123",
+            type: "stripe",
+            success: true,
+            amount: "100",
+            currency: "USD",
+            paymentOption: "HOLD"
+          },
+          appId: "stripe-payment-app"
+        }],
         location: "https://meet.google.com/abc-defg-hij",
         eventType: {
           id: 1,
           title: "Sample Event Type",
           slug: "sample-event",
           length: 60,
+          price: "100",
+          currency: "USD",
           recurringEvent: { freq: "WEEKLY" },
           team: { id: 1, name: "Sample Team" }
         },
-        metadata: {},
+        metadata: {
+          apps: "stripe",
+          paymentId: "pay_123",
+          paymentIntentId: "pi_123",
+          amount: "100",
+          currency: "USD",
+          credentialId: "1",
+          price: "100"
+        },
         isRecorded: false,
         recurringEventId: null,
         seatsReferences: [],

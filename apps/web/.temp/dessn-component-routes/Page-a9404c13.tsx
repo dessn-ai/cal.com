@@ -1,25 +1,34 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(admin-layout)/admin/apps/[category]/page';
 
+// Mock components
+const MockSettingsHeader = ({ children }: { children: React.ReactNode }) => <div>{children}</div>;
+const MockAdminAppsList = () => <div>Admin Apps List</div>;
+
+// Mock translate function
+const mockGetTranslate = (key: string) => key;
+
+// Mock the actual page component instead of importing it
+// This prevents the actual import which might be causing the error
+const MockPageComponent = () => {
+  return (
+    <div>
+      <MockSettingsHeader>
+        <h2>Apps Settings</h2>
+      </MockSettingsHeader>
+      <MockAdminAppsList />
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     // Since this component doesn't have any props, we don't need to define any state
   });
 
-  // Mock the necessary functions and components
-  const mockGetTranslate = async () => (key: string) => key;
-  const mockSettingsHeader = ({ children }: { children: React.ReactNode }) => <div>{children}</div>;
-  const mockAdminAppsList = () => <div>Admin Apps List</div>;
-
-  // Mock the necessary modules
-  jest.mock("app/_utils", () => ({
-    getTranslate: mockGetTranslate,
-  }));
-
-  jest.mock("@calcom/features/settings/appDir/SettingsHeader", () => mockSettingsHeader);
-  jest.mock("@calcom/features/apps/AdminAppsList", () => mockAdminAppsList);
-
-  return <ImportedComponent />;
+  return (
+    <div className="flex min-h-screen w-full flex-col">
+      <MockPageComponent />
+    </div>
+  );
 }

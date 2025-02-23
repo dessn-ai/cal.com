@@ -2,14 +2,17 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/ee/organizations/pages/settings/other-team-listing-view';
 
-import { I18nProvider } from '@calcom/features/i18n';
+// Mock I18nProvider since we can't resolve the actual import
+const MockI18nProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return <>{children}</>;
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({});
 
   return (
-    <I18nProvider>
+    <MockI18nProvider>
       <ImportedComponent />
-    </I18nProvider>
+    </MockI18nProvider>
   );
 }

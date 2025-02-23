@@ -2,26 +2,30 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { UpgradeTeamsBadge } from '../../../../packages/ui/components/badge/UpgradeTeamsBadge';
 
+// Mock providers and hooks
+const mockT = (key: string) => key;
 
-// Mock the necessary hooks and components
-const mockUseLocale = () => ({
-  t: (key: string) => key,
+// Create a mock context for useLocale
+const MockLocaleContext = React.createContext({ t: mockT });
+export const useLocale = () => React.useContext(MockLocaleContext);
+
+// Create a mock for useHasPaidPlan
+export const useHasPaidPlan = () => ({ hasPaidPlan: false });
+
+// Mock Link component
+const Link = ({ children }: { children: React.ReactNode }) => <>{children}</>;
+
+// Override the actual imports with our mocks
+import('@calcom/lib/hooks/useLocale').then((module) => {
+  Object.defineProperty(module, 'useLocale', { value: useLocale });
 });
 
-const mockUseHasPaidPlan = () => ({
-  hasPaidPlan: false,
+import('@calcom/lib/hooks/useHasPaidPlan').then((module) => {
+  Object.defineProperty(module, 'useHasPaidPlan', { value: useHasPaidPlan });
 });
 
-jest.mock('@calcom/lib/hooks/useLocale', () => ({
-  useLocale: mockUseLocale,
-}));
-
-jest.mock('@calcom/lib/hooks/useHasPaidPlan', () => ({
-  useHasPaidPlan: mockUseHasPaidPlan,
-}));
-
-jest.mock('next/link', () => {
-  return ({ children }: { children: React.ReactNode }) => <>{children}</>;
+import('next/link').then((module) => {
+  Object.defineProperty(module, 'default', { value: Link });
 });
 
 export default function ComponentPreview() {
@@ -29,5 +33,9 @@ export default function ComponentPreview() {
     // No props to control for this component
   });
 
-  return <UpgradeTeamsBadge />;
+  return (
+    <MockLocaleContext.Provider value={{ t: mockT }}>
+      <UpgradeTeamsBadge />
+    </MockLocaleContext.Provider>
+  );
 }

@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { BannerContainer } from '../../../../packages/features/shell/banners/LayoutBanner';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     teamUpgradeBanner: {
@@ -42,15 +41,81 @@ export default function ComponentPreview() {
     },
   });
 
-  const banners = {
-    teamUpgradeBanner: state.teamUpgradeBanner.value,
-    orgUpgradeBanner: state.orgUpgradeBanner.value,
-    verifyEmailBanner: state.verifyEmailBanner.value,
-    adminPasswordBanner: state.adminPasswordBanner.value,
-    impersonationBanner: state.impersonationBanner.value,
-    calendarCredentialBanner: state.calendarCredentialBanner.value,
-    invalidAppCredentialBanners: state.invalidAppCredentialBanners.value,
+  // Mock data for each banner type
+  const mockBanners = {
+    teamUpgradeBanner: state.teamUpgradeBanner.value ? 
+      [{
+        team: {
+          name: "Test Team",
+          slug: "test-team"
+        },
+        role: "MEMBER"
+      }] : 
+      [],
+    orgUpgradeBanner: state.orgUpgradeBanner.value ? 
+      [{
+        team: {
+          name: "Test Org",
+          slug: "test-org"
+        },
+        role: "MEMBER"
+      }] : 
+      [],
+    verifyEmailBanner: state.verifyEmailBanner.value ? {
+      email: "test@example.com",
+      isVerified: false
+    } : null,
+    adminPasswordBanner: state.adminPasswordBanner.value ? {
+      user: {
+        role: "ADMIN",
+        username: "admin"
+      },
+      usedSettingsPage: false
+    } : null,
+    impersonationBanner: state.impersonationBanner.value ? {
+      user: {
+        impersonatedBy: {
+          username: "admin",
+          name: "Administrator"
+        }
+      }
+    } : null,
+    calendarCredentialBanner: state.calendarCredentialBanner.value ? {
+      user: {
+        hasCalendarIntegrations: false,
+        hasBookings: true
+      }
+    } : null,
+    invalidAppCredentialBanners: state.invalidAppCredentialBanners.value ? 
+      [
+        {
+          appName: "Test App",
+          appType: "calendar",
+          title: "Invalid Credentials",
+          message: "Please reconnect your calendar",
+          integration: {
+            name: "Test Integration",
+            type: "calendar"
+          }
+        }
+      ] : 
+      []
   };
 
-  return <BannerContainer banners={banners} />;
+  // Only render banners that have data
+  const filteredBanners = Object.fromEntries(
+    Object.entries(mockBanners).filter(([key, value]) => {
+      if (Array.isArray(value)) {
+        return value.length > 0;
+      }
+      return value !== null;
+    })
+  );
+
+  try {
+    return <BannerContainer banners={filteredBanners} />;
+  } catch (error) {
+    console.error('Error rendering BannerContainer:', error);
+    return null;
+  }
 }

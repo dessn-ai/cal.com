@@ -2,7 +2,11 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { ConnectedCalendars } from '../../components/getting-started/steps-views/ConnectCalendars';
 
-import { TRPCProvider } from '../../components/trpc/TRPCProvider';
+// Mock TRPCProvider since we can't access the actual one
+const MockTRPCProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Provide a basic wrapper that just renders children
+  return <>{children}</>;
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -19,8 +23,8 @@ export default function ComponentPreview() {
   };
 
   return (
-    <TRPCProvider>
+    <MockTRPCProvider>
       <ConnectedCalendars nextStep={nextStep} />
-    </TRPCProvider>
+    </MockTRPCProvider>
   );
 }

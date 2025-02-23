@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { CommandSeparator } from '../../../../packages/ui/components/command/index';
-
+import { Command, CommandSeparator } from '../../../../packages/ui/components/command';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -14,7 +13,9 @@ export default function ComponentPreview() {
 
   return (
     <div style={{ padding: '20px', background: '#f0f0f0' }}>
-      <CommandSeparator className={state.className.value} />
+      <Command>
+        <CommandSeparator className={state.className.value} />
+      </Command>
     </div>
   );
 }

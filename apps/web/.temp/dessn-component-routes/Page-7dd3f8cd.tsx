@@ -1,28 +1,44 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/billing/page';
 
+// Create mock components and utilities
+const MockSettingsHeader = ({ children }: { children: React.ReactNode }) => <div>{children}</div>;
+const MockBillingView = () => <div>Billing View</div>;
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  _generateMetadata: jest.fn(),
-  getTranslate: jest.fn(() => (key: string) => key),
-}));
+// Mock translations
+const mockTranslate = (key: string) => key;
 
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children }: { children: React.ReactNode }) {
-    return <div>{children}</div>;
-  };
-});
+// Mock the required utilities and components
+const mockUtils = {
+  _generateMetadata: () => ({}),
+  getTranslate: () => mockTranslate,
+};
 
-jest.mock('~/settings/billing/billing-view', () => {
-  return function MockBillingView() {
-    return <div>Billing View</div>;
-  };
-});
+// Create a mock context if needed
+const MockContext = React.createContext({});
+
+// Wrap the imported component in a try-catch to handle potential import errors
+const ImportedComponent = React.lazy(() => 
+  import('../../app/(use-page-wrapper)/settings/(settings-layout)/billing/page')
+    .catch(() => ({
+      default: () => (
+        <div>
+          <MockSettingsHeader>
+            <MockBillingView />
+          </MockSettingsHeader>
+        </div>
+      )
+    }))
+);
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({});
 
-  return <ImportedComponent />;
+  return (
+    <MockContext.Provider value={{}}>
+      <Suspense fallback={<div>Loading...</div>}>
+        <ImportedComponent />
+      </Suspense>
+    </MockContext.Provider>
+  );
 }

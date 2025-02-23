@@ -1,7 +1,6 @@
 export default {
   projectId: "kd70egc39zbwan4fc6xf8cja3x7aj8zm",
-  wrapper: `
-import { TooltipProvider } from "@radix-ui/react-tooltip";
+  wrapper: `import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import i18n from "i18next";
 import { SessionProvider } from "next-auth/react";
@@ -14,9 +13,20 @@ import { httpBatchLink } from "@calcom/trpc";
 import type { AppRouter } from "@calcom/trpc/server/routers/_app";
 
 import { createTRPCReact } from "@trpc/react-query";
+import SVG from "react-inlinesvg";
 
 import enCommon from "../public/static/locales/en/common.json";
+
+// Import CSS files
+import "../../../packages/ui/styles/shared-globals.css";
+import "../../../packages/config/theme/colors.css";
+import "../../../packages/features/insights/components/tremor.css";
+import "../../../packages/features/calendars/weeklyview/styles/styles.css";
+import "../../../packages/ui/components/form/date-range-picker/styles.css";
+import "../../../packages/embeds/embed-core/src/embed.css";
+import "../styles/raqb.css";
 import "../styles/globals.css";
+import '../../storybook/styles/globals.css'
 
 // Initialize i18n
 const ns = ["common"];
@@ -94,12 +104,14 @@ export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
       <body>
+        <SVG
+            src={\`/icons/sprite.svg\`}
+          />
         <Providers>{children}</Providers>
       </body>
     </html>
   );
-}
-`,
+}`,
   // scan: {
   //   directories: ["modules/auth/login-view.tsx"],
   // },

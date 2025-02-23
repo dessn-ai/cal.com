@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { OverlayCalendar } from '../../../../packages/features/bookings/Booker/components/OverlayCalendar/OverlayCalendar';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     connectedCalendars: {
@@ -51,7 +50,7 @@ export default function ComponentPreview() {
   return (
     <OverlayCalendar
       connectedCalendars={JSON.parse(state.connectedCalendars.value)}
-      overlayBusyDates={new Set(JSON.parse(state.overlayBusyDates.value))}
+      overlayBusyDates={JSON.parse(state.overlayBusyDates.value)}
       onToggleCalendar={onToggleCalendar}
       isOverlayCalendarEnabled={state.isOverlayCalendarEnabled.value}
       loadingConnectedCalendar={state.loadingConnectedCalendar.value}

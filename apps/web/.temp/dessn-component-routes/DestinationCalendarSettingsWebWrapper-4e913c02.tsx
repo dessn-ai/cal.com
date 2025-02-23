@@ -2,10 +2,8 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { DestinationCalendarSettingsWebWrapper } from '../../../../packages/platform/atoms/destination-calendar/wrappers/DestinationCalendarSettingsWebWrapper';
 
-import { trpc } from "@calcom/trpc/react";
-
-// Mock trpc
-const mockTrpc = {
+// Create a mock implementation of trpc
+const mockTrpcImplementation = {
   viewer: {
     connectedCalendars: {
       useQuery: () => ({
@@ -18,6 +16,8 @@ const mockTrpc = {
             externalId: 'calendar-1',
           },
         },
+        isLoading: false,
+        isError: false,
       }),
     },
     setDestinationCalendar: {
@@ -30,16 +30,14 @@ const mockTrpc = {
   useUtils: () => ({
     viewer: {
       connectedCalendars: {
-        invalidate: () => {},
+        invalidate: () => Promise.resolve(),
       },
     },
   }),
 };
 
-// Mock the trpc import
-jest.mock("@calcom/trpc/react", () => ({
-  trpc: mockTrpc,
-}));
+// Override the actual trpc import with our mock
+const trpc = mockTrpcImplementation;
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({

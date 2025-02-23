@@ -1,9 +1,41 @@
-import React from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../pages/org/[orgSlug]/[user]/[type]/embed';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { I18nextProvider } from 'react-i18next';
+import i18next from 'i18next';
 
+// Configure i18next
+i18next.init({
+  lng: 'en',
+  resources: {},
+});
+
+// Create a client with proper configuration
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+const ErrorFallback = () => (
+  <div className="error-boundary">
+    Failed to load component. Please try again.
+  </div>
+);
+
+const LoadingFallback = () => (
+  <div className="loading">
+    Loading...
+  </div>
+);
 
 export default function ComponentPreview() {
+  const [Component, setComponent] = useState<React.ComponentType<any> | null>(null);
+  const [error, setError] = useState<Error | null>(null);
+
   const [state, setState] = useParentState({
     isEmbed: {
       type: "boolean",
@@ -73,6 +105,17 @@ export default function ComponentPreview() {
     },
   });
 
+  useEffect(() => {
+    import('../../pages/org/[orgSlug]/[user]/[type]/embed')
+      .then((module) => {
+        setComponent(() => module.default || module);
+      })
+      .catch((err) => {
+        console.error('Failed to load component:', err);
+        setError(err);
+      });
+  }, []);
+
   const props = {
     isEmbed: state.isEmbed.value,
     eventData: JSON.parse(state.eventData.value),
@@ -87,5 +130,17 @@ export default function ComponentPreview() {
     trpcState: {},
   };
 
-  return <ImportedComponent {...props} />;
+  if (error) {
+    return <ErrorFallback />;
+  }
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <I18nextProvider i18n={i18next}>
+        <Suspense fallback={<LoadingFallback />}>
+          {Component ? <Component {...props} /> : <LoadingFallback />}
+        </Suspense>
+      </I18nextProvider>
+    </QueryClientProvider>
+  );
 }

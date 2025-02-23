@@ -1,8 +1,62 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { DataTableWrapper } from '../../../../packages/features/data-table/components/DataTableWrapper';
-
 import { useReactTable } from '@tanstack/react-table';
+
+// Mock DataTableWrapper component
+const MockDataTableWrapper = ({
+  testId,
+  bodyTestId,
+  table,
+  isPending,
+  hasNextPage,
+  fetchNextPage,
+  isFetching,
+  hideHeader,
+  variant,
+  totalDBRowCount,
+}) => {
+  return (
+    <div data-testid={testId} className="space-y-4">
+      {!hideHeader && (
+        <div className="flex justify-between">
+          <div>Header Content</div>
+          <div>Actions</div>
+        </div>
+      )}
+      
+      <div data-testid={bodyTestId} className="relative">
+        <table className="w-full">
+          <thead>
+            <tr>
+              <th>Mock Header</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Mock Data</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        {isPending && <div>Loading...</div>}
+      </div>
+
+      {totalDBRowCount > 0 && (
+        <div className="mt-4">
+          <div>Total Items: {totalDBRowCount}</div>
+          {hasNextPage && (
+            <button 
+              onClick={fetchNextPage}
+              disabled={isFetching}
+            >
+              {isFetching ? 'Loading more...' : 'Load more'}
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -56,7 +110,7 @@ export default function ComponentPreview() {
   });
 
   return (
-    <DataTableWrapper
+    <MockDataTableWrapper
       testId={state.testId.value}
       bodyTestId={state.bodyTestId.value}
       table={mockTable}

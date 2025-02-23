@@ -1,8 +1,28 @@
-import React from 'react';
+import React, { createContext } from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/insihts/components/EventTypeAppCardInterface';
+import EventTypeAppContext from '@calcom/app-store/EventTypeAppContext';
 
-import { AppContextProvider } from '@calcom/app-store/EventTypeAppContext';
+// Create a mock AtomsContext locally
+const AtomsContext = createContext({
+  clientId: "",
+  accessToken: "",
+  organizationId: 0,
+  options: { refreshUrl: "", apiUrl: "" },
+  error: "",
+  getClient: () => undefined,
+  isEmbed: false,
+  isAuth: true,
+  isValidClient: true,
+  isInit: true,
+  t: (key: string, values: Record<string, string | number | undefined | null>) => key,
+  i18n: {
+    language: "en" as const,
+    defaultLocale: "en" as const,
+    locales: ["en"] as const,
+    exists: (key: string) => true,
+  }
+});
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -50,13 +70,38 @@ export default function ComponentPreview() {
     disabled: state.disabled.value
   };
 
+  const mockAtomsContext = {
+    clientId: "mock-client-id",
+    accessToken: "mock-access-token",
+    organizationId: 1,
+    options: {
+      refreshUrl: "https://example.com/refresh",
+      apiUrl: "https://example.com/api"
+    },
+    error: "",
+    getClient: () => undefined,
+    isEmbed: false,
+    isAuth: true,
+    isValidClient: true,
+    isInit: true,
+    t: (key: string, values: Record<string, string | number | undefined | null>) => key,
+    i18n: {
+      language: "en" as const,
+      defaultLocale: "en" as const,
+      locales: ["en"] as const,
+      exists: (key: string) => true,
+    }
+  };
+
   return (
-    <AppContextProvider value={mockAppContext}>
-      <ImportedComponent 
-        eventType={state.eventType.value}
-        app={state.app.value}
-        disabled={state.disabled.value}
-      />
-    </AppContextProvider>
+    <AtomsContext.Provider value={mockAtomsContext}>
+      <EventTypeAppContext.Provider value={mockAppContext}>
+        <ImportedComponent 
+          eventType={state.eventType.value}
+          app={state.app.value}
+          disabled={state.disabled.value}
+        />
+      </EventTypeAppContext.Provider>
+    </AtomsContext.Provider>
   );
 }

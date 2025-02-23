@@ -1,9 +1,40 @@
-import React from 'react';
+import React, { createContext, useContext } from 'react';
 import { useParentState } from '../useIframeState';
 import { HighestNoShowHostTable } from '../../../../packages/features/insights/components/HighestNoShowHostTable';
-
-import { InsightsProvider } from '../../../../packages/features/insights/context/insights-provider';
 import { trpc } from '@calcom/trpc';
+
+// Mock InsightsContext
+const InsightsContext = createContext({
+  teamId: 0,
+  startDate: '',
+  endDate: '',
+  eventTypeId: 0,
+  isAll: false,
+});
+
+// Mock InsightsProvider
+const InsightsProvider = ({ 
+  children, 
+  teamId, 
+  startDate, 
+  endDate, 
+  eventTypeId, 
+  isAll 
+}) => {
+  const value = {
+    teamId,
+    startDate,
+    endDate,
+    eventTypeId,
+    isAll,
+  };
+
+  return (
+    <InsightsContext.Provider value={value}>
+      {children}
+    </InsightsContext.Provider>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({

@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { InfiniteEventTypeList } from '../../modules/event-types/views/event-types-listing-view';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     group: {
@@ -45,9 +44,28 @@ export default function ComponentPreview() {
               id: 1,
               title: "Example Event Type",
               slug: "example-event-type",
+              description: "This is an example event type description",
+              length: 30,
               hidden: false,
               schedulingType: "ROUND_ROBIN",
-              users: []
+              users: [],
+              userId: null,
+              teamId: null,
+              owner: {
+                id: 1,
+                name: "Example User",
+                email: "user@example.com",
+                username: "exampleuser"
+              },
+              metadata: {},
+              locations: [],
+              price: 0,
+              currency: "USD",
+              bookingFields: [],
+              seatsPerTimeSlot: null,
+              minimumBookingNotice: 120,
+              beforeEventBuffer: 0,
+              afterEventBuffer: 0
             }
           ]
         }

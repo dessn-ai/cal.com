@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
+import ReactSelect, { components } from 'react-select';
 import { OptionComponent } from '../../../../packages/ui/components/form/select/components';
-
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -28,15 +28,35 @@ export default function ComponentPreview() {
     },
   });
 
-  const optionProps = {
-    label: state.option.value,
-    value: state.option.value,
-    isMulti: state.isMulti.value,
-    isSelected: state.isSelected.value,
-    data: {
-      needsTeamsUpgrade: state.needsTeamsUpgrade.value,
-    },
-  };
+  const options = state.option.options.map(opt => ({
+    label: opt,
+    value: opt,
+    needsTeamsUpgrade: state.needsTeamsUpgrade.value
+  }));
 
-  return <OptionComponent {...optionProps} />;
+  return (
+    <ReactSelect
+      options={options}
+      value={options.find(opt => opt.value === state.option.value)}
+      isMulti={state.isMulti.value}
+      components={{
+        Option: OptionComponent
+      }}
+      onChange={(newValue) => {
+        setState(prev => ({
+          ...prev,
+          option: {
+            ...prev.option,
+            value: newValue ? (Array.isArray(newValue) ? newValue[0]?.value : newValue.value) : ''
+          }
+        }));
+      }}
+      className="text-sm"
+      classNames={{
+        control: () => "border border-gray-300 rounded-md min-h-[36px]",
+        option: () => "p-2 hover:bg-gray-100 cursor-pointer",
+        menu: () => "bg-white border border-gray-300 mt-1 rounded-md shadow-lg",
+      }}
+    />
+  );
 }

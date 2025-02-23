@@ -1,8 +1,19 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../modules/settings/teams/new/create-new-team-view';
-
 import { WizardLayout } from '@calcom/ui';
+
+// Mock the useOrgBranding hook
+jest.mock('@calcom/features/ee/organizations/context/provider', () => ({
+  useOrgBranding: () => ({
+    theme: null,
+    logo: null,
+    brandColor: null,
+    darkBrandColor: null,
+    organizationName: "Test Organization",
+    isLoading: false,
+  }),
+}));
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({

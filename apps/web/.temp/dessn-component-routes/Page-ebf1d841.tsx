@@ -1,28 +1,53 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/teams/[id]/members/page';
 
+// Create mock components
+const MockLegacyPage = () => <div>Mock Legacy Page</div>;
+const MockSettingsHeader = ({ children }) => <div>Mock Settings Header {children}</div>;
+const MockI18nProvider = ({ children }) => <>{children}</>;
+const MockDialog = ({ children }) => <div className="mock-dialog">{children}</div>;
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  _generateMetadata: jest.fn(),
-  getTranslate: jest.fn(() => Promise.resolve((key) => key)),
-}));
+// Mock modules as direct imports
+const mockMetadata = {
+  _generateMetadata: () => ({}),
+  getTranslate: () => Promise.resolve((key) => key),
+};
 
-jest.mock('@calcom/features/ee/teams/pages/team-members-view', () => {
-  return function MockLegacyPage() {
-    return <div>Mock Legacy Page</div>;
-  };
-});
+// Create a mock UI object
+const mockUI = {
+  Dialog: MockDialog,
+  Button: ({ children }) => <button>{children}</button>,
+  showToast: () => {},
+};
 
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children }) {
-    return <div>Mock Settings Header {children}</div>;
-  };
-});
+// Mock the imported component
+const ImportedComponent = () => {
+  return (
+    <div>
+      <MockSettingsHeader>
+        <h1>Team Members</h1>
+      </MockSettingsHeader>
+      <MockLegacyPage />
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({});
 
-  return <ImportedComponent />;
+  return (
+    <MockI18nProvider>
+      <Suspense fallback={<div>Loading...</div>}>
+        <ImportedComponent />
+      </Suspense>
+    </MockI18nProvider>
+  );
 }
+
+// Export mocked modules for other components to use
+export const mockedModules = {
+  '@calcom/ui': mockUI,
+  '@calcom/features/i18n': { I18nProvider: MockI18nProvider },
+  '@calcom/ui/components/dialog/Dialog': { Dialog: MockDialog },
+  'app/_utils': mockMetadata,
+};

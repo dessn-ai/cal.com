@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParentState } from '../useIframeState';
 import { Timezone } from '../../../../packages/platform/atoms/timezone/index';
 
-
 export default function ComponentPreview() {
+  const [selectedTimezone, setSelectedTimezone] = useState("America/New_York");
   const [state, setState] = useParentState({
     variant: {
       type: "dropdown",
@@ -35,6 +35,8 @@ export default function ComponentPreview() {
       timezoneSelectCustomClassname={state.timezoneSelectCustomClassname.value}
       size={state.size.value}
       grow={state.grow.value}
+      value={selectedTimezone}
+      onChange={(timezone) => setSelectedTimezone(timezone)}
     />
   );
 }

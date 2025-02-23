@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { DatePicker } from '../../../../packages/features/bookings/Booker/components/DatePicker';
-
+import { AtomsWrapper } from '../../../../packages/platform/atoms/src/components/atoms-wrapper';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -63,11 +63,13 @@ export default function ComponentPreview() {
   };
 
   return (
-    <DatePicker
-      event={event}
-      schedule={schedule}
-      classNames={classNames}
-      scrollToTimeSlots={scrollToTimeSlots}
-    />
+    <AtomsWrapper>
+      <DatePicker
+        event={event}
+        schedule={schedule}
+        classNames={classNames}
+        scrollToTimeSlots={scrollToTimeSlots}
+      />
+    </AtomsWrapper>
   );
 }

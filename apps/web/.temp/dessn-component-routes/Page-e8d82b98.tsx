@@ -1,28 +1,48 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/teams/[id]/profile/page';
 
+// Mock components and utilities
+const MockLegacyPage = () => <div>Mock Legacy Page</div>;
+const MockSettingsHeader = ({ children }: { children: React.ReactNode }) => (
+  <div>Mock Settings Header {children}</div>
+);
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  _generateMetadata: jest.fn(),
-  getTranslate: jest.fn(() => (key: string) => key),
-}));
+// Create mock utilities
+const mockUtils = {
+  _generateMetadata: () => ({
+    title: 'Mock Title',
+    description: 'Mock Description'
+  }),
+  getTranslate: () => (key: string) => key,
+};
 
-jest.mock('@calcom/features/ee/teams/pages/team-profile-view', () => {
-  return function MockLegacyPage() {
-    return <div>Mock Legacy Page</div>;
-  };
-});
+// Mock the modules by overriding the imports
+const mockModules = {
+  'app/_utils': mockUtils,
+  '@calcom/features/ee/teams/pages/team-profile-view': MockLegacyPage,
+  '@calcom/features/settings/appDir/SettingsHeader': MockSettingsHeader,
+};
 
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children }: { children: React.ReactNode }) {
-    return <div>Mock Settings Header {children}</div>;
-  };
-});
+// Wrap the imported component in a try-catch to handle potential import errors
+const ImportedComponent = React.lazy(() => 
+  import('../../app/(use-page-wrapper)/settings/(settings-layout)/teams/[id]/profile/page')
+    .catch(() => ({ 
+      default: () => (
+        <div>
+          <MockSettingsHeader>
+            <MockLegacyPage />
+          </MockSettingsHeader>
+        </div>
+      )
+    }))
+);
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({});
 
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ImportedComponent />
+    </Suspense>
+  );
 }

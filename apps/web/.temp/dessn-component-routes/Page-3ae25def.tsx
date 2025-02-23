@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/organizations/dsync/page';
 
+// Wrap the import in a try-catch to handle potential import failures
+const ImportedComponent = React.lazy(() => import('../../app/(use-page-wrapper)/settings/(settings-layout)/organizations/dsync/page').catch(() => ({
+  default: () => <div>Failed to load component</div>
+})));
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({});
 
   // Mock the getTranslate function
-  const mockGetTranslate = async () => (key: string) => key;
+  const mockGetTranslate = () => (key: string) => key;
 
   // Mock the SettingsHeader component
   const MockSettingsHeader = ({ children }: { children: React.ReactNode }) => (
@@ -21,12 +24,41 @@ export default function ComponentPreview() {
   const MockDirectorySyncTeamView = () => <div>Mock Directory Sync Team View</div>;
 
   return (
-    <React.Suspense fallback={<div>Loading...</div>}>
-      <ImportedComponent
-        getTranslate={mockGetTranslate}
-        SettingsHeader={MockSettingsHeader}
-        DirectorySyncTeamView={MockDirectorySyncTeamView}
-      />
-    </React.Suspense>
+    <Suspense fallback={<div>Loading...</div>}>
+      <ErrorBoundary>
+        <ImportedComponent
+          getTranslate={mockGetTranslate}
+          SettingsHeader={MockSettingsHeader}
+          DirectorySyncTeamView={MockDirectorySyncTeamView}
+        />
+      </ErrorBoundary>
+    </Suspense>
   );
+}
+
+// Simple ErrorBoundary component
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: any, errorInfo: any) {
+    console.error('Error in component:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong loading the component.</div>;
+    }
+
+    return this.props.children;
+  }
 }

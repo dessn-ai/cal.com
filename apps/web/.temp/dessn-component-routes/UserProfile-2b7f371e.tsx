@@ -1,9 +1,18 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../components/getting-started/steps-views/UserProfile';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { FormProvider, useForm } from "react-hook-form";
 
-import { trpc } from "@calcom/trpc/react";
-import { useForm } from "react-hook-form";
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -28,7 +37,10 @@ export default function ComponentPreview() {
     },
   });
 
-  const mockTrpc = {
+  const methods = useForm();
+
+  // Create mock trpc context
+  const mockTrpcContext = {
     viewer: {
       me: {
         useSuspenseQuery: () => [JSON.parse(state.user.value)],
@@ -37,21 +49,21 @@ export default function ComponentPreview() {
         list: {
           useQuery: () => ({ data: JSON.parse(state.eventTypes.value) }),
         },
-      },
-      updateProfile: {
-        useMutation: () => ({
-          mutate: () => {},
-          isPending: false,
-        }),
-      },
-      eventTypes: {
         create: {
           useMutation: () => ({
-            mutate: () => {},
+            mutate: async () => {},
+            isLoading: false,
           }),
         },
       },
+      updateProfile: {
+        useMutation: () => ({
+          mutate: async () => {},
+          isPending: false,
+        }),
+      },
     },
+    useContext: () => mockTrpcContext,
     useUtils: () => ({
       viewer: {
         me: {
@@ -62,8 +74,12 @@ export default function ComponentPreview() {
   };
 
   return (
-    <trpc.Provider client={mockTrpc as any}>
-      <ImportedComponent />
-    </trpc.Provider>
+    <QueryClientProvider client={queryClient}>
+      <FormProvider {...methods}>
+        <div className="w-full">
+          <ImportedComponent />
+        </div>
+      </FormProvider>
+    </QueryClientProvider>
   );
 }

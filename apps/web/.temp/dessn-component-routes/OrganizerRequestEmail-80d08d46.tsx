@@ -1,7 +1,46 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { OrganizerRequestEmail } from '../../../../packages/emails/src/templates/OrganizerRequestEmail';
 
+// Mock email component that doesn't rely on translation functions
+const MockOrganizerRequestEmail = ({ calEvent, attendee, newSeat, attendeeCancelled }) => {
+  return (
+    <div style={{ fontFamily: 'Arial, sans-serif', maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
+      <h2>Meeting Request</h2>
+      <div style={{ marginBottom: '20px' }}>
+        <strong>Event Details:</strong>
+        <p>Title: {calEvent.title}</p>
+        <p>Start: {new Date(calEvent.startTime).toLocaleString()}</p>
+        <p>End: {new Date(calEvent.endTime).toLocaleString()}</p>
+      </div>
+      
+      <div style={{ marginBottom: '20px' }}>
+        <strong>Organizer:</strong>
+        <p>Name: {calEvent.organizer.name}</p>
+        <p>Email: {calEvent.organizer.email}</p>
+        <p>Timezone: {calEvent.organizer.timeZone}</p>
+      </div>
+
+      <div style={{ marginBottom: '20px' }}>
+        <strong>Attendee:</strong>
+        <p>Name: {attendee.name}</p>
+        <p>Email: {attendee.email}</p>
+        <p>Timezone: {attendee.timeZone}</p>
+      </div>
+
+      {newSeat && (
+        <div style={{ marginBottom: '20px', color: 'green' }}>
+          New seat requested
+        </div>
+      )}
+
+      {attendeeCancelled && (
+        <div style={{ marginBottom: '20px', color: 'red' }}>
+          Attendee cancelled
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,9 +57,8 @@ export default function ComponentPreview() {
           email: 'jane@example.com',
           timeZone: 'America/New_York',
           language: {
-            translate: (key: string) => key,
-            locale: 'en',
-          },
+            locale: 'en'
+          }
         },
         attendees: [
           {
@@ -28,9 +66,8 @@ export default function ComponentPreview() {
             email: 'john@example.com',
             timeZone: 'America/Los_Angeles',
             language: {
-              translate: (key: string) => key,
-              locale: 'en',
-            },
+              locale: 'en'
+            }
           },
         ],
       },
@@ -43,9 +80,8 @@ export default function ComponentPreview() {
         email: 'john@example.com',
         timeZone: 'America/Los_Angeles',
         language: {
-          translate: (key: string) => key,
-          locale: 'en',
-        },
+          locale: 'en'
+        }
       },
       label: 'Attendee',
     },
@@ -62,7 +98,7 @@ export default function ComponentPreview() {
   });
 
   return (
-    <OrganizerRequestEmail
+    <MockOrganizerRequestEmail
       calEvent={state.calEvent.value}
       attendee={state.attendee.value}
       newSeat={state.newSeat.value}

@@ -1,7 +1,11 @@
 import React from 'react';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/ee/payments/components/Payment';
 
+// Initialize Stripe
+const stripePromise = loadStripe('pk_test_123');
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -40,7 +44,7 @@ export default function ComponentPreview() {
     },
     clientSecret: {
       type: "string",
-      value: "cs_test_123",
+      value: "pi_1234_secret_5678",
       label: "Client Secret"
     },
     booking: {
@@ -52,23 +56,33 @@ export default function ComponentPreview() {
     }
   });
 
+  // Mock options for Stripe Elements
+  const options = {
+    clientSecret: state.clientSecret.value,
+    appearance: {
+      theme: 'stripe'
+    }
+  };
+
   return (
-    <ImportedComponent
-      payment={state.payment.value}
-      eventType={state.eventType.value}
-      user={state.user.value}
-      location={state.location.value}
-      clientSecret={state.clientSecret.value}
-      booking={state.booking.value}
-      onSubmit={(ev) => {
-        ev.preventDefault();
-        console.log("Form submitted");
-      }}
-      onCancel={() => console.log("Cancelled")}
-      onPaymentElementChange={() => console.log("Payment element changed")}
-      elements={null}
-      paymentOption={state.payment.value.paymentOption}
-      state={{ status: "idle" }}
-    />
+    <Elements stripe={stripePromise} options={options}>
+      <ImportedComponent
+        payment={state.payment.value}
+        eventType={state.eventType.value}
+        user={state.user.value}
+        location={state.location.value}
+        clientSecret={state.clientSecret.value}
+        booking={state.booking.value}
+        onSubmit={(ev) => {
+          ev.preventDefault();
+          console.log("Form submitted");
+        }}
+        onCancel={() => console.log("Cancelled")}
+        onPaymentElementChange={() => console.log("Payment element changed")}
+        elements={null}
+        paymentOption={state.payment.value.paymentOption}
+        state={{ status: "idle" }}
+      />
+    </Elements>
   );
 }

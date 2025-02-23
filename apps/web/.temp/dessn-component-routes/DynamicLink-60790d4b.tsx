@@ -2,16 +2,15 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { DynamicLink } from '../../../../packages/features/users/components/UserTable/BulkActions/DynamicLink';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     table: {
       type: 'object',
       value: {
-        getSelectedRowModel: () => ({
-          rows: [{ original: { username: 'user1' } }, { original: { username: 'user2' } }],
-          flatRows: [{ original: { username: 'user1' } }, { original: { username: 'user2' } }],
-        }),
+        selectedRows: [
+          { original: { username: 'user1' } },
+          { original: { username: 'user2' } }
+        ],
       },
       label: 'Table',
     },
@@ -24,7 +23,12 @@ export default function ComponentPreview() {
 
   return (
     <DynamicLink
-      table={state.table.value as any}
+      table={{
+        getSelectedRowModel: () => ({
+          rows: state.table.value.selectedRows,
+          flatRows: state.table.value.selectedRows,
+        }),
+      }}
       domain={state.domain.value}
     />
   );

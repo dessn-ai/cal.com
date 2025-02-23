@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParentState } from '../useIframeState';
 import { TimezoneSelectComponent } from '../../../../packages/ui/components/form/timezone-select/TimezoneSelect';
-
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -34,6 +33,9 @@ export default function ComponentPreview() {
     },
   });
 
+  // Initialize with a default timezone value
+  const [selectedTimezone, setSelectedTimezone] = useState({ value: "America/New_York", label: "New York" });
+
   const mockData = [
     { label: "New York", timezone: "America/New_York" },
     { label: "London", timezone: "Europe/London" },
@@ -48,6 +50,8 @@ export default function ComponentPreview() {
       grow={state.grow.value}
       timezoneSelectCustomClassname={state.timezoneSelectCustomClassname.value}
       data={mockData}
+      value={selectedTimezone}
+      onChange={(timezone) => setSelectedTimezone(timezone)}
     />
   );
 }

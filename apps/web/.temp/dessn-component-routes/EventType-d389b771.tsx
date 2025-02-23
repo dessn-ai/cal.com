@@ -1,8 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { EventType } from '../../../../packages/features/eventtypes/components/EventType';
-
-import { useForm } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -13,22 +12,47 @@ export default function ComponentPreview() {
         title: "Sample Event Type",
         slug: "sample-event",
         bookerUrl: "https://example.com/book",
+        length: 30,
+        description: "Sample description",
+        schedulingType: "ROUND_ROBIN",
+        locations: [{ type: "integrations:daily" }],
+        customInputs: [],
+        schedule: null,
+        periodType: "UNLIMITED",
+        hidden: false,
+        hideCalendarNotes: false,
+        requiresConfirmation: false,
+        disableGuests: false,
+        metadata: {},
+        seatsPerTimeSlot: null,
+        users: [{ id: 1, name: "Test User", email: "test@example.com" }],
+        price: 0,
+        currency: "USD",
+        owner: { id: 1, name: "Test User", email: "test@example.com" },
       },
       label: "Event Type",
     },
     team: {
       type: "object",
-      value: null,
+      value: {
+        id: 1,
+        name: "Test Team",
+        slug: "test-team",
+        members: []
+      },
       label: "Team",
     },
     currentUserMembership: {
       type: "object",
-      value: null,
+      value: {
+        role: "OWNER",
+        accepted: true
+      },
       label: "Current User Membership",
     },
     isUserOrganizationAdmin: {
       type: "boolean",
-      value: false,
+      value: true,
       label: "Is User Organization Admin",
     },
     isUpdating: {
@@ -58,7 +82,11 @@ export default function ComponentPreview() {
     },
   });
 
-  const formMethods = useForm<any>();
+  const formMethods = useForm({
+    defaultValues: {
+      ...state.eventType.value,
+    }
+  });
 
   const mockTabMap = {
     setup: <div>Setup Tab Content</div>,
@@ -68,28 +96,30 @@ export default function ComponentPreview() {
   };
 
   const mockTabsNavigation = [
-    { name: "Setup", href: "#setup" },
-    { name: "Availability", href: "#availability" },
-    { name: "Limits", href: "#limits" },
-    { name: "Advanced", href: "#advanced" },
+    { name: "setup", href: "#setup", info: "Setup info" },
+    { name: "availability", href: "#availability", info: "Availability info" },
+    { name: "limits", href: "#limits", info: "Limits info" },
+    { name: "advanced", href: "#advanced", info: "Advanced info" },
   ];
 
   return (
-    <EventType
-      formMethods={formMethods}
-      isPlatform={state.isPlatform.value}
-      tabName={state.tabName.value}
-      eventType={state.eventType.value}
-      team={state.team.value}
-      currentUserMembership={state.currentUserMembership.value}
-      tabMap={mockTabMap}
-      isUpdating={state.isUpdating.value}
-      isUserOrganizationAdmin={state.isUserOrganizationAdmin.value}
-      onDelete={() => {}}
-      isDeleting={state.isDeleting.value}
-      tabsNavigation={mockTabsNavigation}
-      handleSubmit={() => {}}
-      allowDelete={state.allowDelete.value}
-    />
+    <FormProvider {...formMethods}>
+      <EventType
+        formMethods={formMethods}
+        isPlatform={state.isPlatform.value}
+        tabName={state.tabName.value}
+        eventType={state.eventType.value}
+        team={state.team.value}
+        currentUserMembership={state.currentUserMembership.value}
+        tabMap={mockTabMap}
+        isUpdating={state.isUpdating.value}
+        isUserOrganizationAdmin={state.isUserOrganizationAdmin.value}
+        onDelete={() => console.log('Delete clicked')}
+        isDeleting={state.isDeleting.value}
+        tabsNavigation={mockTabsNavigation}
+        handleSubmit={() => console.log('Submit clicked')}
+        allowDelete={state.allowDelete.value}
+      />
+    </FormProvider>
   );
 }

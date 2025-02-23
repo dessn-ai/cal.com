@@ -1,8 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/webhooks/components/WebhookTestDisclosure';
-
-import { useForm } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -32,8 +31,10 @@ export default function ComponentPreview() {
   });
 
   return (
-    <form>
-      <ImportedComponent />
-    </form>
+    <FormProvider {...methods}>
+      <form>
+        <ImportedComponent />
+      </form>
+    </FormProvider>
   );
 }

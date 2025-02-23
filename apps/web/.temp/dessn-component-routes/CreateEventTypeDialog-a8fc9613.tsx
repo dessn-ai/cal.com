@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/eventtypes/components/CreateEventTypeDialog';
-
+import { OrgBrandingProvider } from '@calcom/features/ee/organizations/context/provider';
 import { MembershipRole } from '@calcom/prisma/enums';
 
 export default function ComponentPreview() {
@@ -34,5 +34,24 @@ export default function ComponentPreview() {
 
   const profileOptions = JSON.parse(state.profileOptions.value);
 
-  return <ImportedComponent profileOptions={profileOptions} />;
+  // Mock data matching the exact OrganizationBranding type
+  const mockOrgBrand = {
+    id: 1,
+    name: 'Test Organization',
+    slug: 'test-org',
+    logoUrl: null,
+    fullDomain: 'test-org.cal.com',
+    domainSuffix: 'cal.com',
+    role: MembershipRole.OWNER,
+    theme: null,
+    brandColor: '#292929',
+    darkBrandColor: '#fafafa',
+    backgroundImage: null,
+  };
+
+  return (
+    <OrgBrandingProvider value={{ orgBrand: mockOrgBrand }}>
+      <ImportedComponent profileOptions={profileOptions} />
+    </OrgBrandingProvider>
+  );
 }

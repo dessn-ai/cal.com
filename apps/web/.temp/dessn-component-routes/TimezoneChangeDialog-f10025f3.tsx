@@ -1,20 +1,23 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/settings/TimezoneChangeDialog';
-
 import { SessionProvider } from 'next-auth/react';
-import { trpc } from '@calcom/trpc/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { httpBatchLink } from '@trpc/client';
 
-const queryClient = new QueryClient();
-const trpcClient = trpc.createClient({
-  links: [
-    httpBatchLink({
-      url: '/api/trpc',
-    }),
-  ],
+// Create a new QueryClient instance
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
 });
+
+// Mock TRPC Provider to avoid API calls
+const MockTRPCProvider = ({ children }) => {
+  return children;
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -26,12 +29,26 @@ export default function ComponentPreview() {
   });
 
   return (
-    <SessionProvider session={null}>
-      <trpc.Provider client={trpcClient} queryClient={queryClient}>
-        <QueryClientProvider client={queryClient}>
-          {state.showDialog.value && <ImportedComponent />}
-        </QueryClientProvider>
-      </trpc.Provider>
-    </SessionProvider>
+    <div className="preview-container">
+      <SessionProvider session={null}>
+        <MockTRPCProvider>
+          <QueryClientProvider client={queryClient}>
+            {state.showDialog.value && (
+              <React.Suspense fallback={<div>Loading...</div>}>
+                <ImportedComponent 
+                  onClose={() => setState(prev => ({
+                    ...prev,
+                    showDialog: {
+                      ...prev.showDialog,
+                      value: false
+                    }
+                  }))}
+                />
+              </React.Suspense>
+            )}
+          </QueryClientProvider>
+        </MockTRPCProvider>
+      </SessionProvider>
+    </div>
   );
 }

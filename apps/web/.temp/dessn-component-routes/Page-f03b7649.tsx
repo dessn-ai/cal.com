@@ -1,24 +1,79 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/my-account/calendars/page';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { I18nextProvider } from 'react-i18next';
+import i18next from 'i18next';
 
+// Initialize i18next
+const i18n = i18next.createInstance();
+i18n.init({
+  lng: 'en',
+  resources: {},
+  fallbackLng: 'en',
+});
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+// Create an error boundary component
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong.</div>;
+    }
+
+    return this.props.children;
+  }
+}
+
+const LazyComponent = React.lazy(() => import('../../app/(use-page-wrapper)/settings/(settings-layout)/my-account/calendars/page'));
 
 export default function ComponentPreview() {
-  const [state, setState] = useParentState({
-    // Since this component doesn't have props, we don't need to define any state
-  });
+  const [state, setState] = useParentState({});
 
   // Mock the necessary functions and components
-  const mockGetTranslate = async () => (key: string) => key;
-  const mockButton = ({ children }: { children: React.ReactNode }) => <button>{children}</button>;
-  const mockCalendarListContainer = () => <div>Calendar List Container</div>;
-  const mockSettingsHeader = ({ children }: { children: React.ReactNode }) => <div>{children}</div>;
+  React.useEffect(() => {
+    try {
+      // Mock the necessary imports and global functions
+      (global as any).getTranslate = async () => (key: string) => key;
+      (global as any).Button = ({ children }: { children: React.ReactNode }) => <button>{children}</button>;
+      (global as any).CalendarListContainer = () => <div>Calendar List Container</div>;
+      (global as any).SettingsHeader = ({ children }: { children: React.ReactNode }) => <div>{children}</div>;
+    } catch (error) {
+      console.error('Error setting up mocks:', error);
+    }
+  }, []);
 
-  // Mock the necessary imports
-  (global as any).getTranslate = mockGetTranslate;
-  (global as any).Button = mockButton;
-  (global as any).CalendarListContainer = mockCalendarListContainer;
-  (global as any).SettingsHeader = mockSettingsHeader;
-
-  return <ImportedComponent />;
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<div>Loading...</div>}>
+        <QueryClientProvider client={queryClient}>
+          <I18nextProvider i18n={i18n}>
+            <div className="w-full">
+              <LazyComponent />
+            </div>
+          </I18nextProvider>
+        </QueryClientProvider>
+      </Suspense>
+    </ErrorBoundary>
+  );
 }

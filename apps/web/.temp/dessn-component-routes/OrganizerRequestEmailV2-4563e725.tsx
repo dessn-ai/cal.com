@@ -2,7 +2,28 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { OrganizerRequestEmailV2 } from '../../../../packages/emails/src/templates/OrganizerRequestEmailV2';
 
-import { TimeFormat } from '../../../../packages/emails/src/templates/OrganizerRequestEmailV2';
+// Define TimeFormat enum locally
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
+
+// Mock translations object
+const mockTranslations = {
+  "someone_requested_an_event": "Someone requested an event",
+  "confirm": "Confirm",
+  "reject": "Reject",
+  "event_awaiting_approval": "Event Awaiting Approval",
+  "event_awaiting_approval_recurring": "Recurring Event Awaiting Approval",
+  "event_awaiting_approval_subject": "Event Awaiting Approval"
+};
+
+// Create a serializable language object
+const createLanguageObject = () => ({
+  locale: 'en',
+  // Instead of a function, use an object with translations
+  translate: mockTranslations,
+});
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -17,20 +38,15 @@ export default function ComponentPreview() {
           name: 'Jane Smith',
           email: 'jane@example.com',
           timeZone: 'America/New_York',
-          language: {
-            translate: (key: string) => key,
-            locale: 'en',
-          },
+          language: createLanguageObject(),
+          id: '123', // Added required id field
         },
         attendees: [
           {
             name: 'John Doe',
             email: 'john@example.com',
             timeZone: 'America/Los_Angeles',
-            language: {
-              translate: (key: string) => key,
-              locale: 'en',
-            },
+            language: createLanguageObject(),
           },
         ],
         uid: '123456',
@@ -44,10 +60,7 @@ export default function ComponentPreview() {
         name: 'John Doe',
         email: 'john@example.com',
         timeZone: 'America/Los_Angeles',
-        language: {
-          translate: (key: string) => key,
-          locale: 'en',
-        },
+        language: createLanguageObject(),
       },
       label: 'Attendee',
     },
@@ -84,10 +97,37 @@ export default function ComponentPreview() {
     },
   });
 
+  // Override the translate function after state is managed
+  const calEventWithTranslate = {
+    ...state.calEvent.value,
+    organizer: {
+      ...state.calEvent.value.organizer,
+      language: {
+        ...state.calEvent.value.organizer.language,
+        translate: (key: string) => mockTranslations[key as keyof typeof mockTranslations] || key,
+      },
+    },
+    attendees: state.calEvent.value.attendees.map(attendee => ({
+      ...attendee,
+      language: {
+        ...attendee.language,
+        translate: (key: string) => mockTranslations[key as keyof typeof mockTranslations] || key,
+      },
+    })),
+  };
+
+  const attendeeWithTranslate = {
+    ...state.attendee.value,
+    language: {
+      ...state.attendee.value.language,
+      translate: (key: string) => mockTranslations[key as keyof typeof mockTranslations] || key,
+    },
+  };
+
   return (
     <OrganizerRequestEmailV2
-      calEvent={state.calEvent.value}
-      attendee={state.attendee.value}
+      calEvent={calEventWithTranslate}
+      attendee={attendeeWithTranslate}
       newSeat={state.newSeat.value}
       attendeeCancelled={state.attendeeCancelled.value}
       timeZone={state.timeZone.value}

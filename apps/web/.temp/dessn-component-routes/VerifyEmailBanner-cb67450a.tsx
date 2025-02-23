@@ -2,7 +2,7 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/users/components/VerifyEmailBanner';
 
-import { FlagProvider } from '../../../../packages/features/flags/context/provider';
+import { FeatureProvider } from '../../../../packages/features/flags/context/provider';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -13,9 +13,10 @@ export default function ComponentPreview() {
     },
   });
 
+  // Provide an empty flags object as value
   return (
-    <FlagProvider>
+    <FeatureProvider value={{}}>
       <ImportedComponent data={state.data.value} />
-    </FlagProvider>
+    </FeatureProvider>
   );
 }

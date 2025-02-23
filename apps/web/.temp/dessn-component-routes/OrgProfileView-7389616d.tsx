@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/ee/organizations/pages/settings/profile';
-
+import { OrgBrandingProvider } from '../../../../packages/features/ee/organizations/context/provider';
 import { useForm } from 'react-hook-form';
 
 export default function ComponentPreview() {
@@ -49,5 +49,22 @@ export default function ComponentPreview() {
     },
   });
 
-  return <ImportedComponent />;
+  const mockOrgBrand = {
+    orgBrand: {
+      id: 1,
+      name: state.name.value,
+      slug: state.slug.value,
+      logoUrl: state.logoUrl.value,
+      fullDomain: `https://${state.slug.value}.cal.com`,
+      domainSuffix: "cal.com",
+      role: "OWNER",
+      metadata: {},
+    }
+  };
+
+  return (
+    <OrgBrandingProvider value={mockOrgBrand}>
+      <ImportedComponent />
+    </OrgBrandingProvider>
+  );
 }

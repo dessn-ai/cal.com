@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/hubspot/components/EventTypeAppCardInterface';
-
+import EventTypeAppContext from "@calcom/app-store/EventTypeAppContext";
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -27,13 +27,20 @@ export default function ComponentPreview() {
         name: "Hubspot",
         description: "Hubspot integration",
         logo: "https://example.com/hubspot-logo.png",
+        categories: ["crm", "marketing"],
         category: "crm",
         url: "https://www.hubspot.com",
         credentialOwner: {
           name: "John Doe",
-          avatar: "https://example.com/avatar.png"
+          avatar: "https://example.com/avatar.png",
+          credentialId: 1
         },
-        credentialIds: [1, 2, 3]
+        userCredentialIds: [1, 2, 3],
+        credentialIds: [1, 2, 3],
+        slug: "hubspot",
+        isInstalled: true,
+        enabled: true,
+        isSetupAlready: true
       },
       label: "App"
     },
@@ -44,11 +51,27 @@ export default function ComponentPreview() {
     }
   });
 
+  // Mock data for EventTypeAppContext
+  const contextValue = {
+    appData: {
+      enabled: true,
+      credentialId: 1
+    },
+    setAppData: () => {},
+    getAppData: (key: string) => {
+      if (key === "enabled") return true;
+      if (key === "credentialId") return 1;
+      return undefined;
+    }
+  };
+
   return (
-    <ImportedComponent
-      eventType={state.eventType.value}
-      app={state.app.value}
-      disabled={state.disabled.value}
-    />
+    <EventTypeAppContext.Provider value={contextValue}>
+      <ImportedComponent
+        eventType={state.eventType.value}
+        app={state.app.value}
+        disabled={state.disabled.value}
+      />
+    </EventTypeAppContext.Provider>
   );
 }

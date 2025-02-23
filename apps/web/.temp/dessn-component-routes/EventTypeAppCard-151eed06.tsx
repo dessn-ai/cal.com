@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/umami/components/EventTypeAppCardInterface';
-
+import EventTypeAppContext from "@calcom/app-store/EventTypeAppContext";
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -30,7 +30,12 @@ export default function ComponentPreview() {
         category: "analytics",
         url: "https://umami.is",
         credentialOwner: null,
-        credentialIds: []
+        credentialIds: [],
+        categories: ["analytics"],
+        slug: "umami",
+        enabled: true,
+        isInstalled: true,
+        isSetupAlready: true
       },
       label: "App"
     },
@@ -41,11 +46,21 @@ export default function ComponentPreview() {
     }
   });
 
+  // Mock the context values
+  const mockContextValue = {
+    getAppData: (key: string) => "",
+    setAppData: (key: string, value: any) => {},
+    disabled: false,
+    LockedIcon: null,
+  };
+
   return (
-    <ImportedComponent
-      eventType={state.eventType.value}
-      app={state.app.value}
-      disabled={state.disabled.value}
-    />
+    <EventTypeAppContext.Provider value={mockContextValue}>
+      <ImportedComponent
+        eventType={state.eventType.value}
+        app={state.app.value}
+        disabled={state.disabled.value}
+      />
+    </EventTypeAppContext.Provider>
   );
 }

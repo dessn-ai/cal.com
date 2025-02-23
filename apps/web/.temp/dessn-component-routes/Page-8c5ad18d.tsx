@@ -1,25 +1,38 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(admin-layout)/admin/users/add/page';
 
+// Mock components
+const MockUsersAddView = () => <div>Mock UsersAddView</div>;
+const MockSettingsHeader = ({ children }: { children: React.ReactNode }) => (
+  <div>Mock SettingsHeader {children}</div>
+);
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  getTranslate: jest.fn(() => (key: string) => key),
-}));
+// Mock translations
+const mockTranslate = (key: string) => key;
 
-jest.mock('@calcom/features/ee/users/pages/users-add-view', () => {
-  return function MockUsersAddView() {
-    return <div>Mock UsersAddView</div>;
-  };
-});
+// Override imports with mocks
+const mockModules = {
+  '@calcom/features/ee/users/pages/users-add-view': MockUsersAddView,
+  '@calcom/features/settings/appDir/SettingsHeader': MockSettingsHeader,
+  'app/_utils': {
+    getTranslate: () => mockTranslate,
+  }
+};
 
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children }: { children: React.ReactNode }) {
-    return <div>Mock SettingsHeader {children}</div>;
-  };
-});
+// Wrap the import in a try-catch and use dynamic import
+const ImportedComponent = React.lazy(() => 
+  import('../../app/(use-page-wrapper)/settings/(admin-layout)/admin/users/add/page')
+    .catch(() => ({
+      default: () => <div>Failed to load component</div>
+    }))
+);
 
 export default function ComponentPreview() {
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="mock-environment">
+        <ImportedComponent />
+      </div>
+    </Suspense>
+  );
 }

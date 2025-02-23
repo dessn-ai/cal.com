@@ -1,8 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/ee/workflows/components/WorkflowDetailsPage';
-
-import { useForm } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -59,16 +58,18 @@ export default function ComponentPreview() {
   ];
 
   return (
-    <ImportedComponent
-      form={form}
-      workflowId={state.workflowId.value}
-      selectedOptions={JSON.parse(state.selectedOptions.value)}
-      setSelectedOptions={() => {}}
-      teamId={state.teamId.value}
-      user={user}
-      readOnly={state.readOnly.value}
-      isOrg={state.isOrg.value}
-      allOptions={allOptions}
-    />
+    <FormProvider {...form}>
+      <ImportedComponent
+        form={form}
+        workflowId={state.workflowId.value}
+        selectedOptions={JSON.parse(state.selectedOptions.value)}
+        setSelectedOptions={() => {}}
+        teamId={state.teamId.value}
+        user={user}
+        readOnly={state.readOnly.value}
+        isOrg={state.isOrg.value}
+        allOptions={allOptions}
+      />
+    </FormProvider>
   );
 }

@@ -2,8 +2,10 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { OrganizerReassignedEmail } from '../../../../packages/emails/src/templates/OrganizerReassignedEmail';
 
-
 export default function ComponentPreview() {
+  // Create a translate function that will be used consistently
+  const translate = (key: string) => key;
+
   const [state, setState] = useParentState({
     calEvent: {
       type: 'string',
@@ -17,7 +19,6 @@ export default function ComponentPreview() {
           email: 'john@example.com',
           timeZone: 'America/New_York',
           language: {
-            translate: (key: string) => key,
             locale: 'en',
           },
         },
@@ -27,7 +28,6 @@ export default function ComponentPreview() {
             email: 'jane@example.com',
             timeZone: 'America/Los_Angeles',
             language: {
-              translate: (key: string) => key,
               locale: 'en',
             },
           },
@@ -42,7 +42,6 @@ export default function ComponentPreview() {
         email: 'jane@example.com',
         timeZone: 'America/Los_Angeles',
         language: {
-          translate: (key: string) => key,
           locale: 'en',
         },
       }),
@@ -65,7 +64,6 @@ export default function ComponentPreview() {
         email: 'team@example.com',
         timeZone: 'Europe/London',
         language: {
-          translate: (key: string) => key,
           locale: 'en',
         },
       }),
@@ -83,14 +81,45 @@ export default function ComponentPreview() {
     },
   });
 
+  const parsedCalEvent = JSON.parse(state.calEvent.value);
+  const parsedAttendee = JSON.parse(state.attendee.value);
+  const parsedTeamMember = JSON.parse(state.teamMember.value);
+  const parsedReassigned = JSON.parse(state.reassigned.value);
+
+  // Add translate function to the required objects
+  parsedCalEvent.organizer.language.translate = translate;
+  parsedAttendee.language.translate = translate;
+  parsedTeamMember.language.translate = translate;
+
   return (
     <OrganizerReassignedEmail
-      calEvent={JSON.parse(state.calEvent.value)}
-      attendee={JSON.parse(state.attendee.value)}
+      calEvent={{
+        ...parsedCalEvent,
+        organizer: {
+          ...parsedCalEvent.organizer,
+          language: {
+            ...parsedCalEvent.organizer.language,
+            translate,
+          },
+        },
+      }}
+      attendee={{
+        ...parsedAttendee,
+        language: {
+          ...parsedAttendee.language,
+          translate,
+        },
+      }}
       newSeat={state.newSeat.value}
       attendeeCancelled={state.attendeeCancelled.value}
-      teamMember={JSON.parse(state.teamMember.value)}
-      reassigned={JSON.parse(state.reassigned.value)}
+      teamMember={{
+        ...parsedTeamMember,
+        language: {
+          ...parsedTeamMember.language,
+          translate,
+        },
+      }}
+      reassigned={parsedReassigned}
     />
   );
 }

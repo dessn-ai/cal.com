@@ -1,8 +1,34 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/ee/teams/components/MakeTeamPrivateSwitch';
-
 import { trpc } from '@calcom/trpc/react';
+
+// Create a mock TRPC provider component
+const MockTRPCProvider = ({ children }) => {
+  const mockTrpcValue = {
+    viewer: {
+      teams: {
+        update: {
+          useMutation: () => ({
+            mutate: async () => {},
+            isPending: false
+          })
+        }
+      }
+    }
+  };
+
+  // Override the trpc hooks that the component uses
+  const originalUseContext = React.useContext;
+  React.useContext = (context) => {
+    if (context === trpc.context) {
+      return mockTrpcValue;
+    }
+    return originalUseContext(context);
+  };
+
+  return children;
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -28,36 +54,28 @@ export default function ComponentPreview() {
     },
   });
 
-  const mockTrpc = {
-    useUtils: () => ({
-      viewer: {
-        teams: {
-          get: {
-            invalidate: async () => {},
-          },
-        },
-      },
-    }),
+  // Create mock functions that the component might need
+  const mockUtils = {
     viewer: {
       teams: {
-        update: {
-          useMutation: () => ({
-            mutate: () => {},
-            isPending: false,
-          }),
-        },
-      },
-    },
+        get: {
+          invalidate: async () => {}
+        }
+      }
+    }
   };
 
+  // Override trpc.useUtils
+  trpc.useUtils = () => mockUtils;
+
   return (
-    <trpc.Provider client={mockTrpc as any}>
+    <MockTRPCProvider>
       <ImportedComponent
         teamId={state.teamId.value}
         isPrivate={state.isPrivate.value}
         disabled={state.disabled.value}
         isOrg={state.isOrg.value}
       />
-    </trpc.Provider>
+    </MockTRPCProvider>
   );
 }

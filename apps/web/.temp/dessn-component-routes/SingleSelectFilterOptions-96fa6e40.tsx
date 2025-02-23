@@ -1,8 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParentState } from '../useIframeState';
-import { SingleSelectFilterOptions } from '../../../../packages/features/data-table/components/filters/SingleSelectFilterOptions';
-
 import { ColumnFilterType } from '../../../../packages/features/data-table/lib/types';
+
+// Create a simplified version of SingleSelectFilterOptions
+const SimplifiedSingleSelectFilterOptions = ({ column }) => {
+  const [selectedValue, setSelectedValue] = useState(null);
+
+  const handleOptionSelect = (value) => {
+    setSelectedValue(value);
+  };
+
+  return (
+    <div className="flex flex-col space-y-2 p-2">
+      {column.options.map((option) => (
+        <button
+          key={option.value}
+          className={`px-3 py-2 text-sm rounded ${
+            selectedValue === option.value 
+              ? 'bg-gray-200 text-gray-900' 
+              : 'hover:bg-gray-100'
+          }`}
+          onClick={() => handleOptionSelect(option.value)}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -36,5 +61,5 @@ export default function ComponentPreview() {
     ],
   };
 
-  return <SingleSelectFilterOptions column={column} />;
+  return <SimplifiedSingleSelectFilterOptions column={column} />;
 }

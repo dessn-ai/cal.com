@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../modules/d/[link]/d-type-view';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     slug: {
@@ -45,7 +44,7 @@ export default function ComponentPreview() {
   // Mock objects for complex props
   const mockBooking = {};
   const mockEntity = {};
-  const mockDurationConfig = {};
+  const mockDurationConfig = [15, 30, 45, 60]; // Changed to array of common duration values
 
   return (
     <ImportedComponent

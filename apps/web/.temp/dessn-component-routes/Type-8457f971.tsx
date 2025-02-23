@@ -1,7 +1,21 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../pages/[user]/[type]/embed';
 
+// Lazy load the component with error handling
+const ImportedComponent = React.lazy(() => {
+  return import('../../pages/[user]/[type]/embed')
+    .catch(error => {
+      console.error('Failed to load component:', error);
+      return {
+        default: () => (
+          <div className="error-boundary">
+            <h2>Failed to load the component</h2>
+            <p>Please check your network connection and try again.</p>
+          </div>
+        )
+      };
+    });
+});
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -83,18 +97,22 @@ export default function ComponentPreview() {
   };
 
   return (
-    <ImportedComponent
-      eventData={state.eventData.value}
-      rescheduleUid={state.rescheduleUid.value}
-      bookingUid={state.bookingUid.value}
-      user={state.user.value}
-      slug={state.slug.value}
-      trpcState={mockTrpcState}
-      isBrandingHidden={state.isBrandingHidden.value}
-      isSEOIndexable={state.isSEOIndexable.value}
-      themeBasis={state.themeBasis.value}
-      orgBannerUrl={state.orgBannerUrl.value}
-      isEmbed={state.isEmbed.value}
-    />
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="preview-container">
+        <ImportedComponent
+          eventData={state.eventData.value}
+          rescheduleUid={state.rescheduleUid.value}
+          bookingUid={state.bookingUid.value}
+          user={state.user.value}
+          slug={state.slug.value}
+          trpcState={mockTrpcState}
+          isBrandingHidden={state.isBrandingHidden.value}
+          isSEOIndexable={state.isSEOIndexable.value}
+          themeBasis={state.themeBasis.value}
+          orgBannerUrl={state.orgBannerUrl.value}
+          isEmbed={state.isEmbed.value}
+        />
+      </div>
+    </Suspense>
   );
 }

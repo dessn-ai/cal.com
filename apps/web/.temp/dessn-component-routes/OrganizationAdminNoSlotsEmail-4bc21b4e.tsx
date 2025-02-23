@@ -2,13 +2,12 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { OrganizationAdminNoSlotsEmail } from '../../../../packages/emails/src/templates/OrganizationAdminNoSlots';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     language: {
       type: "string",
-      value: (key: string, options?: any) => key,
-      label: "Language Function",
+      value: "en",
+      label: "Language",
     },
     to: {
       type: "string",
@@ -47,9 +46,12 @@ export default function ComponentPreview() {
     },
   });
 
+  // Create a simple translation function that returns the key
+  const t = (key: string) => key;
+
   return (
     <OrganizationAdminNoSlotsEmail
-      language={state.language.value}
+      language={t}
       to={{ email: state.to.value }}
       user={state.user.value}
       slug={state.slug.value}

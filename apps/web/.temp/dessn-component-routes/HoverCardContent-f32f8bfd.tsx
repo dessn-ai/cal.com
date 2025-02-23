@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { HoverCardContent } from '../../../../packages/ui/components/hover-card/index';
-
+import { HoverCard, HoverCardTrigger, HoverCardContent } from '../../../../packages/ui/components/hover-card/index';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -24,12 +23,17 @@ export default function ComponentPreview() {
   });
 
   return (
-    <HoverCardContent
-      align={state.align.value as "start" | "center" | "end"}
-      sideOffset={state.sideOffset.value}
-      className={state.className.value}
-    >
-      This is the content of the HoverCard
-    </HoverCardContent>
+    <HoverCard>
+      <HoverCardTrigger asChild>
+        <button>Hover over me</button>
+      </HoverCardTrigger>
+      <HoverCardContent
+        align={state.align.value as "start" | "center" | "end"}
+        sideOffset={state.sideOffset.value}
+        className={state.className.value}
+      >
+        This is the content of the HoverCard
+      </HoverCardContent>
+    </HoverCard>
   );
 }

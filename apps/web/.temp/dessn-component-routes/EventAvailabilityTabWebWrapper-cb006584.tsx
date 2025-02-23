@@ -1,9 +1,13 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/platform/atoms/event-types/wrappers/EventAvailabilityTabWebWrapper';
-
 import { FormProvider, useForm } from 'react-hook-form';
-import { TRPCProvider } from '@calcom/trpc/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+// Mock TRPC Provider component
+const MockTRPCProvider = ({ children }) => {
+  return children;
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -47,16 +51,29 @@ export default function ComponentPreview() {
     },
   });
 
+  // Initialize QueryClient
+  const [queryClient] = React.useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        cacheTime: 0,
+        staleTime: 0,
+      },
+    },
+  }));
+
   return (
-    <TRPCProvider>
-      <FormProvider {...formMethods}>
-        <ImportedComponent
-          eventType={JSON.parse(state.eventType.value)}
-          isTeamEvent={state.isTeamEvent.value}
-          user={JSON.parse(state.user.value)}
-          teamMembers={JSON.parse(state.teamMembers.value)}
-        />
-      </FormProvider>
-    </TRPCProvider>
+    <QueryClientProvider client={queryClient}>
+      <MockTRPCProvider>
+        <FormProvider {...formMethods}>
+          <ImportedComponent
+            eventType={JSON.parse(state.eventType.value)}
+            isTeamEvent={state.isTeamEvent.value}
+            user={JSON.parse(state.user.value)}
+            teamMembers={JSON.parse(state.teamMembers.value)}
+          />
+        </FormProvider>
+      </MockTRPCProvider>
+    </QueryClientProvider>
   );
 }

@@ -2,8 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { AvailabilityEditSheetForm } from '../../../../packages/features/timezone-buddy/components/AvailabilityEditSheet';
 
-import { useForm } from 'react-hook-form';
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     open: {
@@ -27,12 +25,25 @@ export default function ComponentPreview() {
     id: 1,
     name: "Default Schedule",
     timeZone: "America/New_York",
-    availability: [],
+    availability: [
+      [], // Sunday
+      [{ start: new Date("2024-01-01T09:00:00"), end: new Date("2024-01-01T17:00:00") }], // Monday
+      [{ start: new Date("2024-01-01T09:00:00"), end: new Date("2024-01-01T17:00:00") }], // Tuesday
+      [{ start: new Date("2024-01-01T09:00:00"), end: new Date("2024-01-01T17:00:00") }], // Wednesday
+      [{ start: new Date("2024-01-01T09:00:00"), end: new Date("2024-01-01T17:00:00") }], // Thursday
+      [{ start: new Date("2024-01-01T09:00:00"), end: new Date("2024-01-01T17:00:00") }], // Friday
+      [], // Saturday
+    ],
     dateOverrides: [],
-    workingHours: [],
-    schedule: {},
-    isDefault: true,
+    workingHours: [
+      {
+        days: [1, 2, 3, 4, 5], // Monday to Friday
+        startTime: "09:00:00",
+        endTime: "17:00:00",
+      }
+    ],
     hasDefaultSchedule: true,
+    isDefault: true,
     isManaged: false,
     readOnly: false,
     isLastSchedule: false,

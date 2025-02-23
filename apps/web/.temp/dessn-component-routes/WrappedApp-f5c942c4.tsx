@@ -2,9 +2,35 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../components/apps/App';
 
-import LicenseRequired from "@calcom/features/ee/common/components/LicenseRequired";
-import Shell from "@calcom/features/shell/Shell";
-import { useLocale } from "@calcom/lib/hooks/useLocale";
+// Mock implementation of useLocale
+const useLocale = () => ({
+  t: (key: string) => key,
+});
+
+// Mock Shell component
+const Shell = ({ 
+  children, 
+  smallHeading, 
+  isPublic, 
+  heading, 
+  backPath, 
+  withoutSeo 
+}: { 
+  children: React.ReactNode;
+  smallHeading?: boolean;
+  isPublic?: boolean;
+  heading?: React.ReactNode;
+  backPath?: string;
+  withoutSeo?: boolean;
+}) => (
+  <div className="shell-container">
+    {heading}
+    {children}
+  </div>
+);
+
+// Mock LicenseRequired component
+const LicenseRequired = ({ children }: { children: React.ReactNode }) => <>{children}</>;
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({

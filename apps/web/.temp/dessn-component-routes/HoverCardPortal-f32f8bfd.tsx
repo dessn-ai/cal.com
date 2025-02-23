@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { HoverCardPortal } from '../../../../packages/ui/components/hover-card/index';
-
+import { HoverCard, HoverCardTrigger, HoverCardContent, HoverCardPortal } from '../../../../packages/ui/components/hover-card/index';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -24,13 +23,19 @@ export default function ComponentPreview() {
   });
 
   return (
-    <HoverCardPortal
-      className={state.className.value}
-      align={state.align.value}
-      sideOffset={state.sideOffset.value}
-    >
-      {/* HoverCardPortal doesn't accept children directly, so we're just rendering it */}
-      <div>Hover Card Content</div>
-    </HoverCardPortal>
+    <HoverCard>
+      <HoverCardTrigger asChild>
+        <button className="rounded-md border p-2">Hover over me</button>
+      </HoverCardTrigger>
+      <HoverCardPortal>
+        <HoverCardContent
+          className={state.className.value}
+          align={state.align.value}
+          sideOffset={state.sideOffset.value}
+        >
+          <div>Hover Card Content</div>
+        </HoverCardContent>
+      </HoverCardPortal>
+    </HoverCard>
   );
 }

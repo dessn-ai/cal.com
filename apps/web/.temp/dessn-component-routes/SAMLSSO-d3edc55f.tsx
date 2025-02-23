@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/ee/sso/page/orgs-sso-view';
-
+import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 
 export default function ComponentPreview() {
@@ -18,20 +18,21 @@ export default function ComponentPreview() {
     },
   });
 
-  const mockSession = {
-    data: {
-      user: {
-        org: {
-          id: state.orgId.value,
-          role: state.isAdminOrOwner.value ? "ADMIN" : "MEMBER",
-        },
-      },
-    },
-    status: "authenticated",
+  const mockSession: Session = {
+    expires: new Date(Date.now() + 2 * 86400).toISOString(),
+    user: {
+      id: "user123",
+      name: "Test User",
+      email: "test@example.com",
+      org: {
+        id: state.orgId.value,
+        role: state.isAdminOrOwner.value ? "ADMIN" : "MEMBER",
+      }
+    }
   };
 
   return (
-    <SessionProvider session={mockSession as any}>
+    <SessionProvider session={mockSession}>
       <ImportedComponent />
     </SessionProvider>
   );

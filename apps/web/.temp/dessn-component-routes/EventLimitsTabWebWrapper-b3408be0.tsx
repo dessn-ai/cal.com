@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/platform/atoms/event-types/wrappers/EventLimitsTabWebWrapper';
-
+import { FormProvider, useForm } from 'react-hook-form';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -17,6 +17,12 @@ export default function ComponentPreview() {
     },
   });
 
+  const formMethods = useForm({
+    defaultValues: {
+      // Add any default form values needed
+    }
+  });
+
   const parsedCustomClassNames = React.useMemo(() => {
     try {
       return JSON.parse(state.customClassNames.value);
@@ -27,9 +33,11 @@ export default function ComponentPreview() {
   }, [state.customClassNames.value]);
 
   return (
-    <ImportedComponent
-      eventType={state.eventType.value}
-      customClassNames={parsedCustomClassNames}
-    />
+    <FormProvider {...formMethods}>
+      <ImportedComponent
+        eventType={state.eventType.value}
+        customClassNames={parsedCustomClassNames}
+      />
+    </FormProvider>
   );
 }

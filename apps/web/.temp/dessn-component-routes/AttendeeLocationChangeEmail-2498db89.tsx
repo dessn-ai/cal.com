@@ -2,9 +2,25 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { AttendeeLocationChangeEmail } from '../../../../packages/emails/src/templates/AttendeeLocationChangeEmail';
 
-import { TimeFormat } from '../../../../packages/types/Calendar';
+// Mock TimeFormat enum locally instead of importing from Calendar package
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
 
 export default function ComponentPreview() {
+  // Create a stable translation function
+  const translateFn = function(this: any, key: string, vars?: Record<string, any>) {
+    if (!key) return '';
+    let text = key;
+    if (vars) {
+      Object.entries(vars).forEach(([k, v]) => {
+        text = text.replace(new RegExp(`{${k}}`, 'g'), String(v));
+      });
+    }
+    return text;
+  };
+
   const [state, setState] = useParentState({
     calEvent: {
       type: 'string',
@@ -17,17 +33,40 @@ export default function ComponentPreview() {
           name: 'John Doe',
           email: 'john@example.com',
           timeZone: 'America/New_York',
-          language: { translate: (key: string) => key, locale: 'en' },
+          language: {
+            translate: translateFn,
+            locale: 'en'
+          },
         },
         attendees: [
           {
             name: 'Jane Smith',
             email: 'jane@example.com',
             timeZone: 'Europe/London',
-            language: { translate: (key: string) => key, locale: 'en' },
+            language: {
+              translate: translateFn,
+              locale: 'en'
+            },
           },
         ],
         location: 'New Location',
+        uid: 'test-uid',
+        team: {
+          name: 'Team',
+          members: []
+        },
+        recurringEvent: null,
+        cancellationReason: undefined,
+        additionalNotes: undefined,
+        customInputs: {},
+        responses: {},
+        seatsPerTimeSlot: undefined,
+        seatsShowAttendees: false,
+        // Add properties needed for manage links
+        destinationCalendar: null,
+        hideCalendarNotes: false,
+        requiresConfirmation: false,
+        metadata: {},
       }),
       label: 'Calendar Event',
     },
@@ -37,7 +76,12 @@ export default function ComponentPreview() {
         name: 'Jane Smith',
         email: 'jane@example.com',
         timeZone: 'Europe/London',
-        language: { translate: (key: string) => key, locale: 'en' },
+        language: {
+          translate: translateFn,
+          locale: 'en'
+        },
+        // Ensure the translate function is directly accessible
+        translate: translateFn,
       }),
       label: 'Attendee',
     },
@@ -75,10 +119,17 @@ export default function ComponentPreview() {
   return (
     <AttendeeLocationChangeEmail
       calEvent={parsedCalEvent}
-      attendee={parsedAttendee}
+      attendee={{
+        ...parsedAttendee,
+        language: {
+          ...parsedAttendee.language,
+          translate: translateFn
+        },
+        translate: translateFn
+      }}
       timeZone={state.timeZone.value}
       includeAppsStatus={state.includeAppsStatus.value}
-      t={(key: string) => key}
+      t={translateFn}
       locale={state.locale.value}
       timeFormat={state.timeFormat.value as TimeFormat}
       isOrganizer={state.isOrganizer.value}

@@ -2,8 +2,15 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { LowestRatedMembersTable } from '../../../../packages/features/insights/components/LowestRatedMembersTable';
 
-import { TRPCProvider } from '@calcom/trpc/react';
-import { I18nLanguageHandler } from '@calcom/features/i18n';
+// Mock i18n wrapper component
+const I18nWrapper = ({ children }: { children: React.ReactNode }) => {
+  return <>{children}</>;
+};
+
+// Mock TRPC Provider
+const MockTRPCProvider = ({ children }: { children: React.ReactNode }) => {
+  return <>{children}</>;
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -35,10 +42,10 @@ export default function ComponentPreview() {
   });
 
   return (
-    <TRPCProvider>
-      <I18nLanguageHandler>
+    <MockTRPCProvider>
+      <I18nWrapper>
         <LowestRatedMembersTable />
-      </I18nLanguageHandler>
-    </TRPCProvider>
+      </I18nWrapper>
+    </MockTRPCProvider>
   );
 }

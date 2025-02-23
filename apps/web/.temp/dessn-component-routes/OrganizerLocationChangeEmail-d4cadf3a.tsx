@@ -2,7 +2,11 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { OrganizerLocationChangeEmail } from '../../../../packages/emails/src/templates/OrganizerLocationChangeEmail';
 
-import { TimeFormat } from '../../../../packages/types/Calendar';
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -17,17 +21,34 @@ export default function ComponentPreview() {
           name: "John Doe",
           email: "john@example.com",
           timeZone: "America/New_York",
-          language: { translate: (key: string) => key, locale: "en" }
+          language: { 
+            translate: (key: string) => key,
+            locale: "en" 
+          }
         },
         attendees: [
           {
             name: "Jane Smith",
             email: "jane@example.com",
             timeZone: "America/Los_Angeles",
-            language: { translate: (key: string) => key, locale: "en" }
+            language: { 
+              translate: (key: string) => key,
+              locale: "en" 
+            }
           }
         ],
-        location: "New Location"
+        location: "New Location",
+        uid: "test-uid",
+        additionalNotes: "",
+        recurringEvent: null,
+        responses: {},
+        seatsPerTimeSlot: null,
+        seatsShowAttendees: false,
+        bookingUid: "test-booking-uid",
+        language: {
+          translate: (key: string) => key,
+          locale: "en"
+        }
       }),
       label: "Calendar Event"
     },
@@ -37,7 +58,10 @@ export default function ComponentPreview() {
         name: "Jane Smith",
         email: "jane@example.com",
         timeZone: "America/Los_Angeles",
-        language: { translate: (key: string) => key, locale: "en" }
+        language: { 
+          translate: (key: string) => key,
+          locale: "en" 
+        }
       }),
       label: "Attendee"
     },
@@ -79,18 +103,62 @@ export default function ComponentPreview() {
     }
   });
 
-  return (
-    <OrganizerLocationChangeEmail
-      calEvent={JSON.parse(state.calEvent.value)}
-      attendee={JSON.parse(state.attendee.value)}
-      newSeat={state.newSeat.value}
-      attendeeCancelled={state.attendeeCancelled.value}
-      timeZone={state.timeZone.value}
-      includeAppsStatus={state.includeAppsStatus.value}
-      locale={state.locale.value}
-      timeFormat={state.timeFormat.value as TimeFormat}
-      isOrganizer={state.isOrganizer.value}
-      t={(key: string) => key}
-    />
-  );
+  // Simple translation function
+  const translate = React.useCallback((key: string) => key, []);
+
+  const calEventData = React.useMemo(() => {
+    const parsed = JSON.parse(state.calEvent.value);
+    return {
+      ...parsed,
+      language: {
+        translate,
+        locale: "en"
+      },
+      organizer: {
+        ...parsed.organizer,
+        language: {
+          translate,
+          locale: "en"
+        }
+      },
+      attendees: parsed.attendees.map((attendee: any) => ({
+        ...attendee,
+        language: {
+          translate,
+          locale: "en"
+        }
+      }))
+    };
+  }, [state.calEvent.value, translate]);
+
+  const attendeeData = React.useMemo(() => {
+    const parsed = JSON.parse(state.attendee.value);
+    return {
+      ...parsed,
+      language: {
+        translate,
+        locale: "en"
+      }
+    };
+  }, [state.attendee.value, translate]);
+
+  try {
+    return (
+      <OrganizerLocationChangeEmail
+        calEvent={calEventData}
+        attendee={attendeeData}
+        newSeat={state.newSeat.value}
+        attendeeCancelled={state.attendeeCancelled.value}
+        timeZone={state.timeZone.value}
+        includeAppsStatus={state.includeAppsStatus.value}
+        locale={state.locale.value}
+        timeFormat={state.timeFormat.value as TimeFormat}
+        isOrganizer={state.isOrganizer.value}
+        t={translate}
+      />
+    );
+  } catch (error) {
+    console.error('Error rendering email template:', error);
+    return <div>Error rendering email template: {String(error)}</div>;
+  }
 }

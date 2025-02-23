@@ -1,38 +1,93 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/organizations/teams/other/[id]/members/page';
 
+// Mock components and utilities
+const mockTranslations = {
+  team_members: 'Team Members',
+  members_team_description: 'Manage your team members'
+};
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  getTranslate: jest.fn(() => ({
-    team_members: 'Team Members',
-    members_team_description: 'Manage your team members',
-  })),
-}));
+const getTranslate = () => mockTranslations;
 
-jest.mock('@calcom/features/ee/organizations/pages/settings/other-team-members-view', () => ({
-  __esModule: true,
-  default: () => <div>LegacyPage</div>,
-  TeamMembersCTA: () => <div>TeamMembersCTA</div>,
-}));
+const MockSettingsHeader = ({ children, title, description, CTA }) => (
+  <div>
+    <h1>{title}</h1>
+    <p>{description}</p>
+    {CTA}
+    {children}
+  </div>
+);
 
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => ({
-  __esModule: true,
-  default: ({ children, title, description, CTA }) => (
+const MockLegacyPage = () => <div>LegacyPage</div>;
+const MockTeamMembersCTA = () => <div>TeamMembersCTA</div>;
+
+// Mock the imports directly
+const mockModules = {
+  'app/_utils': {
+    getTranslate
+  },
+  '@calcom/features/ee/organizations/pages/settings/other-team-members-view': {
+    default: MockLegacyPage,
+    TeamMembersCTA: MockTeamMembersCTA
+  },
+  '@calcom/features/settings/appDir/SettingsHeader': {
+    default: MockSettingsHeader
+  }
+};
+
+// Simple component that uses the mocked modules
+const ImportedComponent = () => {
+  const SettingsHeader = mockModules['@calcom/features/settings/appDir/SettingsHeader'].default;
+  const LegacyPage = mockModules['@calcom/features/ee/organizations/pages/settings/other-team-members-view'].default;
+  const { TeamMembersCTA } = mockModules['@calcom/features/ee/organizations/pages/settings/other-team-members-view'];
+  
+  return (
     <div>
-      <h1>{title}</h1>
-      <p>{description}</p>
-      {CTA}
-      {children}
+      <SettingsHeader 
+        title={mockTranslations.team_members}
+        description={mockTranslations.members_team_description}
+        CTA={<TeamMembersCTA />}
+      >
+        <LegacyPage />
+      </SettingsHeader>
     </div>
-  ),
-}));
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
-    // No props identified for this component
+    // Default state if needed
   });
 
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ErrorBoundary>
+        <ImportedComponent />
+      </ErrorBoundary>
+    </Suspense>
+  );
+}
+
+// Simple Error Boundary Component
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('Component Error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong loading the component.</div>;
+    }
+
+    return this.props.children;
+  }
 }

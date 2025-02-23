@@ -1,7 +1,19 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/paypal/components/EventTypeAppCardInterface';
+import EventTypeAppContext from '@calcom/app-store/EventTypeAppContext';
 
+// Mock next/navigation
+const usePathname = () => '/test-path';
+const useSearchParams = () => new URLSearchParams();
+
+// Mock useLocale
+const useLocale = () => ({
+  t: (key: string) => key,
+  i18n: {
+    language: 'en',
+  },
+});
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -28,8 +40,13 @@ export default function ComponentPreview() {
         slug: "paypal",
         logo: "https://example.com/paypal-logo.png",
         description: "Accept payments via PayPal",
+        categories: ["payment"],
+        isInstalled: true,
+        enabled: true,
+        isSetupAlready: true,
         credentialOwner: null,
-        credentialIds: []
+        credentialIds: [],
+        dirName: "paypal"
       },
       label: "App"
     },
@@ -40,17 +57,33 @@ export default function ComponentPreview() {
     },
     eventTypeFormMetadata: {
       type: "object",
-      value: {},
+      value: {
+        apps: {}
+      },
       label: "Event Type Form Metadata"
     }
   });
 
+  const appContextValue = {
+    getAppData: (key: string) => {
+      if (key === "enabled") return true;
+      return null;
+    },
+    setAppData: (key: string, value: unknown) => {
+      console.log("Setting app data:", key, value);
+    },
+    disabled: false,
+    LockedIcon: undefined
+  };
+
   return (
-    <ImportedComponent
-      eventType={state.eventType.value}
-      app={state.app.value}
-      disabled={state.disabled.value}
-      eventTypeFormMetadata={state.eventTypeFormMetadata.value}
-    />
+    <EventTypeAppContext.Provider value={appContextValue}>
+      <ImportedComponent
+        eventType={state.eventType.value}
+        app={state.app.value}
+        disabled={state.disabled.value}
+        eventTypeFormMetadata={state.eventTypeFormMetadata.value}
+      />
+    </EventTypeAppContext.Provider>
   );
 }

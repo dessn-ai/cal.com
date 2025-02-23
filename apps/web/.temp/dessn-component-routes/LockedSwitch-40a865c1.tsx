@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { LockedSwitch } from '../../../../packages/features/ee/managed-event-types/hooks/useLockedFieldsManager';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     isManagedEventType: {
@@ -23,12 +22,11 @@ export default function ComponentPreview() {
     console.log(`Setting ${fieldName} to ${val}`);
   };
 
-  return (
-    <LockedSwitch
-      isManagedEventType={state.isManagedEventType.value}
-      fieldState={[fieldState, setFieldState]}
-      fieldName={state.fieldName.value}
-      setUnlockedFields={setUnlockedFields}
-    />
+  return LockedSwitch(
+    state.isManagedEventType.value,
+    [fieldState, setFieldState],
+    state.fieldName.value,
+    setUnlockedFields,
+    { simple: false }
   );
 }

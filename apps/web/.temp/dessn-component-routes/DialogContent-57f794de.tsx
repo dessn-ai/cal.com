@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { DialogContent } from '../../../../packages/ui/components/dialog/Dialog';
-
+import { Dialog, DialogContent } from '../../../../packages/ui/components/dialog/Dialog';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -40,15 +39,17 @@ export default function ComponentPreview() {
   });
 
   return (
-    <DialogContent
-      title={state.title.value}
-      description={state.description.value}
-      type={state.type.value as "creation" | "confirmation"}
-      size={state.size.value as "xl" | "lg" | "md" | "default"}
-      enableOverflow={state.enableOverflow.value}
-      preventCloseOnOutsideClick={state.preventCloseOnOutsideClick.value}
-    >
-      <div>Dialog Content Goes Here</div>
-    </DialogContent>
+    <Dialog open={true}>
+      <DialogContent
+        title={state.title.value}
+        description={state.description.value}
+        type={state.type.value as "creation" | "confirmation"}
+        size={state.size.value as "xl" | "lg" | "md" | "default"}
+        enableOverflow={state.enableOverflow.value}
+        preventCloseOnOutsideClick={state.preventCloseOnOutsideClick.value}
+      >
+        <div>Dialog Content Goes Here</div>
+      </DialogContent>
+    </Dialog>
   );
 }

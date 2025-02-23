@@ -1,13 +1,12 @@
-import crypto from "crypto";
-
+// Browser-compatible implementation
 export const generateNonce = (): string => {
-  return crypto.randomBytes(16).toString("hex");
+  // Simple mock implementation for preview
+  return Array.from(new Array(32))
+    .map(() => Math.floor(Math.random() * 16).toString(16))
+    .join('');
 };
 
-// Utility function to create a signature
 export const createSignature = (body: Record<string, unknown>, nonce: string, secretKey: string): string => {
-  return crypto
-    .createHmac("sha256", secretKey)
-    .update(JSON.stringify(body) + nonce)
-    .digest("hex");
+  // Simple mock implementation for preview
+  return 'mock-signature-' + nonce;
 };

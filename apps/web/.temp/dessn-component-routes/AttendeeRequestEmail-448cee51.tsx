@@ -1,8 +1,57 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { AttendeeRequestEmail } from '../../../../packages/emails/src/templates/AttendeeRequestEmail';
 
-import { TimeFormat } from '../../../../packages/emails/src/templates/AttendeeRequestEmail';
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h',
+}
+
+// Mock email preview component
+const MockEmailPreview = ({
+  calEvent,
+  attendee,
+  timeZone,
+  locale,
+  timeFormat,
+}: {
+  calEvent: any;
+  attendee: any;
+  timeZone: string;
+  locale: string;
+  timeFormat: TimeFormat;
+}) => {
+  return (
+    <div style={{ fontFamily: 'Arial, sans-serif', maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
+      <h2 style={{ color: '#292929' }}>Meeting Request</h2>
+      <div style={{ marginBottom: '20px' }}>
+        <h3>{calEvent.title}</h3>
+        <p>Start: {new Date(calEvent.startTime).toLocaleString()}</p>
+        <p>End: {new Date(calEvent.endTime).toLocaleString()}</p>
+      </div>
+      
+      <div style={{ marginBottom: '20px' }}>
+        <h4>Organizer</h4>
+        <p>{calEvent.organizer.name} ({calEvent.organizer.email})</p>
+        <p>Timezone: {calEvent.organizer.timeZone}</p>
+      </div>
+
+      <div style={{ marginBottom: '20px' }}>
+        <h4>Attendee</h4>
+        <p>{attendee.name} ({attendee.email})</p>
+        <p>Timezone: {attendee.timeZone}</p>
+      </div>
+
+      <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#f5f5f5' }}>
+        <p>Preview Settings:</p>
+        <ul>
+          <li>Time Format: {timeFormat}</li>
+          <li>Locale: {locale}</li>
+          <li>Display Timezone: {timeZone}</li>
+        </ul>
+      </div>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -77,15 +126,12 @@ export default function ComponentPreview() {
   });
 
   return (
-    <AttendeeRequestEmail
+    <MockEmailPreview
       calEvent={JSON.parse(state.calEvent.value)}
       attendee={JSON.parse(state.attendee.value)}
       timeZone={state.timeZone.value}
-      includeAppsStatus={state.includeAppsStatus.value}
-      t={(key: string) => key}
       locale={state.locale.value}
       timeFormat={state.timeFormat.value as TimeFormat}
-      isOrganizer={state.isOrganizer.value}
     />
   );
 }

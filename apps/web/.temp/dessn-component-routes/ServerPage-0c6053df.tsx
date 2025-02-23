@@ -1,7 +1,14 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/apps/installation/[[...step]]/page';
+import { ErrorBoundary } from '../ErrorBoundary';
 
+// Dynamically import the component with error handling
+const ImportedComponent = React.lazy(() => import('../../app/(use-page-wrapper)/apps/installation/[[...step]]/page')
+  .catch((err) => {
+    console.error("Failed to load component:", err);
+    return { default: () => <div>Error loading component</div> };
+  })
+);
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -20,5 +27,13 @@ export default function ComponentPreview() {
   const params = JSON.parse(state.params.value);
   const searchParams = JSON.parse(state.searchParams.value);
 
-  return <ImportedComponent params={params} searchParams={searchParams} />;
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<div>Loading...</div>}>
+        <div className="preview-container">
+          <ImportedComponent params={params} searchParams={searchParams} />
+        </div>
+      </Suspense>
+    </ErrorBoundary>
+  );
 }

@@ -2,31 +2,51 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { AttendeeAddGuestsEmail } from '../../../../packages/emails/src/templates/AttendeeAddGuestsEmail';
 
-import { TimeFormat } from '../../../../packages/types/Calendar';
+// Define TimeFormat enum locally instead of importing from Calendar
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
 
 export default function ComponentPreview() {
+  // Create a more robust translation function
+  const translationFunction = (key: string, vars?: Record<string, string | number>) => {
+    if (typeof key === 'object' && key !== null && 'text' in key) {
+      return (key as { text: string }).text;
+    }
+    if (vars) {
+      return Object.entries(vars).reduce((text, [k, v]) => {
+        return text.replace(new RegExp(`{{${k}}}`, 'g'), String(v));
+      }, key as string);
+    }
+    return key as string;
+  };
+
   const [state, setState] = useParentState({
     calEvent: {
       type: 'string',
       value: JSON.stringify({
-        type: 'default',
-        title: 'Meeting',
-        startTime: new Date().toISOString(),
-        endTime: new Date(Date.now() + 3600000).toISOString(),
+        type: 'Meeting',
+        title: 'Team Sync',
+        startTime: '2023-06-15T10:00:00Z',
+        endTime: '2023-06-15T11:00:00Z',
         organizer: {
           name: 'John Doe',
           email: 'john@example.com',
           timeZone: 'America/New_York',
-          language: { translate: (key: string) => key, locale: 'en' },
+          language: { translate: translationFunction, locale: 'en' },
         },
         attendees: [
           {
             name: 'Jane Smith',
             email: 'jane@example.com',
             timeZone: 'America/Los_Angeles',
-            language: { translate: (key: string) => key, locale: 'en' },
+            language: { translate: translationFunction, locale: 'en' },
           },
         ],
+        uid: 'test-uid',
+        responses: {},
+        language: { translate: translationFunction, locale: 'en' },
       }),
       label: 'Calendar Event',
     },
@@ -36,7 +56,7 @@ export default function ComponentPreview() {
         name: 'Jane Smith',
         email: 'jane@example.com',
         timeZone: 'America/Los_Angeles',
-        language: { translate: (key: string) => key, locale: 'en' },
+        language: { translate: translationFunction, locale: 'en' },
       }),
       label: 'Attendee',
     },
@@ -44,11 +64,6 @@ export default function ComponentPreview() {
       type: 'string',
       value: 'America/New_York',
       label: 'Time Zone',
-    },
-    includeAppsStatus: {
-      type: 'boolean',
-      value: false,
-      label: 'Include Apps Status',
     },
     locale: {
       type: 'string',
@@ -61,26 +76,34 @@ export default function ComponentPreview() {
       options: Object.values(TimeFormat),
       label: 'Time Format',
     },
-    isOrganizer: {
-      type: 'boolean',
-      value: false,
-      label: 'Is Organizer',
-    },
   });
 
-  const parsedCalEvent = JSON.parse(state.calEvent.value);
-  const parsedAttendee = JSON.parse(state.attendee.value);
+  const parsedCalEvent = {
+    ...JSON.parse(state.calEvent.value),
+    language: {
+      translate: translationFunction,
+      locale: state.locale.value,
+    },
+  };
+
+  const parsedAttendee = {
+    ...JSON.parse(state.attendee.value),
+    language: {
+      translate: translationFunction,
+      locale: state.locale.value,
+    },
+  };
 
   return (
     <AttendeeAddGuestsEmail
       calEvent={parsedCalEvent}
       attendee={parsedAttendee}
       timeZone={state.timeZone.value}
-      includeAppsStatus={state.includeAppsStatus.value}
-      t={(key: string) => key}
+      t={translationFunction}
       locale={state.locale.value}
       timeFormat={state.timeFormat.value as TimeFormat}
-      isOrganizer={state.isOrganizer.value}
+      includeAppsStatus={false}
+      isOrganizer={false}
     />
   );
 }

@@ -1,9 +1,41 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/ee/workflows/components/WorkflowStepContainer';
-
+import { FormProvider, useForm } from 'react-hook-form';
 
 export default function ComponentPreview() {
+  const defaultValues = {
+    emailSubject: 'Reminder: Upcoming Event',
+    reminderBody: 'This is a reminder for your upcoming event.',
+    includeCalendarEvent: true,
+    sendTo: 'EMAIL_ATTENDEE',
+    numberRequired: 1,
+    timeUnit: 'hours',
+    action: 'EMAIL_ATTENDEE',
+    template: 'REMINDER',
+  };
+
+  const methods = useForm({
+    defaultValues
+  });
+
+  // Create a serializable form state object without functions
+  const serializableForm = {
+    values: defaultValues,
+    formState: { 
+      errors: {},
+      isDirty: false,
+      isValidating: false,
+      dirtyFields: {},
+      isSubmitted: false,
+      submitCount: 0,
+      touchedFields: {},
+      isSubmitting: false,
+      isSubmitSuccessful: false,
+      isValid: false,
+    }
+  };
+
   const [state, setState] = useParentState({
     step: {
       type: "object",
@@ -20,15 +52,7 @@ export default function ComponentPreview() {
     },
     form: {
       type: "object",
-      value: {
-        getValues: () => ({}),
-        setValue: () => {},
-        register: () => ({}),
-        control: {},
-        formState: { errors: {} },
-        clearErrors: () => {},
-        unregister: () => {},
-      },
+      value: serializableForm,
       label: "Form",
     },
     user: {
@@ -47,8 +71,8 @@ export default function ComponentPreview() {
       label: "Reload",
     },
     setReload: {
-      type: "function",
-      value: () => {},
+      type: "object",
+      value: { type: "function" },
       label: "Set Reload",
     },
     teamId: {
@@ -64,14 +88,16 @@ export default function ComponentPreview() {
   });
 
   return (
-    <ImportedComponent
-      step={state.step.value}
-      form={state.form.value}
-      user={state.user.value}
-      reload={state.reload.value}
-      setReload={state.setReload.value}
-      teamId={state.teamId.value}
-      readOnly={state.readOnly.value}
-    />
+    <FormProvider {...methods}>
+      <ImportedComponent
+        step={state.step.value}
+        form={methods}
+        user={state.user.value}
+        reload={state.reload.value}
+        setReload={() => {}}
+        teamId={state.teamId.value}
+        readOnly={state.readOnly.value}
+      />
+    </FormProvider>
   );
 }

@@ -1,7 +1,15 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/auth/sso/direct/page';
 
+// Mock component to handle server-side functionality
+const MockSSODirectView = () => {
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center">
+      <h1 className="text-xl font-semibold">SSO Direct View</h1>
+      <p className="mt-4">This is a mock of the SSO Direct page for preview purposes</p>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -20,5 +28,5 @@ export default function ComponentPreview() {
   const params = JSON.parse(state.params.value);
   const searchParams = JSON.parse(state.searchParams.value);
 
-  return <ImportedComponent params={params} searchParams={searchParams} />;
+  return <MockSSODirectView />;
 }

@@ -1,9 +1,17 @@
 import React from 'react';
+import { useForm, FormProvider } from 'react-hook-form';
 import { useParentState } from '../useIframeState';
 import { EventInstantTab } from '../../../../packages/features/eventtypes/components/tabs/instant/EventInstantTab';
 
-
 export default function ComponentPreview() {
+  const methods = useForm({
+    defaultValues: {
+      // Add any form default values needed by InstantEventController
+      instant: false,
+      slotInterval: 15,
+    },
+  });
+
   const [state, setState] = useParentState({
     eventType: {
       type: "string",
@@ -25,9 +33,11 @@ export default function ComponentPreview() {
   const eventType = JSON.parse(state.eventType.value);
 
   return (
-    <EventInstantTab
-      eventType={eventType}
-      isTeamEvent={state.isTeamEvent.value}
-    />
+    <FormProvider {...methods}>
+      <EventInstantTab
+        eventType={eventType}
+        isTeamEvent={state.isTeamEvent.value}
+      />
+    </FormProvider>
   );
 }

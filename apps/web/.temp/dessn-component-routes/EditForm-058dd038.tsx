@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { EditForm } from '../../../../packages/features/users/components/UserTable/EditSheet/EditUserForm';
-
+import { Dialog, DialogContent } from "@calcom/ui";
 import { MembershipRole } from '@calcom/prisma/enums';
 
 export default function ComponentPreview() {
@@ -45,11 +45,15 @@ export default function ComponentPreview() {
   };
 
   return (
-    <EditForm
-      selectedUser={mockSelectedUser}
-      avatarUrl={state.avatarUrl.value}
-      domainUrl={state.domainUrl.value}
-      dispatch={mockDispatch}
-    />
+    <Dialog defaultOpen={true}>
+      <DialogContent>
+        <EditForm
+          selectedUser={mockSelectedUser}
+          avatarUrl={state.avatarUrl.value}
+          domainUrl={state.domainUrl.value}
+          dispatch={mockDispatch}
+        />
+      </DialogContent>
+    </Dialog>
   );
 }

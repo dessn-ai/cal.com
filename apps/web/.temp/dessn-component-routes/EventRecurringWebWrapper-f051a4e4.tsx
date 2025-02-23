@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/platform/atoms/event-types/wrappers/EventRecurringWebWrapper';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     eventType: {
@@ -23,16 +22,46 @@ export default function ComponentPreview() {
     slug: 'test-event',
     title: 'Test Event',
     length: 60,
-    recurringEvent: null,
+    recurringEvent: {
+      freq: 1,
+      interval: "weekly",
+      count: 12,
+      until: null
+    },
     type: state.eventType.value,
+    description: '',
+    hidden: false,
+    userId: 1,
+    users: [],
+    teamId: null,
+    hashedLink: null,
+    locations: [],
+    price: 0,
+    currency: 'USD',
+    schedulingType: null,
+    seatsPerTimeSlot: null,
+    metadata: {},
+    workflows: [],
+    periodType: 'UNLIMITED',
+    periodStartDate: null,
+    periodEndDate: null,
+    periodDays: null,
+    periodCountCalendarDays: null,
+    requiresConfirmation: false,
+    minimumBookingNotice: 0
   };
 
   const customClassNames = JSON.parse(state.customClassNames.value);
 
-  return (
-    <ImportedComponent
-      eventType={eventType}
-      customClassNames={customClassNames}
-    />
-  );
+  try {
+    return (
+      <ImportedComponent
+        eventType={eventType}
+        customClassNames={customClassNames}
+      />
+    );
+  } catch (error) {
+    console.error('Error rendering EventRecurringWebWrapper:', error);
+    return <div>Error: Failed to render EventRecurringWebWrapper</div>;
+  }
 }

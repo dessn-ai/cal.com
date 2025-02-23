@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { CommandEmpty } from '../../../../packages/ui/components/command/index';
-
+import { Command, CommandEmpty } from '../../../../packages/ui/components/command/index';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,8 +17,10 @@ export default function ComponentPreview() {
   });
 
   return (
-    <CommandEmpty className={state.className.value}>
-      {state.children.value}
-    </CommandEmpty>
+    <Command>
+      <CommandEmpty className={state.className.value}>
+        {state.children.value}
+      </CommandEmpty>
+    </Command>
   );
 }

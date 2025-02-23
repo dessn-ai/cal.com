@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { Dialog } from '../../../../packages/ui/components/dialog/Dialog';
-
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogClose } from '../../../../packages/ui/components/dialog/Dialog';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -23,14 +22,21 @@ export default function ComponentPreview() {
   });
 
   return (
-    <Dialog
-      name={state.name.value}
-      open={state.open.value}
-      clearQueryParamsOnClose={state.clearQueryParamsOnClose.value.split(',')}
-    >
-      <Dialog.Content>
-        <div>Dialog Content</div>
-      </Dialog.Content>
-    </Dialog>
+    <div>
+      <Dialog
+        name={state.name.value}
+        open={state.open.value}
+        clearQueryParamsOnClose={state.clearQueryParamsOnClose.value.split(',')}>
+        <DialogContent>
+          <DialogHeader title="Example Dialog" />
+          <div className="p-4">
+            <p>Dialog Content</p>
+          </div>
+          <DialogFooter>
+            <DialogClose>Close</DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }

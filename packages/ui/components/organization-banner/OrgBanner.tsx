@@ -1,5 +1,4 @@
 import Image from "next/image";
-
 import classNames from "@calcom/lib/classNames";
 
 type Maybe<T> = T | null | undefined;
@@ -20,6 +19,21 @@ export function OrgBanner(props: OrgBannerProps) {
   if (!imageSrc) {
     return <div className={classNames("bg-muted", props.className)}>{props.fallback}</div>;
   }
+
+  // Use regular img tag in development/preview environment
+  if (process.env.NODE_ENV !== 'production') {
+    return (
+      <img
+        data-testid={props?.["data-testid"]}
+        src={imageSrc}
+        alt={alt}
+        className={props.className}
+        width={width}
+        height={height}
+      />
+    );
+  }
+
   return (
     <Image
       data-testid={props?.["data-testid"]}

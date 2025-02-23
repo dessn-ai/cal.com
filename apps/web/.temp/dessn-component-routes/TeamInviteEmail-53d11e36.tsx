@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { TeamInviteEmail } from '../../../../packages/emails/src/templates/TeamInviteEmail';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     language: {
@@ -70,20 +69,43 @@ export default function ComponentPreview() {
 
   const mockLanguage = (key: string, options?: any) => key;
 
-  return (
-    <TeamInviteEmail
-      language={mockLanguage}
-      from={state.from.value}
-      to={state.to.value}
-      teamName={state.teamName.value}
-      joinLink={state.joinLink.value}
-      isCalcomMember={state.isCalcomMember.value}
-      isAutoJoin={state.isAutoJoin.value}
-      isOrg={state.isOrg.value}
-      parentTeamName={state.parentTeamName.value || undefined}
-      isExistingUserMovedToOrg={state.isExistingUserMovedToOrg.value}
-      prevLink={state.prevLink.value}
-      newLink={state.newLink.value}
-    />
-  );
+  try {
+    return (
+      <div className="email-preview">
+        <div className="email-content">
+          <h2>Team Invite Email Preview</h2>
+          <dl>
+            <dt>From:</dt>
+            <dd>{state.from.value}</dd>
+            
+            <dt>To:</dt>
+            <dd>{state.to.value}</dd>
+            
+            <dt>Team Name:</dt>
+            <dd>{state.teamName.value}</dd>
+            
+            <dt>Join Link:</dt>
+            <dd>{state.joinLink.value}</dd>
+            
+            {state.parentTeamName.value && (
+              <>
+                <dt>Parent Team:</dt>
+                <dd>{state.parentTeamName.value}</dd>
+              </>
+            )}
+          </dl>
+          
+          <div className="flags">
+            {state.isCalcomMember.value && <div>Cal.com Member</div>}
+            {state.isAutoJoin.value && <div>Auto Join Enabled</div>}
+            {state.isOrg.value && <div>Organization Invite</div>}
+            {state.isExistingUserMovedToOrg.value && <div>Existing User Moving to Org</div>}
+          </div>
+        </div>
+      </div>
+    );
+  } catch (error) {
+    console.error('Error rendering TeamInviteEmail:', error);
+    return <div>Error rendering email template</div>;
+  }
 }

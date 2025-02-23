@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../pages/[user]/embed';
 
+// Using dynamic import with error boundary
+const ImportedComponent = React.lazy(() => import('../../pages/[user]/embed').catch(() => ({
+  default: () => <div>Error: Failed to load component</div>
+})));
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -121,5 +124,9 @@ export default function ComponentPreview() {
     isEmbed: state.isEmbed.value,
   };
 
-  return <ImportedComponent {...props} />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ImportedComponent {...props} />
+    </Suspense>
+  );
 }

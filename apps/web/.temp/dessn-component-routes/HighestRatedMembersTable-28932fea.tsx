@@ -2,8 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { HighestRatedMembersTable } from '../../../../packages/features/insights/components/HighestRatedMembersTable';
 
-import { trpc } from '@calcom/trpc';
-
 // Mock the trpc.viewer.insights.membersWithHighestRatings.useQuery
 const mockUseQuery = () => ({
   data: [
@@ -31,14 +29,51 @@ const mockUseLocale = () => ({
   t: (key: string) => key,
 });
 
-// Mock the useInsightsParameters hook
-const mockUseInsightsParameters = () => ({
+// Create Insights Context
+const InsightsContext = React.createContext<{
+  isAll: boolean;
+  teamId: number;
+  startDate: Date;
+  endDate: Date;
+  eventTypeId: number | null;
+}>({
   isAll: true,
   teamId: 1,
   startDate: new Date('2023-01-01'),
   endDate: new Date('2023-12-31'),
   eventTypeId: 1,
 });
+
+// Create mock InsightsProvider
+const MockInsightsProvider = ({ children }: { children: React.ReactNode }) => {
+  const value = {
+    isAll: true,
+    teamId: 1,
+    startDate: new Date('2023-01-01'),
+    endDate: new Date('2023-12-31'),
+    eventTypeId: 1,
+  };
+
+  return (
+    <InsightsContext.Provider value={value}>
+      {children}
+    </InsightsContext.Provider>
+  );
+};
+
+// Create a mock i18n provider component
+const I18nProvider = ({ children }: { children: React.ReactNode }) => {
+  return <>{children}</>;
+};
+
+// Create a mock TRPC provider component
+const MockTRPCProvider = ({ children }: { children: React.ReactNode }) => {
+  React.useEffect(() => {
+    (global as any).trpc = mockTrpc;
+  }, []);
+  
+  return <>{children}</>;
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -71,10 +106,16 @@ export default function ComponentPreview() {
 
   // Override the necessary hooks and modules
   React.useEffect(() => {
-    (global as any).trpc = mockTrpc;
     (global as any).useLocale = mockUseLocale;
-    (global as any).useInsightsParameters = mockUseInsightsParameters;
   }, []);
 
-  return <HighestRatedMembersTable />;
+  return (
+    <I18nProvider>
+      <MockTRPCProvider>
+        <MockInsightsProvider>
+          <HighestRatedMembersTable />
+        </MockInsightsProvider>
+      </MockTRPCProvider>
+    </I18nProvider>
+  );
 }

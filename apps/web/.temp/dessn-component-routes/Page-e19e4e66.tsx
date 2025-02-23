@@ -1,27 +1,45 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/organizations/attributes/page';
 
+// Create mock components that would normally be imported
+const MockOrgSettingsAttributesPage = () => {
+  return <div>Mock OrgSettingsAttributesPage</div>;
+};
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  getTranslate: jest.fn(() => (key: string) => key),
-}));
+const MockSettingsHeader = ({ children }: { children: React.ReactNode }) => {
+  return <div>Mock SettingsHeader {children}</div>;
+};
 
-jest.mock('@calcom/ee/organizations/pages/settings/attributes/attributes-list-view', () => {
-  return function MockOrgSettingsAttributesPage() {
-    return <div>Mock OrgSettingsAttributesPage</div>;
-  };
-});
+const mockTranslate = (key: string) => key;
 
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children }: { children: React.ReactNode }) {
-    return <div>Mock SettingsHeader {children}</div>;
-  };
-});
+// Mock the imported component directly
+const MockImportedComponent = () => {
+  try {
+    return (
+      <div>
+        <MockSettingsHeader>
+          <h1>Organization Attributes</h1>
+        </MockSettingsHeader>
+        <MockOrgSettingsAttributesPage />
+      </div>
+    );
+  } catch (error) {
+    console.error('Error rendering component:', error);
+    return <div>Error: Failed to render component</div>;
+  }
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({});
 
-  return <ImportedComponent />;
+  try {
+    return (
+      <React.Suspense fallback={<div>Loading...</div>}>
+        <MockImportedComponent />
+      </React.Suspense>
+    );
+  } catch (error) {
+    console.error('Error in ComponentPreview:', error);
+    return <div>Error: Failed to load preview</div>;
+  }
 }

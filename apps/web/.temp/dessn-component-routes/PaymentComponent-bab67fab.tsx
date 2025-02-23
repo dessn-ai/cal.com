@@ -6,7 +6,7 @@ import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 
 const mockStripe = {
-  elements: () => ({}),
+  elements: () => mockElements,
   confirmPayment: () => Promise.resolve({}),
   confirmSetup: () => Promise.resolve({}),
 };
@@ -63,7 +63,7 @@ export default function ComponentPreview() {
     user: {
       username: state.username.value,
     },
-    clientSecret: "mock_client_secret",
+    clientSecret: "pi_1234567890_secret_abcdefghijklmnop",
     booking: {
       uid: "mock_booking_uid",
     },
@@ -72,7 +72,7 @@ export default function ComponentPreview() {
   const stripePromise = Promise.resolve(mockStripe);
 
   return (
-    <Elements stripe={stripePromise}>
+    <Elements stripe={stripePromise} options={{ clientSecret: props.clientSecret }}>
       <ImportedComponent {...props} />
     </Elements>
   );

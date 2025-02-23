@@ -1,24 +1,19 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useParentState } from '../useIframeState';
 import { TeamListBulkAction } from '../../../../packages/features/users/components/UserTable/BulkActions/TeamList';
 
-
 export default function ComponentPreview() {
-  const [state, setState] = useParentState({
-    table: {
-      type: 'object',
-      value: {
-        getSelectedRowModel: () => ({
-          flatRows: [
-            { original: { id: 1, teams: [{ id: 1, name: 'Team 1' }] } },
-            { original: { id: 2, teams: [{ id: 2, name: 'Team 2' }] } },
-          ],
-        }),
-        toggleAllRowsSelected: () => {},
-      },
-      label: 'Table',
-    },
-  });
+  const selectedRows = [
+    { id: 1, teams: [{ id: 1, name: 'Team 1' }] },
+    { id: 2, teams: [{ id: 2, name: 'Team 2' }] },
+  ];
 
-  return <TeamListBulkAction table={state.table.value} />;
+  const tableData = useMemo(() => ({
+    getSelectedRowModel: () => ({
+      flatRows: selectedRows.map((row) => ({ original: row }))
+    }),
+    toggleAllRowsSelected: () => {},
+  }), []);
+
+  return <TeamListBulkAction table={tableData} />;
 }

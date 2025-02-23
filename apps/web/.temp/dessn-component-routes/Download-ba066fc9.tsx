@@ -1,9 +1,29 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { Download } from '../../../../packages/features/insights/filters/Download/Download';
+import { Download } from '@calcom/features/insights/filters/Download/Download';
 
-import { TRPCProvider } from '@calcom/trpc/react';
-import { InsightsProvider } from '../../../../packages/features/insights/context/insights-provider';
+// Mock InsightsContext with typical insights data structure
+const InsightsContext = React.createContext({
+  startDate: new Date(),
+  endDate: new Date(),
+  teamId: null,
+  userId: null,
+  eventTypeId: null,
+  memberUserId: null,
+  isLoading: false,
+});
+
+// Mock InsightsProvider
+const MockInsightsProvider = ({ children, ...props }) => {
+  return (
+    <InsightsContext.Provider value={{
+      ...props,
+      isLoading: false,
+    }}>
+      {children}
+    </InsightsContext.Provider>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -40,16 +60,14 @@ export default function ComponentPreview() {
   });
 
   return (
-    <TRPCProvider>
-      <InsightsProvider
-        startDate={new Date(state.startDate.value)}
-        endDate={new Date(state.endDate.value)}
-        teamId={state.teamId.value}
-        userId={state.userId.value}
-        eventTypeId={state.eventTypeId.value}
-        memberUserId={state.memberUserId.value}>
-        <Download />
-      </InsightsProvider>
-    </TRPCProvider>
+    <MockInsightsProvider
+      startDate={new Date(state.startDate.value)}
+      endDate={new Date(state.endDate.value)}
+      teamId={state.teamId.value}
+      userId={state.userId.value}
+      eventTypeId={state.eventTypeId.value}
+      memberUserId={state.memberUserId.value}>
+      <Download />
+    </MockInsightsProvider>
   );
 }

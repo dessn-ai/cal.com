@@ -1,40 +1,39 @@
 import React from 'react';
+import { RecoilRoot } from 'recoil';
 import { useParentState } from '../useIframeState';
 import { CalAiTranscribe } from '../../modules/videos/ai/ai-transcribe';
 
+// Mock implementations without using Jest
+const mockDailyHooks = {
+  useDaily: () => ({
+    updateCustomTrayButtons: () => {},
+    startRecording: () => Promise.resolve(),
+    stopRecording: () => Promise.resolve(),
+    startTranscription: () => {},
+    stopTranscription: () => {},
+  }),
+  useDailyEvent: () => {},
+  useTranscription: () => ({
+    isTranscribing: false,
+  }),
+  useRecording: () => ({
+    isRecording: false,
+  }),
+};
 
-// Mock the necessary hooks and functions
-const mockUseDaily = () => ({
-  updateCustomTrayButtons: () => {},
-  startRecording: () => Promise.resolve(),
-  stopRecording: () => Promise.resolve(),
-  startTranscription: () => {},
-  stopTranscription: () => {},
-});
-
-const mockUseTranscription = () => ({
-  isTranscribing: false,
-});
-
-const mockUseRecording = () => ({
-  isRecording: false,
-});
-
+// Mock useLocale hook
 const mockUseLocale = () => ({
   t: (key: string) => key,
 });
 
-// Mock the hooks
-jest.mock('@daily-co/daily-react', () => ({
-  useDaily: mockUseDaily,
-  useDailyEvent: () => {},
-  useTranscription: mockUseTranscription,
-  useRecording: mockUseRecording,
+// Override the imports directly
+React.createContext = React.createContext || (() => ({
+  Provider: ({ children }) => children,
+  Consumer: ({ children }) => children,
 }));
 
-jest.mock('@calcom/lib/hooks/useLocale', () => ({
-  useLocale: mockUseLocale,
-}));
+// Mock the modules at the top level
+const originalReactUseState = React.useState;
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -45,8 +44,24 @@ export default function ComponentPreview() {
     },
   });
 
-  // Override the useState to use our mocked transcript
-  React.useState = jest.fn().mockReturnValue([state.transcript.value, () => {}]);
+  // Use try-catch to handle potential module import errors
+  try {
+    // Override the hooks that the component might use
+    (window as any).useDaily = mockDailyHooks.useDaily;
+    (window as any).useDailyEvent = mockDailyHooks.useDailyEvent;
+    (window as any).useTranscription = mockDailyHooks.useTranscription;
+    (window as any).useRecording = mockDailyHooks.useRecording;
+    (window as any).useLocale = mockUseLocale;
+  } catch (error) {
+    console.warn('Error setting up mocks:', error);
+  }
 
-  return <CalAiTranscribe />;
+  // Use a simple state override instead of Jest mock
+  const transcriptState = originalReactUseState(state.transcript.value);
+
+  return (
+    <RecoilRoot>
+      <CalAiTranscribe />
+    </RecoilRoot>
+  );
 }

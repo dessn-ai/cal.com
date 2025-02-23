@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { LockedIndicator } from '../../../../packages/features/ee/managed-event-types/hooks/useLockedFieldsManager';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     isChildrenManagedEventType: {
@@ -30,14 +29,12 @@ export default function ComponentPreview() {
   const mockT = (key: string) => key;
   const mockSetUnlockedFields = () => {};
 
-  return (
-    <LockedIndicator
-      isChildrenManagedEventType={state.isChildrenManagedEventType.value}
-      isManagedEventType={state.isManagedEventType.value}
-      fieldState={[mockFieldState, mockSetFieldState]}
-      t={mockT}
-      fieldName={state.fieldName.value}
-      setUnlockedFields={mockSetUnlockedFields}
-    />
+  return LockedIndicator(
+    state.isChildrenManagedEventType.value,
+    state.isManagedEventType.value,
+    [mockFieldState, mockSetFieldState],
+    mockT,
+    state.fieldName.value,
+    mockSetUnlockedFields
   );
 }

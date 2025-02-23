@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { HoverCardTrigger } from '../../../../packages/ui/components/hover-card/index';
-
+import * as HoverCard from '@radix-ui/react-hover-card';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,8 +17,15 @@ export default function ComponentPreview() {
   });
 
   return (
-    <HoverCardTrigger className={state.className.value}>
-      {state.children.value}
-    </HoverCardTrigger>
+    <HoverCard.Root>
+      <HoverCard.Trigger asChild className={state.className.value}>
+        <span>{state.children.value}</span>
+      </HoverCard.Trigger>
+      <HoverCard.Portal>
+        <HoverCard.Content>
+          <div>Hover card content</div>
+        </HoverCard.Content>
+      </HoverCard.Portal>
+    </HoverCard.Root>
   );
 }

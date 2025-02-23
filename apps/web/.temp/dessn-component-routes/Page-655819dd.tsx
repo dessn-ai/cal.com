@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../pages/team/[slug]/embed';
-
+import dynamic from 'next/dynamic';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { DehydratedState } from '@tanstack/react-query';
+
+// Dynamically import the component with no SSR
+const ImportedComponent = dynamic(
+  () => import('../../pages/team/[slug]/embed').catch(() => {
+    // Fallback component if import fails
+    return () => <div>Failed to load component</div>;
+  }),
+  { ssr: false }
+);
+
+// Create a client
+const queryClient = new QueryClient();
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -72,15 +84,19 @@ export default function ComponentPreview() {
   };
 
   return (
-    <ImportedComponent
-      considerUnpublished={state.considerUnpublished.value}
-      team={mockTeam}
-      trpcState={mockTrpcState}
-      themeBasis={mockThemeBasis}
-      markdownStrippedBio={state.markdownStrippedBio.value}
-      isValidOrgDomain={state.isValidOrgDomain.value}
-      currentOrgDomain={state.currentOrgDomain.value}
-      isSEOIndexable={state.isSEOIndexable.value}
-    />
+    <QueryClientProvider client={queryClient}>
+      <Suspense fallback={<div>Loading...</div>}>
+        <ImportedComponent
+          considerUnpublished={state.considerUnpublished.value}
+          team={mockTeam}
+          trpcState={mockTrpcState}
+          themeBasis={mockThemeBasis}
+          markdownStrippedBio={state.markdownStrippedBio.value}
+          isValidOrgDomain={state.isValidOrgDomain.value}
+          currentOrgDomain={state.currentOrgDomain.value}
+          isSEOIndexable={state.isSEOIndexable.value}
+        />
+      </Suspense>
+    </QueryClientProvider>
   );
 }

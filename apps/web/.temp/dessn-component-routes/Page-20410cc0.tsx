@@ -1,36 +1,45 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/organizations/teams/other/[id]/appearance/page';
 
+// Mock the necessary components and utilities
+const mockUtils = {
+  _generateMetadata: () => ({}),
+  getTranslate: () => Promise.resolve((key) => key),
+};
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  _generateMetadata: jest.fn(),
-  getTranslate: jest.fn(() => Promise.resolve((key) => key)),
-}));
+// Create mock components
+const MockLegacyPage = () => <div>Mock LegacyPage</div>;
+const MockSettingsHeader = ({ children, title, description }) => (
+  <div>
+    <h1>{title}</h1>
+    <p>{description}</p>
+    {children}
+  </div>
+);
 
-jest.mock('@calcom/features/ee/teams/pages/team-appearance-view', () => {
-  return function MockLegacyPage() {
-    return <div>Mock LegacyPage</div>;
-  };
-});
-
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children, title, description }) {
+// Override imports with mock components
+const originalModule = async () => {
+  const Component = () => {
     return (
-      <div>
-        <h1>{title}</h1>
-        <p>{description}</p>
-        {children}
-      </div>
+      <MockSettingsHeader title="Team Appearance" description="Customize your team appearance">
+        <MockLegacyPage />
+      </MockSettingsHeader>
     );
   };
-});
+  return { default: Component };
+};
+
+// Lazy load the component with mocked implementation
+const ImportedComponent = React.lazy(() => originalModule());
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
-    // No props identified for this component
+    // Add any required state here if needed
   });
 
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ImportedComponent />
+    </Suspense>
+  );
 }

@@ -2,8 +2,13 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { EventTypeAppCard } from '../../../../packages/app-store/_components/EventTypeAppCardInterface';
 
-
 export default function ComponentPreview() {
+  // Create local mock functions
+  const mockGetAppData = (key: string) => key;
+  const mockSetAppData = (key: string, value: unknown) => {
+    console.log('Setting app data:', key, value);
+  };
+
   const [state, setState] = useParentState({
     app: {
       type: "object",
@@ -25,13 +30,13 @@ export default function ComponentPreview() {
       label: "Event Type",
     },
     getAppData: {
-      type: "function",
-      value: (key: string) => key,
+      type: "string",
+      value: "mockGetAppData",
       label: "Get App Data",
     },
     setAppData: {
-      type: "function",
-      value: (key: string, value: unknown) => {},
+      type: "string",
+      value: "mockSetAppData",
       label: "Set App Data",
     },
     LockedIcon: {
@@ -55,8 +60,8 @@ export default function ComponentPreview() {
     <EventTypeAppCard
       app={state.app.value}
       eventType={state.eventType.value}
-      getAppData={state.getAppData.value}
-      setAppData={state.setAppData.value}
+      getAppData={mockGetAppData}
+      setAppData={mockSetAppData}
       LockedIcon={state.LockedIcon.value}
       eventTypeFormMetadata={state.eventTypeFormMetadata.value}
       disabled={state.disabled.value}

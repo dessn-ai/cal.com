@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { PopoverTrigger } from '../../../../packages/ui/components/popover/Popover';
-
+import { Popover, PopoverTrigger, PopoverContent } from '../../../../packages/ui/components/popover/Popover';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,8 +17,15 @@ export default function ComponentPreview() {
   });
 
   return (
-    <PopoverTrigger className={state.className.value}>
-      {state.children.value}
-    </PopoverTrigger>
+    <Popover>
+      <PopoverTrigger className={state.className.value}>
+        {state.children.value}
+      </PopoverTrigger>
+      <PopoverContent>
+        <div className="p-4">
+          <p>Popover content</p>
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }

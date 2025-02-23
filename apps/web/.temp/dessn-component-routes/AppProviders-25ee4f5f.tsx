@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../lib/app-providers';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     children: {
@@ -12,8 +11,31 @@ export default function ComponentPreview() {
     },
   });
 
+  // Mock the required props
+  const mockProps = {
+    pageProps: {
+      nonce: "mock-nonce",
+      themeBasis: "light",
+    },
+    router: {
+      query: {},
+      pathname: "/",
+      asPath: "/",
+      basePath: "",
+      isLocaleDomain: false,
+      events: {},
+      isFallback: false,
+      isReady: true,
+      isPreview: false,
+    },
+    Component: {
+      isThemeSupported: true,
+      isBookingPage: false,
+    }
+  };
+
   return (
-    <ImportedComponent>
+    <ImportedComponent {...mockProps}>
       {state.children.value}
     </ImportedComponent>
   );

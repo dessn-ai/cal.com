@@ -1,9 +1,16 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { IntervalLimitsManager } from '../../../../packages/features/eventtypes/components/tabs/limits/EventLimitsTab';
-
+import { FormProvider, useForm } from 'react-hook-form';
 
 export default function ComponentPreview() {
+  const methods = useForm({
+    defaultValues: {
+      durationLimits: [],
+      bookingLimits: []
+    }
+  });
+
   const [state, setState] = useParentState({
     propertyName: {
       type: "dropdown",
@@ -34,12 +41,14 @@ export default function ComponentPreview() {
   });
 
   return (
-    <IntervalLimitsManager
-      propertyName={state.propertyName.value}
-      defaultLimit={state.defaultLimit.value}
-      step={state.step.value}
-      textFieldSuffix={state.textFieldSuffix.value}
-      disabled={state.disabled.value}
-    />
+    <FormProvider {...methods}>
+      <IntervalLimitsManager
+        propertyName={state.propertyName.value}
+        defaultLimit={state.defaultLimit.value}
+        step={state.step.value}
+        textFieldSuffix={state.textFieldSuffix.value}
+        disabled={state.disabled.value}
+      />
+    </FormProvider>
   );
 }

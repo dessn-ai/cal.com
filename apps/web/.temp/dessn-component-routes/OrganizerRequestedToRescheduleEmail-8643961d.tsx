@@ -2,7 +2,11 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { OrganizerRequestedToRescheduleEmail } from '../../../../packages/emails/src/templates/OrganizerRequestedToRescheduleEmail';
 
-import { TimeFormat } from '../../../../packages/types/Calendar';
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,7 +22,6 @@ export default function ComponentPreview() {
           email: 'john@example.com',
           timeZone: 'America/New_York',
           language: {
-            translate: (key: string, params: any) => `Translated: ${key}`,
             locale: 'en',
           },
         },
@@ -28,7 +31,6 @@ export default function ComponentPreview() {
             email: 'jane@example.com',
             timeZone: 'America/Los_Angeles',
             language: {
-              translate: (key: string, params: any) => `Translated: ${key}`,
               locale: 'en',
             },
           },
@@ -43,7 +45,6 @@ export default function ComponentPreview() {
         email: 'jane@example.com',
         timeZone: 'America/Los_Angeles',
         language: {
-          translate: (key: string, params: any) => `Translated: ${key}`,
           locale: 'en',
         },
       }),
@@ -64,6 +65,16 @@ export default function ComponentPreview() {
 
   const parsedCalEvent = JSON.parse(state.calEvent.value);
   const parsedAttendee = JSON.parse(state.attendee.value);
+
+  // Add translate function after parsing
+  const translateFn = (key: string, params?: any) => `Translated: ${key}`;
+  
+  // Add translate function to both organizer and attendee language objects
+  parsedCalEvent.organizer.language.translate = translateFn;
+  parsedCalEvent.attendees.forEach(attendee => {
+    attendee.language.translate = translateFn;
+  });
+  parsedAttendee.language.translate = translateFn;
 
   return (
     <OrganizerRequestedToRescheduleEmail

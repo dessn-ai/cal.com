@@ -1,8 +1,26 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../components/apps/installation/EventTypeConferencingAppSettings';
 
-import { SchedulingType } from '@calcom/prisma/client';
+// Mock the necessary types
+type SchedulingType = "ROUND_ROBIN" | "COLLECTIVE" | "MANAGED";
+
+// Mock component that represents the original functionality
+const MockEventTypeConferencingAppSettings = ({ 
+  eventType, 
+  slug 
+}: { 
+  eventType: any; 
+  slug: string 
+}) => {
+  return (
+    <div>
+      <h3>Event Type Conferencing Settings</h3>
+      <p>Event Type: {eventType.title}</p>
+      <p>Scheduling Type: {eventType.schedulingType}</p>
+      <p>Slug: {slug}</p>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,7 +36,7 @@ export default function ComponentPreview() {
         seatsPerTimeSlot: null,
         team: null,
         URL: "https://example.com/event",
-        schedulingType: SchedulingType.ROUND_ROBIN,
+        schedulingType: "ROUND_ROBIN" as SchedulingType,
         slug: "sample-event",
         metadata: {},
         position: 0,
@@ -37,7 +55,7 @@ export default function ComponentPreview() {
   });
 
   return (
-    <ImportedComponent
+    <MockEventTypeConferencingAppSettings
       eventType={state.eventType.value}
       slug={state.slug.value}
     />

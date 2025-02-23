@@ -1,8 +1,69 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { FilterOptions } from '../../../../packages/features/data-table/components/filters/FilterOptions';
-
 import { ColumnFilterType } from '../../../../packages/features/data-table/lib/types';
+import { DataTableContext } from '../../../../packages/features/data-table/lib/context';
+
+const DataTableProvider = ({ children }) => {
+  const mockContextValue = {
+    table: {
+      getState: () => ({
+        columnFilters: [],
+        sorting: [],
+        globalFilter: '',
+        pagination: {
+          pageIndex: 0,
+          pageSize: 10
+        }
+      }),
+      setColumnFilters: () => {},
+      setSorting: () => {},
+      setGlobalFilter: () => {},
+      setPagination: () => {},
+      getColumn: (columnId: string) => ({
+        getFilterValue: () => undefined,
+        setFilterValue: () => {},
+        id: columnId,
+        columnDef: {}
+      }),
+      getPreFilteredRowModel: () => ({ rows: [] }),
+      getFilteredRowModel: () => ({ rows: [] }),
+      getCoreRowModel: () => ({ rows: [] }),
+    },
+    selectedRows: new Set(),
+    setSelectedRows: () => {},
+    data: [],
+    isLoading: false,
+    tableState: {
+      pagination: { pageIndex: 0, pageSize: 10 },
+      sorting: [],
+      columnFilters: [],
+      globalFilter: '',
+    },
+    onTableStateChange: () => {},
+    tableRef: { current: null },
+    rowSelection: {},
+    setRowSelection: () => {},
+    columns: [],
+    filterableColumns: [],
+    searchableColumns: [],
+    selectable: false,
+    // Add activeFilters array that useFilterValue expects
+    activeFilters: [],
+    setActiveFilters: () => {},
+    // Add any other filter-related properties
+    setFilter: () => {},
+    removeFilter: () => {},
+    clearFilters: () => {},
+    activeFilterCount: 0
+  };
+
+  return (
+    <DataTableContext.Provider value={mockContextValue}>
+      {children}
+    </DataTableContext.Provider>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -52,5 +113,9 @@ export default function ComponentPreview() {
     }
   };
 
-  return <FilterOptions column={getColumnData()} />;
+  return (
+    <DataTableProvider>
+      <FilterOptions column={getColumnData()} />
+    </DataTableProvider>
+  );
 }

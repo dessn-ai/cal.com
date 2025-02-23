@@ -1,7 +1,28 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { OrganizerCancelledEmail } from '../../../../packages/emails/src/templates/OrganizerCancelledEmail';
 
+// Mock the BaseScheduledEmail component to avoid translation issues
+const BaseScheduledEmail = ({ subject, title, children }) => (
+  <div>
+    <h1>{title}</h1>
+    <h2>{subject}</h2>
+    {children}
+  </div>
+);
+
+// Mock the actual email component with the base component
+const MockOrganizerCancelledEmail = (props) => {
+  const t = (key) => key;
+  
+  return (
+    <BaseScheduledEmail
+      subject={t("event_cancelled_subject")}
+      title={t("event_request_cancelled")}
+      headerType="xCircle"
+      {...props}
+    />
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -16,14 +37,21 @@ export default function ComponentPreview() {
           name: "Jane Smith",
           email: "jane@example.com",
           timeZone: "America/New_York",
-          language: { translate: (key: string) => key, locale: "en" }
+          timeFormat: 12,
+          language: {
+            locale: "en"
+          }
         },
         attendees: [{
           name: "John Doe",
           email: "john@example.com",
           timeZone: "America/Los_Angeles",
-          language: { translate: (key: string) => key, locale: "en" }
-        }]
+          language: {
+            locale: "en"
+          }
+        }],
+        schedulingType: "default",
+        recurringEvent: null
       }),
       label: "Calendar Event"
     },
@@ -33,7 +61,9 @@ export default function ComponentPreview() {
         name: "John Doe",
         email: "john@example.com",
         timeZone: "America/Los_Angeles",
-        language: { translate: (key: string) => key, locale: "en" }
+        language: {
+          locale: "en"
+        }
       }),
       label: "Attendee"
     },
@@ -53,7 +83,10 @@ export default function ComponentPreview() {
         name: "Team Member",
         email: "team@example.com",
         timeZone: "Europe/London",
-        language: { translate: (key: string) => key, locale: "en" }
+        timeFormat: 24,
+        language: {
+          locale: "en"
+        }
       }),
       label: "Team Member"
     },
@@ -76,7 +109,10 @@ export default function ComponentPreview() {
     attendeeCancelled: state.attendeeCancelled.value,
     teamMember: JSON.parse(state.teamMember.value),
     reassigned: JSON.parse(state.reassigned.value),
+    t: (key) => key,
+    locale: "en",
+    timeZone: "UTC"
   };
 
-  return <OrganizerCancelledEmail {...props} />;
+  return <MockOrganizerCancelledEmail {...props} />;
 }

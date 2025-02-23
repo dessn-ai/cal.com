@@ -2,7 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/giphy/components/EventTypeAppCardInterface';
 
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     eventType: {
@@ -29,9 +28,13 @@ export default function ComponentPreview() {
         description: "Add GIFs to your booking confirmations",
         logo: "https://example.com/giphy-logo.png",
         category: "other",
+        categories: ["other", "messaging"],  // Added categories array
         url: "https://giphy.com",
         credentialOwner: null,
-        credentialIds: []
+        credentialIds: [],
+        isInstalled: true,  // Added isInstalled property
+        enabled: true,      // Added enabled property
+        isSetupAlready: true // Added isSetupAlready property
       },
       label: "App"
     },

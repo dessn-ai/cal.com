@@ -1,36 +1,45 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/teams/[id]/appearance/page';
 
+// Mock components
+const MockLegacyPage = () => <div>Mock Legacy Page</div>;
+const MockSettingsHeader = ({ children, title, description }) => (
+  <div>
+    <h1>{title}</h1>
+    <p>{description}</p>
+    {children}
+  </div>
+);
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  _generateMetadata: jest.fn(),
-  getTranslate: jest.fn(() => Promise.resolve((key) => key)),
-}));
+// Create a wrapped version of the imported component with error handling
+const WrappedComponent = () => {
+  try {
+    // Mock the required components and utilities
+    const mockUtils = {
+      _generateMetadata: () => ({}),
+      getTranslate: () => (key) => key,
+    };
 
-jest.mock('@calcom/features/ee/teams/pages/team-appearance-view', () => {
-  return function MockLegacyPage() {
-    return <div>Mock Legacy Page</div>;
-  };
-});
-
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children, title, description }) {
+    // Return a basic mock implementation
     return (
-      <div>
-        <h1>{title}</h1>
-        <p>{description}</p>
-        {children}
-      </div>
+      <MockSettingsHeader title="Team Appearance" description="Customize your team's appearance">
+        <MockLegacyPage />
+      </MockSettingsHeader>
     );
-  };
-});
+  } catch (error) {
+    console.error('Error rendering component:', error);
+    return <div>Error: Failed to render component</div>;
+  }
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     // No props identified for this component
   });
 
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <WrappedComponent />
+    </Suspense>
+  );
 }

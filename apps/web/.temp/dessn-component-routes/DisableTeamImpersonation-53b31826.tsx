@@ -1,8 +1,24 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/ee/teams/components/DisableTeamImpersonation';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { httpBatchLink } from '@trpc/client';
+import { createTRPCReact } from '@trpc/react-query';
 
-import { trpc } from '@calcom/trpc/react';
+// Create a new QueryClient instance
+const queryClient = new QueryClient();
+
+// Create mock TRPC
+const mockTrpc = createTRPCReact();
+
+// Create mock TRPC client
+const mockTrpcClient = mockTrpc.createClient({
+  links: [
+    httpBatchLink({
+      url: 'http://localhost:3000/api/trpc',
+    }),
+  ],
+});
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -23,9 +39,8 @@ export default function ComponentPreview() {
     },
   });
 
-  // Mock trpc
-  const mockTrpc = {
-    useUtils: () => ({}),
+  // Mock the specific procedures needed
+  const mockedQueries = {
     viewer: {
       teams: {
         getMembershipbyUser: {
@@ -44,13 +59,21 @@ export default function ComponentPreview() {
     },
   };
 
+  // Merge the mock procedures with the TRPC instance
+  const trpcWithMocks = {
+    ...mockTrpc,
+    ...mockedQueries,
+  };
+
   return (
-    <trpc.Provider client={mockTrpc as any}>
-      <ImportedComponent
-        teamId={state.teamId.value}
-        memberId={state.memberId.value}
-        disabled={state.disabled.value}
-      />
-    </trpc.Provider>
+    <QueryClientProvider client={queryClient}>
+      <mockTrpc.Provider client={mockTrpcClient} queryClient={queryClient}>
+        <ImportedComponent
+          teamId={state.teamId.value}
+          memberId={state.memberId.value}
+          disabled={state.disabled.value}
+        />
+      </mockTrpc.Provider>
+    </QueryClientProvider>
   );
 }

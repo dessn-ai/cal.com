@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { EventAvailabilityTab } from '../../../../packages/features/eventtypes/components/tabs/availability/EventAvailabilityTab';
-
+import { FormProvider, useForm } from 'react-hook-form';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -57,18 +57,28 @@ export default function ComponentPreview() {
     isPending: false,
   });
 
+  const formMethods = useForm({
+    defaultValues: {
+      schedule: [],
+      availability: [],
+      timeZone: "UTC",
+    }
+  });
+
   return (
-    <EventAvailabilityTab
-      isTeamEvent={state.isTeamEvent.value}
-      schedulesQueryData={JSON.parse(state.schedulesQueryData.value)}
-      isSchedulesPending={state.isSchedulesPending.value}
-      eventType={JSON.parse(state.eventType.value)}
-      teamMembers={JSON.parse(state.teamMembers.value)}
-      scheduleQueryData={JSON.parse(state.scheduleQueryData.value)}
-      isSchedulePending={state.isSchedulePending.value}
-      user={JSON.parse(state.user.value)}
-      editAvailabilityRedirectUrl={state.editAvailabilityRedirectUrl.value}
-      hostSchedulesQuery={mockHostSchedulesQuery}
-    />
+    <FormProvider {...formMethods}>
+      <EventAvailabilityTab
+        isTeamEvent={state.isTeamEvent.value}
+        schedulesQueryData={JSON.parse(state.schedulesQueryData.value)}
+        isSchedulesPending={state.isSchedulesPending.value}
+        eventType={JSON.parse(state.eventType.value)}
+        teamMembers={JSON.parse(state.teamMembers.value)}
+        scheduleQueryData={JSON.parse(state.scheduleQueryData.value)}
+        isSchedulePending={state.isSchedulePending.value}
+        user={JSON.parse(state.user.value)}
+        editAvailabilityRedirectUrl={state.editAvailabilityRedirectUrl.value}
+        hostSchedulesQuery={mockHostSchedulesQuery}
+      />
+    </FormProvider>
   );
 }

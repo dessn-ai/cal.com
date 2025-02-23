@@ -1,9 +1,32 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../../../packages/app-store/routing-forms/components/SingleForm';
+import { FormProvider, useForm } from 'react-hook-form';
 
+// Create a simplified version of the form component
+const SimplifiedFormComponent = ({ form, appUrl }) => {
+  return (
+    <div className="max-w-4xl mx-auto p-6">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold mb-2">{form.name}</h1>
+        <p className="text-gray-600">{form.description}</p>
+      </div>
+      
+      <div className="bg-white rounded-lg shadow p-6">
+        <div className="space-y-4">
+          {form.routes && form.routes.map((route, index) => (
+            <div key={index} className="border-b pb-4">
+              <h3 className="font-medium">{route.name}</h3>
+              <p className="text-sm text-gray-500">{route.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
+  const methods = useForm();
   const [state, setState] = useParentState({
     form: {
       type: "object",
@@ -42,11 +65,11 @@ export default function ComponentPreview() {
   });
 
   return (
-    <ImportedComponent
-      form={state.form.value}
-      appUrl={state.appUrl.value}
-      Page={() => <div>Page Component</div>}
-      enrichedWithUserProfileForm={state.enrichedWithUserProfileForm.value}
-    />
+    <FormProvider {...methods}>
+      <SimplifiedFormComponent
+        form={state.form.value}
+        appUrl={state.appUrl.value}
+      />
+    </FormProvider>
   );
 }

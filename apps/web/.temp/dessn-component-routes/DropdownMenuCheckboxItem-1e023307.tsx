@@ -1,7 +1,11 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { DropdownMenuCheckboxItem } from '../../../../packages/ui/components/dropdown/Dropdown';
-
+import { 
+  Dropdown,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuCheckboxItem 
+} from '../../../../packages/ui/components/dropdown/Dropdown';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -22,11 +26,18 @@ export default function ComponentPreview() {
   };
 
   return (
-    <DropdownMenuCheckboxItem
-      checked={state.checked.value}
-      onCheckedChange={handleCheckedChange}
-    >
-      {state.children.value}
-    </DropdownMenuCheckboxItem>
+    <Dropdown>
+      <DropdownMenuTrigger>
+        Click me
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuCheckboxItem
+          checked={state.checked.value}
+          onCheckedChange={handleCheckedChange}
+        >
+          {state.children.value}
+        </DropdownMenuCheckboxItem>
+      </DropdownMenuContent>
+    </Dropdown>
   );
 }

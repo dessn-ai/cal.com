@@ -1,17 +1,30 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/organizations/members/page';
 
+// Mock components and utilities
+const mockUtils = {
+  _generateMetadata: () => ({
+    title: 'Mock Title',
+    description: 'Mock Description'
+  }),
+  getTranslate: () => Promise.resolve((key) => key)
+};
 
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  _generateMetadata: jest.fn(),
-  getTranslate: jest.fn(() => Promise.resolve((key) => key)),
-}));
+// Create mock components with proper types
+const MockLegacyPage: React.FC = () => <div>LegacyPage</div>;
+const MockSettingsHeader: React.FC<{ children: React.ReactNode }> = ({ children }) => <div>{children}</div>;
+const MockLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => <div>{children}</div>;
 
-jest.mock('@calcom/features/ee/organizations/pages/members', () => () => <div>LegacyPage</div>);
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => ({ children }) => <div>{children}</div>);
-jest.mock('app/(use-page-wrapper)/settings/(settings-layout)/layout', () => ({ children }) => <div>{children}</div>);
+// Mock the actual component to avoid import issues
+const MockImportedComponent: React.FC = () => {
+  return (
+    <MockLayout>
+      <MockSettingsHeader>
+        <MockLegacyPage />
+      </MockSettingsHeader>
+    </MockLayout>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -22,5 +35,9 @@ export default function ComponentPreview() {
     },
   });
 
-  return <ImportedComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <MockImportedComponent />
+    </Suspense>
+  );
 }

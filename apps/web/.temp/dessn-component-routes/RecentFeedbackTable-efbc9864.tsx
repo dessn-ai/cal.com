@@ -2,8 +2,25 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { RecentFeedbackTable } from '../../../../packages/features/insights/components/RecentFeedbackTable';
 
-import { TRPCProvider } from '@calcom/trpc/react';
-import { InsightsProvider } from '../../../../packages/features/insights/context/insights-provider';
+// Mock InsightsProvider context
+const MockInsightsContext = React.createContext({});
+
+const MockInsightsProvider = ({ children }) => {
+  return (
+    <MockInsightsContext.Provider value={{}}>
+      {children}
+    </MockInsightsContext.Provider>
+  );
+};
+
+// Mock TRPC Provider
+const MockTRPCProvider = ({ children }) => {
+  return (
+    <div data-testid="mock-trpc-provider">
+      {children}
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -11,10 +28,10 @@ export default function ComponentPreview() {
   });
 
   return (
-    <TRPCProvider>
-      <InsightsProvider>
+    <MockTRPCProvider>
+      <MockInsightsProvider>
         <RecentFeedbackTable />
-      </InsightsProvider>
-    </TRPCProvider>
+      </MockInsightsProvider>
+    </MockTRPCProvider>
   );
 }

@@ -1,26 +1,50 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { AddNewTeamsForm } from '../../../../packages/features/ee/organizations/components/AddNewTeamsForm';
-
-import { useForm } from 'react-hook-form';
 import { trpc } from '@calcom/trpc/react';
 
-export default function ComponentPreview() {
-  const [state, setState] = useParentState({
+// Mock the hooks directly
+const useRouter = () => ({
+  push: (path: string) => console.log('Navigation to:', path)
+});
+
+const useSession = () => ({
+  data: {
+    user: {
+      role: "ADMIN"
+    }
+  }
+});
+
+// Mock the useRouterQuery hook
+const useRouterQuery = () => {
+  const [state] = useParentState({
     orgId: {
       type: "number",
       value: 1,
       label: "Organization ID",
     },
   });
+  
+  return {
+    id: state.orgId.value.toString()
+  };
+};
 
-  const form = useForm({
-    defaultValues: {
-      teams: [{ name: "" }],
-      moveTeams: [],
-    },
-  });
+// Mock the required modules
+import('@calcom/lib/hooks/useRouterQuery').then(module => {
+  module.useRouterQuery = useRouterQuery;
+});
 
+import('next/navigation').then(module => {
+  module.useRouter = useRouter;
+});
+
+import('next-auth/react').then(module => {
+  module.useSession = useSession;
+});
+
+export default function ComponentPreview() {
   // Mock the trpc hooks
   const mockTeams = [
     { id: 1, name: "Team 1", slug: "team-1" },
@@ -28,15 +52,50 @@ export default function ComponentPreview() {
   ];
 
   const mockOrg = {
-    id: state.orgId.value,
+    id: 1,
     slug: "org-slug",
-    requestedSlug: null,
+    metadata: {
+      requestedSlug: "org-slug",
+    },
   };
 
-  trpc.viewer.teams.list.useQuery = () => ({ data: mockTeams });
-  trpc.viewer.teams.get.useQuery = () => ({ data: mockOrg });
+  // Create mock functions for trpc
+  const mockTRPC = {
+    viewer: {
+      teams: {
+        list: {
+          useQuery: () => ({ data: mockTeams, isLoading: false }),
+        },
+        get: {
+          useQuery: () => ({ data: mockOrg, isLoading: false }),
+        },
+      },
+      organizations: {
+        listMembers: {
+          useQuery: () => ({ data: [], isLoading: false }),
+        },
+        createTeams: {
+          useMutation: () => ({
+            mutate: () => {},
+            isPending: false,
+            isSuccess: false,
+          }),
+        },
+        publish: {
+          useMutation: () => ({
+            mutate: () => {},
+          }),
+        },
+      },
+    },
+  };
+
+  // Override trpc for the component
+  Object.assign(trpc, mockTRPC);
 
   return (
-    <AddNewTeamsForm />
+    <div>
+      <AddNewTeamsForm />
+    </div>
   );
 }

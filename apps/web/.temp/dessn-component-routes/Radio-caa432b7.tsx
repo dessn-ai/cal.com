@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { Radio } from '../../../../packages/ui/form/radio-area/Radio';
-
+import { RadioGroup } from '@radix-ui/react-radio-group';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -32,13 +32,46 @@ export default function ComponentPreview() {
     },
   });
 
+  const options = [
+    {
+      label: "Option 1",
+      value: "option1"
+    },
+    {
+      label: "Option 2",
+      value: "option2"
+    }
+  ];
+
+  const handleValueChange = (newValue: string) => {
+    setState(prev => ({
+      ...prev,
+      value: {
+        ...prev.value,
+        value: newValue
+      }
+    }));
+  };
+
+  if (!Radio) {
+    return <div>Radio component not available</div>;
+  }
+
   return (
-    <Radio.RadioField
-      value={state.value.value}
-      disabled={state.disabled.value}
-      id={state.id.value}
-      label={state.label.value}
-      withPadding={state.withPadding.value}
-    />
+    <RadioGroup 
+      value={state.value.value} 
+      onValueChange={handleValueChange}
+      className="space-y-4"
+    >
+      {options.map((option) => (
+        <Radio
+          key={option.value}
+          label={option.label}
+          id={`${state.id.value}-${option.value}`}
+          value={option.value}
+          disabled={state.disabled.value}
+        />
+      ))}
+    </RadioGroup>
   );
 }

@@ -1,7 +1,9 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { RadioAreaGroup } from '../../../../packages/ui/form/radio-area/RadioAreaGroup';
+import { RadioAreaGroup, Item } from '../../../../packages/ui/form/radio-area/RadioAreaGroup';
 
+// Attach Item to RadioAreaGroup to match the expected usage
+RadioAreaGroup.Item = Item;
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({

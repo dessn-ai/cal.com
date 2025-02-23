@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
+import Select from 'react-select';
 import { SingleValueComponent } from '../../../../packages/features/calendars/DestinationCalendarSelector';
-
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -30,19 +30,16 @@ export default function ComponentPreview() {
   };
 
   return (
-    <SingleValueComponent
-      data={option}
-      selectProps={{}}
-      cx={() => ({})}
-      getStyles={() => ({})}
-      getValue={() => []}
-      hasValue={true}
+    <Select
+      value={option}
+      options={[option]}
+      components={{
+        SingleValue: SingleValueComponent
+      }}
       isDisabled={false}
-      isFocused={false}
-      isMulti={false}
-      options={[]}
-      selectOption={() => {}}
-      theme={{}}
+      className="react-select"
+      classNamePrefix="select"
+      onChange={() => {}}
     />
   );
 }

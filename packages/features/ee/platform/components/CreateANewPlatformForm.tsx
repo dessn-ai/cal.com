@@ -19,20 +19,34 @@ import type { Ensure } from "@calcom/types/utils";
 import { Alert, Form, TextField, Button } from "@calcom/ui";
 
 export const CreateANewPlatformForm = () => {
-  const session = useSession();
-  if (!session.data) {
-    return null;
+  const { data: session, status } = useSession();
+  
+  // Show loading or not authenticated state
+  if (status === "loading") {
+    return <div>Loading...</div>;
   }
-  return <CreateANewPlatformFormChild session={session} />;
+
+  if (!session?.user) {
+    return <div>Not authenticated</div>;
+  }
+
+  return <CreateANewPlatformFormChild session={{ data: session, status }} />;
 };
 
-const CreateANewPlatformFormChild = ({ session }: { session: Ensure<SessionContextValue, "data"> }) => {
+const CreateANewPlatformFormChild = ({ session }: { session: { data: NonNullable<SessionContextValue["data"]>, status: string } }) => {
   const { t } = useLocale();
   const router = useRouter();
   const telemetry = useTelemetry();
   const [serverErrorMessage, setServerErrorMessage] = useState<string | null>(null);
+
+  // Ensure we have the user object and role
+  if (!session.data?.user?.role) {
+    return <div>Invalid session data</div>;
+  }
+
   const isAdmin = session.data.user.role === UserPermissionRole.ADMIN;
   const defaultOrgOwnerEmail = session.data.user.email ?? "";
+  
   const newOrganizationFormMethods = useForm<{
     name: string;
     slug: string;
@@ -50,13 +64,10 @@ const CreateANewPlatformFormChild = ({ session }: { session: Ensure<SessionConte
   const createOrganizationMutation = trpc.viewer.organizations.create.useMutation({
     onSuccess: async (data) => {
       telemetry.event(telemetryEventTypes.org_created);
-      // This is necessary so that server token has the updated upId
       await session.update({
         upId: data.upId,
       });
       if (isAdmin && data.userId !== session.data?.user.id) {
-        // Impersonate the user chosen as the organization owner(if the admin user isn't the owner himself), so that admin can now configure the organisation on his behalf.
-        // He won't need to have access to the org directly in this way.
         signIn("impersonation-auth", {
           username: data.email,
           callbackUrl: `/settings/platform`,

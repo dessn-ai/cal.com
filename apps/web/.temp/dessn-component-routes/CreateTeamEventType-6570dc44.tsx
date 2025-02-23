@@ -5,8 +5,23 @@ import ImportedComponent from '../../modules/settings/teams/[id]/event-types-vie
 import { useRouter } from 'next/navigation';
 import { trpc } from '@calcom/trpc/react';
 import { useCompatSearchParams } from '@calcom/lib/hooks/useCompatSearchParams';
-import { useCreateEventType } from '@calcom/lib/hooks/useCreateEventType';
 import { useLocale } from '@calcom/lib/hooks/useLocale';
+
+// Override the hook import
+const useCreateEventType = () => ({
+  form: {
+    register: () => ({}),
+    setValue: () => {},
+    watch: () => ({}),
+    handleSubmit: (fn: any) => fn,
+    formState: { errors: {} },
+  },
+  createMutation: {
+    isPending: false,
+    mutate: () => Promise.resolve(),
+  },
+  isManagedEventType: false,
+});
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -29,18 +44,6 @@ export default function ComponentPreview() {
   trpc.viewer.teams.get.useQuery = () => ({
     data: mockTeamData,
   });
-
-  // Mock useCreateEventType hook
-  const mockCreateEventType = {
-    form: {},
-    createMutation: {
-      isPending: false,
-      mutate: () => {},
-    },
-    isManagedEventType: false,
-  };
-
-  useCreateEventType.mockReturnValue(mockCreateEventType);
 
   return (
     <ImportedComponent />

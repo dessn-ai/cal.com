@@ -1,8 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/app-store/matomo/components/EventTypeAppCardInterface';
-
-import { AppProvider } from '@calcom/app-store/EventTypeAppContext';
+import EventTypeAppContext from '@calcom/app-store/EventTypeAppContext';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -47,12 +46,12 @@ export default function ComponentPreview() {
   };
 
   return (
-    <AppProvider value={mockAppContext}>
+    <EventTypeAppContext.Provider value={mockAppContext}>
       <ImportedComponent 
         eventType={state.eventType.value}
         app={state.app.value}
         disabled={state.disabled.value}
       />
-    </AppProvider>
+    </EventTypeAppContext.Provider>
   );
 }

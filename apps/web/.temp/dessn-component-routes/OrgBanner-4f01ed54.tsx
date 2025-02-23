@@ -2,6 +2,8 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { OrgBanner } from '../../../../packages/ui/components/organization-banner/OrgBanner';
 
+// Use a placeholder image instead of example.com
+const PLACEHOLDER_IMAGE = "https://placehold.co/1500x500";
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -22,7 +24,7 @@ export default function ComponentPreview() {
     },
     imageSrc: {
       type: "string",
-      value: "https://example.com/banner.jpg",
+      value: PLACEHOLDER_IMAGE,
       label: "Image Source",
     },
     className: {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { MonthlyDigestEmail } from '../../../../packages/emails/src/templates/MonthlyDigestEmail';
-
+import { EventType, MemberBooking } from './previewTypes';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -85,11 +85,11 @@ export default function ComponentPreview() {
     mostBookedEvents: [
       { eventTypeId: 1, eventTypeName: "Meeting", count: 20 },
       { eventTypeId: 2, eventTypeName: "Interview", count: 15 },
-    ],
+    ] as EventType[],
     membersWithMostBookings: [
       { userId: 1, user: { id: 1, name: "John Doe", email: "john@example.com", avatar: null, username: "johndoe" }, count: 25 },
       { userId: 2, user: { id: 2, name: "Jane Smith", email: "jane@example.com", avatar: null, username: "janesmith" }, count: 20 },
-    ],
+    ] as MemberBooking[],
     admin: { email: "admin@example.com", name: "Admin User" },
     team: { name: "Sample Team", id: 1 },
   };

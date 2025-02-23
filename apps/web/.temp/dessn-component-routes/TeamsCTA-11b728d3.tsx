@@ -2,9 +2,6 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { TeamsCTA } from '../../modules/teams/teams-view';
 
-import { TRPCProvider } from '@calcom/trpc/react';
-import { I18nLanguageHandler } from '@calcom/features/i18n';
-
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     isOrgAdmin: {
@@ -19,16 +16,15 @@ export default function ComponentPreview() {
     },
   });
 
-  const mockTrpcQuery = () => ({
+  // Mock the context that would normally be provided by TRPC
+  const mockContext = {
     organizationId: state.organizationId.value,
     organization: { isOrgAdmin: state.isOrgAdmin.value },
-  });
+  };
 
   return (
-    <TRPCProvider>
-      <I18nLanguageHandler>
-        <TeamsCTA />
-      </I18nLanguageHandler>
-    </TRPCProvider>
+    <div data-testid="teams-cta-preview">
+      <TeamsCTA />
+    </div>
   );
 }

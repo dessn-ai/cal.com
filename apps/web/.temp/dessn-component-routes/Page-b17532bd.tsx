@@ -1,27 +1,46 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/organizations/profile/page';
 
-
-// Mock the necessary dependencies
-jest.mock('app/_utils', () => ({
-  getTranslate: jest.fn(() => (key: string) => key),
-}));
-
-jest.mock('@calcom/features/ee/organizations/pages/settings/profile', () => {
-  return function MockLegacyPage() {
-    return <div>Mock Legacy Page</div>;
-  };
-});
-
-jest.mock('@calcom/features/settings/appDir/SettingsHeader', () => {
-  return function MockSettingsHeader({ children }: { children: React.ReactNode }) {
-    return <div>Mock Settings Header {children}</div>;
-  };
-});
+// Create a mock profile page component
+const MockProfilePage = () => {
+  return (
+    <div className="flex flex-col space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">Organization Profile</h2>
+      </div>
+      <div className="flex flex-col space-y-4">
+        <div className="rounded-md border p-4">
+          <h3 className="text-lg font-medium">Organization Details</h3>
+          <div className="mt-4 space-y-2">
+            <div>
+              <label className="block text-sm font-medium">Organization Name</label>
+              <input
+                type="text"
+                className="mt-1 block w-full rounded-md border p-2"
+                placeholder="Enter organization name"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium">Organization Slug</label>
+              <input
+                type="text"
+                className="mt-1 block w-full rounded-md border p-2"
+                placeholder="Enter organization slug"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({});
 
-  return <ImportedComponent />;
+  return (
+    <div className="p-6">
+      <MockProfilePage />
+    </div>
+  );
 }

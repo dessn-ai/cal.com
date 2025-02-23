@@ -1,29 +1,31 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import { CreateButtonWithTeamsList } from '../../../../packages/ui/components/createButton/CreateButtonWithTeamsList';
-
 import { trpc } from "@calcom/trpc/react";
 
-// Mock trpc.viewer.teamsAndUserProfilesQuery.useQuery
-const mockUseQuery = () => ({
-  data: [
+// Create a mock wrapper component that provides the mock data
+const MockTrpcProvider = ({ children }) => {
+  const mockData = [
     { teamId: 1, name: 'Team 1', slug: 'team-1', image: 'https://example.com/team1.jpg', readOnly: false },
     { teamId: 2, name: 'Team 2', slug: 'team-2', image: 'https://example.com/team2.jpg', readOnly: false },
     { teamId: null, name: 'User Profile', slug: 'user-profile', image: 'https://example.com/user.jpg', readOnly: false },
-  ]
-});
+  ];
 
-// Mock the trpc object
-const mockTrpc = {
-  viewer: {
-    teamsAndUserProfilesQuery: {
-      useQuery: mockUseQuery
-    }
+  // Override the useQuery hook
+  const originalUseQuery = trpc.viewer.teamsAndUserProfilesQuery.useQuery;
+  trpc.viewer.teamsAndUserProfilesQuery.useQuery = () => ({
+    data: mockData,
+    isLoading: false,
+    error: null,
+  });
+
+  try {
+    return children;
+  } finally {
+    // Restore the original useQuery
+    trpc.viewer.teamsAndUserProfilesQuery.useQuery = originalUseQuery;
   }
 };
-
-// Replace the actual trpc with the mock
-(trpc as any) = mockTrpc;
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -50,11 +52,13 @@ export default function ComponentPreview() {
   });
 
   return (
-    <CreateButtonWithTeamsList
-      onlyShowWithTeams={state.onlyShowWithTeams.value}
-      onlyShowWithNoTeams={state.onlyShowWithNoTeams.value}
-      isAdmin={state.isAdmin.value}
-      includeOrg={state.includeOrg.value}
-    />
+    <MockTrpcProvider>
+      <CreateButtonWithTeamsList
+        onlyShowWithTeams={state.onlyShowWithTeams.value}
+        onlyShowWithNoTeams={state.onlyShowWithNoTeams.value}
+        isAdmin={state.isAdmin.value}
+        includeOrg={state.includeOrg.value}
+      />
+    </MockTrpcProvider>
   );
 }

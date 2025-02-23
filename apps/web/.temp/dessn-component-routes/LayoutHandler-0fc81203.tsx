@@ -1,8 +1,16 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../../../packages/app-store/routing-forms/pages/layout-handler/[...appPages]';
-
 import { FormProvider, useForm } from 'react-hook-form';
+
+// Create a mock version of the imported component
+const MockImportedComponent = ({ exampleProp }: any) => {
+  return (
+    <div>
+      <h2>Mock Layout Handler Component</h2>
+      <pre>{JSON.stringify(exampleProp, null, 2)}</pre>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -17,7 +25,9 @@ export default function ComponentPreview() {
 
   return (
     <FormProvider {...methods}>
-      <ImportedComponent {...state} />
+      <React.Suspense fallback={<div>Loading...</div>}>
+        <MockImportedComponent {...state} />
+      </React.Suspense>
     </FormProvider>
   );
 }

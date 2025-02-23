@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { HoverCard } from '../../../../packages/ui/components/hover-card/index';
-
+import { HoverCard, HoverCardTrigger, HoverCardContent, HoverCardPortal } from '../../../../packages/ui/components/hover-card';
+import { classNames } from "@calcom/lib";
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -25,18 +25,30 @@ export default function ComponentPreview() {
   });
 
   return (
-    <HoverCard>
-      <HoverCard.Trigger>Hover over me</HoverCard.Trigger>
-      <HoverCard.Portal>
-        <HoverCard.Content
-          className="p-4"
-          align={state.align.value}
-          sideOffset={state.sideOffset.value}
-          data-theme={state.theme.value}
-        >
-          <p>This is the hover card content</p>
-        </HoverCard.Content>
-      </HoverCard.Portal>
-    </HoverCard>
+    <div className="flex items-center justify-center">
+      <HoverCard>
+        <HoverCardTrigger asChild>
+          <button className="rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-900 shadow-sm hover:bg-gray-50">
+            Hover over me
+          </button>
+        </HoverCardTrigger>
+        <HoverCardPortal>
+          <HoverCardContent
+            align={state.align.value}
+            sideOffset={state.sideOffset.value}
+            className={classNames(
+              "w-80 rounded-md p-4",
+              "bg-white shadow-lg",
+              "data-[theme=dark]:bg-gray-900"
+            )}
+            data-theme={state.theme.value}
+          >
+            <div className="space-y-2">
+              <p className="text-sm text-gray-900">This is the hover card content</p>
+            </div>
+          </HoverCardContent>
+        </HoverCardPortal>
+      </HoverCard>
+    </div>
   );
 }

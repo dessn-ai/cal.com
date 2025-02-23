@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { InputComponent } from '../../../../packages/features/form/components/Select';
-
+import Select from '../../../../packages/features/form/components/Select';
+import { ThemeProvider } from 'next-themes';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -39,14 +39,16 @@ export default function ComponentPreview() {
   ];
 
   return (
-    <InputComponent
-      inputClassName={state.inputClassName.value}
-      placeholder={state.placeholder.value}
-      isDisabled={state.isDisabled.value}
-      isClearable={state.isClearable.value}
-      isSearchable={state.isSearchable.value}
-      options={options}
-      onChange={(selectedOption) => console.log(selectedOption)}
-    />
+    <ThemeProvider attribute="class" defaultTheme="light">
+      <Select
+        className={state.inputClassName.value}
+        placeholder={state.placeholder.value}
+        isDisabled={state.isDisabled.value}
+        isClearable={state.isClearable.value}
+        isSearchable={state.isSearchable.value}
+        options={options}
+        onChange={(selectedOption) => console.log(selectedOption)}
+      />
+    </ThemeProvider>
   );
 }

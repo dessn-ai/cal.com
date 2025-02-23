@@ -1,12 +1,57 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/ee/organizations/pages/settings/admin/AdminOrgPage';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { trpc } from "@calcom/trpc/react";
+// Create a mock client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false,
+    },
+  },
+});
+
+// Create a mock TRPC context
+const createMockTrpc = (mockData) => ({
+  useContext: () => ({
+    viewer: {
+      organizations: {
+        adminGetAll: {
+          invalidate: async () => {},
+        },
+        adminGet: {
+          invalidate: async () => {},
+          refetch: async () => {},
+        },
+      },
+    },
+  }),
+  viewer: {
+    organizations: {
+      adminGetAll: {
+        useSuspenseQuery: () => [mockData],
+        useQuery: () => ({ data: mockData, isLoading: false, error: null }),
+      },
+      adminUpdate: {
+        useMutation: () => ({
+          mutate: async () => {},
+          isLoading: false,
+        }),
+      },
+      adminDelete: {
+        useMutation: () => ({
+          mutate: async () => {},
+          isLoading: false,
+        }),
+      },
+    },
+  },
+});
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
-    // Since the component doesn't have explicit props, we'll mock some data
     mockData: {
       type: "string",
       value: JSON.stringify([
@@ -27,43 +72,29 @@ export default function ComponentPreview() {
     },
   });
 
-  // Mock trpc hooks
-  const mockTrpc = {
-    useUtils: () => ({
-      viewer: {
-        organizations: {
-          adminGetAll: {
-            invalidate: async () => {},
-          },
-          adminGet: {
-            invalidate: async () => {},
-            refetch: async () => {},
-          },
-        },
-      },
-    }),
-    viewer: {
-      organizations: {
-        adminGetAll: {
-          useSuspenseQuery: () => [JSON.parse(state.mockData.value)],
-        },
-        adminUpdate: {
-          useMutation: () => ({
-            mutate: () => {},
-          }),
-        },
-        adminDelete: {
-          useMutation: () => ({
-            mutate: () => {},
-          }),
-        },
-      },
-    },
+  // Parse the mock data
+  const mockData = JSON.parse(state.mockData.value);
+
+  // Create mock TRPC instance
+  const mockTrpc = createMockTrpc(mockData);
+
+  // Create a mock Provider component
+  const MockTRPCProvider = ({ children }) => {
+    return children;
+  };
+
+  // Override the global trpc object
+  const trpcContext = {
+    ...mockTrpc,
+    Provider: MockTRPCProvider,
   };
 
   return (
-    <trpc.Provider client={mockTrpc as any}>
-      <ImportedComponent />
-    </trpc.Provider>
+    <QueryClientProvider client={queryClient}>
+      {/* @ts-ignore */}
+      <trpcContext.Provider>
+        <ImportedComponent />
+      </trpcContext.Provider>
+    </QueryClientProvider>
   );
 }

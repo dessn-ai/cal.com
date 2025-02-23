@@ -1,27 +1,24 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/(main-nav)/bookings/[status]/page';
 
-import { ShellMainAppDir } from '../../app/(use-page-wrapper)/(main-nav)/ShellMainAppDir';
-import BookingsList from '../../bookings/views/bookings-listing-view';
-
-// Mock components and functions
-const MockShellMainAppDir = ({ children }) => <div>{children}</div>;
-const MockBookingsList = () => <div>Bookings List</div>;
-
-jest.mock('../../app/(use-page-wrapper)/(main-nav)/ShellMainAppDir', () => ({
-  ShellMainAppDir: MockShellMainAppDir,
-}));
-jest.mock('../../bookings/views/bookings-listing-view', () => MockBookingsList);
-jest.mock('next/navigation', () => ({
-  redirect: jest.fn(),
-}));
-jest.mock('app/_utils', () => ({
-  getTranslate: () => (key) => key,
-}));
+// Mock a simple bookings page component
+const MockBookingsPage = ({ params, searchParams }) => {
+  return (
+    <div className="flex flex-col">
+      <h1>Bookings Page</h1>
+      <div>Status: {params.status}</div>
+      <div className="mt-4">
+        <div className="rounded-md border p-4">
+          <h2>Bookings List</h2>
+          <p>Showing {params.status} bookings</p>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function ComponentPreview() {
-  const [state, setState] = useParentState({
+  const [state] = useParentState({
     status: {
       type: "dropdown",
       value: "upcoming",
@@ -37,5 +34,11 @@ export default function ComponentPreview() {
     searchParams: {},
   };
 
-  return <ImportedComponent {...mockParams} />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="p-4">
+        <MockBookingsPage {...mockParams} />
+      </div>
+    </Suspense>
+  );
 }

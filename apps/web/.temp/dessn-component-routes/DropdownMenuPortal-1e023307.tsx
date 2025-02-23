@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { DropdownMenuPortal } from '../../../../packages/ui/components/dropdown/Dropdown';
-
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -25,12 +24,20 @@ export default function ComponentPreview() {
   });
 
   return (
-    <DropdownMenuPortal
-      theme={state.theme.value as "light" | "dark"}
-      align={state.align.value as "start" | "center" | "end"}
-      sideOffset={state.sideOffset.value}
-    >
-      <div>Dropdown Content</div>
-    </DropdownMenuPortal>
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <button type="button">Click me</button>
+      </DropdownMenu.Trigger>
+
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content
+          align={state.align.value as "start" | "center" | "end"}
+          sideOffset={state.sideOffset.value}
+          className={state.theme.value === 'dark' ? 'dark' : ''}
+        >
+          <div>Dropdown Content</div>
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
   );
 }

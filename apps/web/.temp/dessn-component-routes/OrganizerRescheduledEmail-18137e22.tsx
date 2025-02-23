@@ -2,7 +2,33 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { OrganizerRescheduledEmail } from '../../../../packages/emails/src/templates/OrganizerRescheduledEmail';
 
-import { TimeFormat } from '../../../../packages/types/Calendar';
+// Define TimeFormat enum locally instead of importing
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h'
+}
+
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong.</div>;
+    }
+
+    return this.props.children;
+  }
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -17,16 +43,25 @@ export default function ComponentPreview() {
           name: 'John Doe',
           email: 'john@example.com',
           timeZone: 'America/New_York',
-          language: { translate: (key: string) => key, locale: 'en' },
+          language: { locale: 'en' },
         },
         attendees: [
           {
             name: 'Jane Smith',
             email: 'jane@example.com',
             timeZone: 'America/Los_Angeles',
-            language: { translate: (key: string) => key, locale: 'en' },
+            language: { locale: 'en' },
           },
         ],
+        uid: 'test-uid',
+        responses: {},
+        location: 'Virtual',
+        description: 'Team sync meeting',
+        additionalNotes: '',
+        customInputs: {},
+        seatsPerTimeSlot: null,
+        seatsShowAttendees: false,
+        seatsShowAvailableSeatsCount: false,
       }),
       label: 'Calendar Event',
     },
@@ -36,7 +71,7 @@ export default function ComponentPreview() {
         name: 'Jane Smith',
         email: 'jane@example.com',
         timeZone: 'America/Los_Angeles',
-        language: { translate: (key: string) => key, locale: 'en' },
+        language: { locale: 'en' },
       }),
       label: 'Attendee',
     },
@@ -81,18 +116,44 @@ export default function ComponentPreview() {
   const parsedCalEvent = JSON.parse(state.calEvent.value);
   const parsedAttendee = JSON.parse(state.attendee.value);
 
+  // Simple translation function that matches the expected signature
+  const translate = React.useCallback(function t(key: string): string {
+    return key;
+  }, []);
+
+  // Ensure the function has a name property
+  Object.defineProperty(translate, 'name', { value: 't' });
+
+  const enhancedCalEvent = {
+    ...parsedCalEvent,
+    language: {
+      translate,
+      locale: state.locale.value,
+    },
+  };
+
+  const enhancedAttendee = {
+    ...parsedAttendee,
+    language: {
+      translate,
+      locale: state.locale.value,
+    },
+  };
+
   return (
-    <OrganizerRescheduledEmail
-      calEvent={parsedCalEvent}
-      attendee={parsedAttendee}
-      newSeat={state.newSeat.value}
-      attendeeCancelled={state.attendeeCancelled.value}
-      timeZone={state.timeZone.value}
-      includeAppsStatus={state.includeAppsStatus.value}
-      t={(key: string) => key}
-      locale={state.locale.value}
-      timeFormat={state.timeFormat.value as TimeFormat}
-      isOrganizer={state.isOrganizer.value}
-    />
+    <ErrorBoundary>
+      <OrganizerRescheduledEmail
+        calEvent={enhancedCalEvent}
+        attendee={enhancedAttendee}
+        newSeat={state.newSeat.value}
+        attendeeCancelled={state.attendeeCancelled.value}
+        timeZone={state.timeZone.value}
+        includeAppsStatus={state.includeAppsStatus.value}
+        t={translate}
+        locale={state.locale.value}
+        timeFormat={state.timeFormat.value as TimeFormat}
+        isOrganizer={state.isOrganizer.value}
+      />
+    </ErrorBoundary>
   );
 }

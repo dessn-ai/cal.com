@@ -2,8 +2,38 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../modules/upgrade/upgrade-view';
 
-import { TRPCProvider } from '@calcom/trpc/react';
-import { I18nLanguageHandler } from '@calcom/features/i18n';
+// Create a mock TRPC context
+const TRPCContext = React.createContext({});
+
+// Mock TRPC Provider
+const MockTRPCProvider = ({ children }) => {
+  const mockTrpcValue = {
+    viewer: {
+      organizations: {
+        checkIfOrgNeedsUpgrade: {
+          useQuery: () => ({
+            data: true,
+            isLoading: false,
+            error: null,
+          }),
+        },
+        publish: {
+          useMutation: () => ({
+            mutate: async () => {},
+            isLoading: false,
+            error: null,
+          }),
+        },
+      },
+    },
+  };
+
+  return (
+    <TRPCContext.Provider value={mockTrpcValue}>
+      {children}
+    </TRPCContext.Provider>
+  );
+};
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -14,28 +44,12 @@ export default function ComponentPreview() {
     },
   });
 
-  const mockTrpc = {
-    viewer: {
-      organizations: {
-        checkIfOrgNeedsUpgrade: {
-          useQuery: () => ({
-            data: state.doesUserHaveOrgToUpgrade.value,
-          }),
-        },
-        publish: {
-          useMutation: () => ({
-            mutate: () => {},
-          }),
-        },
-      },
-    },
-  };
-
   return (
-    <TRPCProvider>
-      <I18nLanguageHandler>
-        <ImportedComponent />
-      </I18nLanguageHandler>
-    </TRPCProvider>
+    <MockTRPCProvider>
+      <ImportedComponent />
+    </MockTRPCProvider>
   );
 }
+
+// Export the context for components that might need it
+export const useTRPC = () => React.useContext(TRPCContext);

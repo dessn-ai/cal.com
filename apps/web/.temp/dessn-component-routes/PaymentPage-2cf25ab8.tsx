@@ -1,19 +1,25 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
 import ImportedComponent from '../../../../packages/features/ee/payments/components/PaymentPage';
-
 import { DehydratedState } from '@tanstack/react-query';
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
     user: {
       type: "string",
-      value: "John Doe",
+      value: JSON.stringify({
+        name: "John Doe",
+        email: "john@example.com"
+      }),
       label: "User",
     },
     eventType: {
       type: "string",
-      value: "Meeting",
+      value: JSON.stringify({
+        id: 1,
+        title: "Meeting",
+        length: 30
+      }),
       label: "Event Type",
     },
     booking: {
@@ -55,15 +61,24 @@ export default function ComponentPreview() {
     },
   });
 
+  const parseJsonSafely = (jsonString: string, fallback: any = {}) => {
+    try {
+      return JSON.parse(jsonString);
+    } catch (e) {
+      console.error('Failed to parse JSON:', e);
+      return fallback;
+    }
+  };
+
   return (
     <ImportedComponent
-      user={JSON.parse(state.user.value)}
-      eventType={JSON.parse(state.eventType.value)}
-      booking={JSON.parse(state.booking.value)}
-      trpcState={JSON.parse(state.trpcState.value) as DehydratedState}
-      payment={JSON.parse(state.payment.value)}
+      user={parseJsonSafely(state.user.value)}
+      eventType={parseJsonSafely(state.eventType.value)}
+      booking={parseJsonSafely(state.booking.value)}
+      trpcState={parseJsonSafely(state.trpcState.value) as DehydratedState}
+      payment={parseJsonSafely(state.payment.value)}
       clientSecret={state.clientSecret.value}
-      profile={JSON.parse(state.profile.value)}
+      profile={parseJsonSafely(state.profile.value)}
     />
   );
 }

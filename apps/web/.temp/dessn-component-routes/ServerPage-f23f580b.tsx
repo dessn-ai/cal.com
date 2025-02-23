@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useParentState } from '../useIframeState';
-import ImportedComponent from '../../app/(use-page-wrapper)/auth/verify/page';
 
+// Use dynamic import with error handling
+const ImportedComponent = React.lazy(() => import('../../app/(use-page-wrapper)/auth/verify/page')
+  .catch(() => ({
+    default: () => <div>Error loading component</div>
+  }))
+);
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -27,8 +32,10 @@ export default function ComponentPreview() {
   };
 
   return (
-    <MockEnvProvider>
-      <ImportedComponent />
-    </MockEnvProvider>
+    <Suspense fallback={<div>Loading...</div>}>
+      <MockEnvProvider>
+        <ImportedComponent />
+      </MockEnvProvider>
+    </Suspense>
   );
 }

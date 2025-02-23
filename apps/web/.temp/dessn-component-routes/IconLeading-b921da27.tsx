@@ -1,8 +1,9 @@
 import React from 'react';
 import { useParentState } from '../useIframeState';
-import { IconLeading } from '../../../../packages/ui/components/form/select/components';
+import ReactSelect from 'react-select';
+import { Icon } from "@calcom/ui";
 
-import { components as reactSelectComponents } from 'react-select';
+const CustomSelect = ReactSelect.default || ReactSelect;
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -13,13 +14,29 @@ export default function ComponentPreview() {
     },
   });
 
+  const options = [
+    { value: 'option1', label: 'Option 1' },
+    { value: 'option2', label: 'Option 2' },
+  ];
+
   return (
-    <IconLeading
-      icon={<div dangerouslySetInnerHTML={{ __html: state.icon.value }} />}
-    >
-      <reactSelectComponents.Control>
-        {/* Add any children components here if needed */}
-      </reactSelectComponents.Control>
-    </IconLeading>
+    <div className="relative w-[200px]">
+      <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10">
+        <Icon.FiUser className="h-4 w-4 text-gray-500" />
+      </div>
+      <CustomSelect
+        options={options}
+        defaultValue={options[0]}
+        classNames={{
+          control: (state) => 'pl-10 !cursor-pointer'
+        }}
+        styles={{
+          control: (base) => ({
+            ...base,
+            minHeight: '40px'
+          })
+        }}
+      />
+    </div>
   );
 }

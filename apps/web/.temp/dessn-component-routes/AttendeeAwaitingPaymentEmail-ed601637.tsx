@@ -2,7 +2,10 @@ import React from 'react';
 import { useParentState } from '../useIframeState';
 import { AttendeeAwaitingPaymentEmail } from '../../../../packages/emails/src/templates/AttendeeAwaitingPaymentEmail';
 
-import { TimeFormat } from '../../../../packages/types/Calendar';
+enum TimeFormat {
+  TWELVE_HOUR = '12h',
+  TWENTY_FOUR_HOUR = '24h',
+}
 
 export default function ComponentPreview() {
   const [state, setState] = useParentState({
@@ -18,7 +21,6 @@ export default function ComponentPreview() {
           email: 'jane@example.com',
           timeZone: 'America/New_York',
           language: {
-            translate: (key: string) => key,
             locale: 'en',
           },
         },
@@ -28,7 +30,6 @@ export default function ComponentPreview() {
             email: 'john@example.com',
             timeZone: 'America/Los_Angeles',
             language: {
-              translate: (key: string) => key,
               locale: 'en',
             },
           },
@@ -47,7 +48,6 @@ export default function ComponentPreview() {
         email: 'john@example.com',
         timeZone: 'America/Los_Angeles',
         language: {
-          translate: (key: string) => key,
           locale: 'en',
         },
       }),
@@ -83,10 +83,37 @@ export default function ComponentPreview() {
 
   const t = (key: string) => key;
 
+  // Parse the data and add the translate function
+  const calEvent = {
+    ...JSON.parse(state.calEvent.value),
+    organizer: {
+      ...JSON.parse(state.calEvent.value).organizer,
+      language: {
+        ...JSON.parse(state.calEvent.value).organizer.language,
+        translate: t,
+      },
+    },
+    attendees: JSON.parse(state.calEvent.value).attendees.map((attendee: any) => ({
+      ...attendee,
+      language: {
+        ...attendee.language,
+        translate: t,
+      },
+    })),
+  };
+
+  const attendee = {
+    ...JSON.parse(state.attendee.value),
+    language: {
+      ...JSON.parse(state.attendee.value).language,
+      translate: t,
+    },
+  };
+
   return (
     <AttendeeAwaitingPaymentEmail
-      calEvent={JSON.parse(state.calEvent.value)}
-      attendee={JSON.parse(state.attendee.value)}
+      calEvent={calEvent}
+      attendee={attendee}
       timeZone={state.timeZone.value}
       includeAppsStatus={state.includeAppsStatus.value}
       t={t}
