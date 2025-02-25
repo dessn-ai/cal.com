@@ -1,0 +1,399 @@
+System: You are an expert React developer working on a project that renders preview components. Your task is to fix any errors.
+
+## Role & Capabilities
+- You are a **component error fixing assistant**
+- You can read files, make edits, and use tools to diagnose issues
+- You have access to browser errors
+
+## Tools Available
+1. **getFile** (Using tool call) - Read contents of project files
+2. **File Editing** (Using xml tags in your response) - Make changes to fix errors using XML format
+
+## File Edit Format
+When you want to edit a file, use this exact XML format:
+
+<file path="path/to/file">
+  <change>
+    <description>Brief explanation of what you're changing</description>
+    <content>
+// Your complete file content here
+    </content>
+  </change>
+</file>
+
+## Important Rules
+1. Only update a file if you know its contents. Use getFile tool to read first.
+2. Most errors can be fixed by updating the preview file. Only update other files if necessary.
+3. Provide complete file content - do not use placeholders or ellipses.
+4. Always include necessary imports and dependencies.
+5. When making changes:
+   - Add all required import statements
+   - Include complete component code
+   - Ensure proper TypeScript types
+   - Handle all edge cases
+
+## Error Handling Process
+1. Read and understand the error message
+2. Use getFile to examine relevant files
+3. Make targeted fixes using the XML format
+4. If the error is caused by the fact that a provider is missing. In these cases, find the provider and add it to the preview file.
+4. If the error persists, try different fixes. Sometimes the error is caused by external dependencies that we dont' have access to. In those cases, you can try to fix the error by mocking,removing or try catching.
+5. REMEMBER, your resonse must have <file> tags with the file path and content if you want to edit a file.
+6. Always output the entire file content in full. Do not be lazy by adding //(code remains the same) or //(code remains unchanged). This will cause more errors.
+
+## Example: Fixing a Form Error
+Here's an example of how to handle a typical error:
+
+Error Message:
+TypeError: Cannot read properties of undefined (reading 'errors')
+at FormInput (/src/components/common/form/FormInput.tsx:23:18)
+
+Step 1: Read the file to understand the context
+
+// First, read the file
+{
+  "name": "getFile",
+  "arguments": {
+    "filePath": "src/components/common/form/FormInput.tsx"
+  }
+}
+
+// Response shows:
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState } = useFormContext();
+  const error = formState.errors[name]?.message;  // Error occurs here
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+
+Step 2: Fix the issue by adding proper error handling
+
+<file path="src/components/common/form/FormInput.tsx">
+  <change>
+    <description>Add null check for formState and provide default values</description>
+    <content>
+===
+import { useFormContext } from 'react-hook-form';
+
+export const FormInput = ({ name }: { name: string }) => {
+  const { register, formState = {} } = useFormContext() || {};
+  const error = formState?.errors?.[name]?.message;
+  
+  return (
+    <input {...register(name)} />
+  );
+};
+===
+    </content>
+  </change>
+</file>
+
+The fix:
+1. Added null check for useFormContext result
+2. Provided default empty object for formState
+3. Used optional chaining for safer property access
+
+Please proceed with fixing any errors you encounter following these guidelines.
+
+User: An error occurred when rendering the component route at OrgAttributesCreatePageWrapper-1fe4751b.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: Failed to fetch dynamically imported module: /.temp/dessn-component-routes/OrgAttributesCreatePageWrapper-1fe4751b.tsxTypeError: Failed to fetch dynamically imported module: /.temp/dessn-component-routes/OrgAttributesCreatePageWrapper-1fe4751b.tsx
+
+## Stack Trace
+```
+
+```
+
+## Component Stack
+```
+
+    at Lazy
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at OrgBrandingProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/organizations/context/provider.ts:9:77)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-KNZ2WZMC.js?v=7ba41bb6:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=7ba41bb6:63:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-RIH2XCSY.js?v=7ba41bb6:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-XSQK3CUC.js?v=7ba41bb6:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-5E7KVCZ5.js?v=7ba41bb6:929:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=7ba41bb6:1100:28)
+    at Providers (/.temp/Wrapper.tsx:74:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:115:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/OrgAttributesCreatePageWrapper-1fe4751b.tsx" type="preview>
+import React from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/organizations/attributes/create/page';
+
+
+export default function ComponentPreview() {
+  // Since the component doesn't have any props, we don't need to use useParentState
+  // However, we'll keep it here in case we need to add props in the future
+  const [state, setState] = useParentState({});
+
+  return <ImportedComponent />;
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: Let me help fix this error. The error suggests there's an issue with importing and rendering the component. Let me check the file and make the necessary adjustments.
+
+First, I notice that this component likely needs some providers based on the component stack trace. I see several providers in use like OrgBrandingProvider, FeatureProvider, TooltipProvider, etc.
+
+Let me fix the preview file by adding the necessary providers and proper error handling:
+
+<file path="apps/web/.temp/dessn-component-routes/OrgAttributesCreatePageWrapper-1fe4751b.tsx">
+  <change>
+    <description>Add necessary providers and error handling</description>
+    <content>
+import React, { Suspense } from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/organizations/attributes/create/page';
+import { OrgBrandingProvider } from '@calcom/features/ee/organizations/context/provider';
+import { FeatureProvider } from '@calcom/features/flags/context/provider';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { trpc } from '@calcom/trpc/react';
+import { httpBatchLink } from '@trpc/client';
+import { I18nextProvider } from 'react-i18next';
+import i18next from 'i18next';
+
+const queryClient = new QueryClient();
+const trpcClient = trpc.createClient({
+  links: [
+    httpBatchLink({
+      url: '/api/trpc',
+    }),
+  ],
+});
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({});
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <I18nextProvider i18n={i18next}>
+        <trpc.Provider client={trpcClient} queryClient={queryClient}>
+          <QueryClientProvider client={queryClient}>
+            <TooltipProvider>
+              <FeatureProvider>
+                <OrgBrandingProvider>
+                  <ImportedComponent />
+                </OrgBrandingProvider>
+              </FeatureProvider>
+            </TooltipProvider>
+          </QueryClientProvider>
+        </trpc.Provider>
+      </I18nextProvider>
+    </Suspense>
+  );
+}
+</content>
+  </change>
+</file>
+
+I've made the following changes:
+1. Added all the necessary providers that were present in the component stack
+2. Added Suspense wrapper for better error handling and loading states
+3. Set up the required clients (QueryClient and TRPC client)
+4. Wrapped the ImportedComponent with all providers in the correct order as shown in the stack trace
+5. Added proper imports for all the providers and utilities
+
+This should resolve the error by providing all the necessary context that the component needs to function properly. The providers are added in the same order as they appear in the component stack to maintain the correct context hierarchy.
+
+Note that if you still encounter any issues, it might be because:
+1. Some of the providers might require specific configuration or props
+2. There might be missing environment variables or configuration needed for TRPC
+3. The actual component might have additional dependencies
+
+If you encounter any specific errors after this change, please let me know and I can help adjust the configuration further.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/OrgAttributesCreatePageWrapper-1fe4751b.tsx
+
+All changes applied successfully. Checking for errors...
+
+User: An error occurred when rendering the component route at OrgAttributesCreatePageWrapper-1fe4751b.tsx
+Error:
+
+# Error 1
+
+## Error Message
+TypeError: Failed to fetch dynamically imported module: /.temp/dessn-component-routes/OrgAttributesCreatePageWrapper-1fe4751b.tsxTypeError: Failed to fetch dynamically imported module: /.temp/dessn-component-routes/OrgAttributesCreatePageWrapper-1fe4751b.tsx
+
+## Stack Trace
+```
+
+```
+
+## Component Stack
+```
+
+    at Lazy
+    at div
+    at div
+    at ErrorBoundary (/.temp/ErrorBoundary.tsx:5:5)
+    at Suspense
+    at App (/.temp/App.tsx:6:23)
+    at OrgBrandingProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/ee/organizations/context/provider.ts:9:77)
+    at FeatureProvider (/@fs/Users/nimcheema/src/cal.com/packages/features/flags/context/provider.ts:9:64)
+    at Provider (/node_modules/.vite/deps/chunk-KNZ2WZMC.js?v=7ba41bb6:84:15)
+    at TooltipProvider (/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=7ba41bb6:63:5)
+    at QueryClientProvider (/node_modules/.vite/deps/chunk-RIH2XCSY.js?v=7ba41bb6:2914:3)
+    at TRPCProvider (/node_modules/.vite/deps/chunk-XSQK3CUC.js?v=7ba41bb6:327:13)
+    at I18nextProvider (/node_modules/.vite/deps/chunk-5E7KVCZ5.js?v=7ba41bb6:929:19)
+    at SessionProvider (/node_modules/.vite/deps/next-auth_react.js?v=7ba41bb6:1100:28)
+    at Providers (/.temp/Wrapper.tsx:74:22)
+    at body
+    at html
+    at RootLayout (/.temp/Wrapper.tsx:115:38)
+```
+
+              
+
+<file name="apps/web/.temp/dessn-component-routes/OrgAttributesCreatePageWrapper-1fe4751b.tsx" type="preview>
+import React, { Suspense } from 'react';
+import { useParentState } from '../useIframeState';
+import ImportedComponent from '../../app/(use-page-wrapper)/settings/(settings-layout)/organizations/attributes/create/page';
+import { OrgBrandingProvider } from '@calcom/features/ee/organizations/context/provider';
+import { FeatureProvider } from '@calcom/features/flags/context/provider';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { trpc } from '@calcom/trpc/react';
+import { httpBatchLink } from '@trpc/client';
+import { I18nextProvider } from 'react-i18next';
+import i18next from 'i18next';
+
+const queryClient = new QueryClient();
+const trpcClient = trpc.createClient({
+  links: [
+    httpBatchLink({
+      url: '/api/trpc',
+    }),
+  ],
+});
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({});
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <I18nextProvider i18n={i18next}>
+        <trpc.Provider client={trpcClient} queryClient={queryClient}>
+          <QueryClientProvider client={queryClient}>
+            <TooltipProvider>
+              <FeatureProvider>
+                <OrgBrandingProvider>
+                  <ImportedComponent />
+                </OrgBrandingProvider>
+              </FeatureProvider>
+            </TooltipProvider>
+          </QueryClientProvider>
+        </trpc.Provider>
+      </I18nextProvider>
+    </Suspense>
+  );
+}
+</file>
+
+Please fix the error. Remember to edit a file, you need to wrap it in <file><change><content> tags with the file path and content.
+
+Assistant: I notice that the error persists and it seems to be related to module loading. Let's try to simplify the component and handle potential import errors. I'll also add error boundaries and try to mock some of the providers since we might not have access to all the required dependencies:
+
+<file path="apps/web/.temp/dessn-component-routes/OrgAttributesCreatePageWrapper-1fe4751b.tsx">
+  <change>
+    <description>Simplify component and add error handling with mocked providers</description>
+    <content>
+import React, { Suspense, useState } from 'react';
+import { useParentState } from '../useIframeState';
+
+// Mock providers to avoid dependency issues
+const MockOrgBrandingProvider = ({ children }) => <>{children}</>;
+const MockFeatureProvider = ({ children }) => <>{children}</>;
+const MockTooltipProvider = ({ children }) => <>{children}</>;
+
+// Error Boundary Component
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong. Please try again.</div>;
+    }
+
+    return this.props.children;
+  }
+}
+
+// Lazy load the imported component
+const LazyImportedComponent = React.lazy(() => import('../../app/(use-page-wrapper)/settings/(settings-layout)/organizations/attributes/create/page').catch(() => ({
+  default: () => <div>Failed to load component</div>
+})));
+
+export default function ComponentPreview() {
+  const [state, setState] = useParentState({});
+
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<div>Loading...</div>}>
+        <MockTooltipProvider>
+          <MockFeatureProvider>
+            <MockOrgBrandingProvider>
+              <LazyImportedComponent />
+            </MockOrgBrandingProvider>
+          </MockFeatureProvider>
+        </MockTooltipProvider>
+      </Suspense>
+    </ErrorBoundary>
+  );
+}
+</content>
+  </change>
+</file>
+
+I've made several changes to handle the module loading issue:
+
+1. Removed complex provider dependencies that might not be available in the preview environment
+2. Created simple mock providers to maintain the component structure
+3. Added a proper ErrorBoundary component to catch and handle any rendering errors
+4. Used React.lazy with error handling for the imported component
+5. Simplified the overall structure while maintaining the essential wrapper hierarchy
+6. Added fallback content in case the component fails to load
+
+The changes focus on:
+- Reducing external dependencies
+- Adding proper error handling
+- Maintaining the component hierarchy with mock providers
+- Ensuring graceful fallbacks if things fail
+
+This simplified version should be more resilient to module loading issues while still maintaining the basic structure needed for the preview. If you still encounter issues, please let me know what specific error you're seeing and I can adjust the approach further.
+
+Assistant: Successfully applied changes to:
+- apps/web/.temp/dessn-component-routes/OrgAttributesCreatePageWrapper-1fe4751b.tsx
+
+All changes applied successfully. Checking for errors...

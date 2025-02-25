@@ -3,6 +3,7 @@
     Don't modify this file manually.
 **/
 import { appKeysSchema as alby_zod_ts } from "./alby/zod";
+import { appKeysSchema as analytics_zod_ts } from "./analytics/zod";
 import { appKeysSchema as basecamp3_zod_ts } from "./basecamp3/zod";
 import { appKeysSchema as campsite_zod_ts } from "./campsite/zod";
 import { appKeysSchema as closecom_zod_ts } from "./closecom/zod";
@@ -22,7 +23,6 @@ import { appKeysSchema as jelly_zod_ts } from "./jelly/zod";
 import { appKeysSchema as jitsivideo_zod_ts } from "./jitsivideo/zod";
 import { appKeysSchema as larkcalendar_zod_ts } from "./larkcalendar/zod";
 import { appKeysSchema as make_zod_ts } from "./make/zod";
-import { appKeysSchema as matomo_zod_ts } from "./matomo/zod";
 import { appKeysSchema as metapixel_zod_ts } from "./metapixel/zod";
 import { appKeysSchema as mock_payment_app_zod_ts } from "./mock-payment-app/zod";
 import { appKeysSchema as nextcloudtalk_zod_ts } from "./nextcloudtalk/zod";
@@ -53,6 +53,7 @@ import { appKeysSchema as zoomvideo_zod_ts } from "./zoomvideo/zod";
 
 export const appKeysSchemas = {
   alby: alby_zod_ts,
+  analytics: analytics_zod_ts,
   basecamp3: basecamp3_zod_ts,
   campsite: campsite_zod_ts,
   closecom: closecom_zod_ts,
@@ -72,7 +73,6 @@ export const appKeysSchemas = {
   jitsivideo: jitsivideo_zod_ts,
   larkcalendar: larkcalendar_zod_ts,
   make: make_zod_ts,
-  matomo: matomo_zod_ts,
   metapixel: metapixel_zod_ts,
   "mock-payment-app": mock_payment_app_zod_ts,
   nextcloudtalk: nextcloudtalk_zod_ts,

@@ -1,0 +1,514 @@
+🎭 Starting component verification...
+🎭 Starting component verification...
+✅ 0 components verified without fixes
+Updating Convex task status to completed
+✅ Pipeline completed successfully!
+
+=== Pipeline Summary ===
+Total Components: 1130
+Completed: 0
+Successful: 0
+Failed: 0
+====================
+
+Error verifying Tooltip-cf029c20: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying UserAvatarGroup-bf7f904b: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying Avatar-72403f10: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying App-b7fbf4a7: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying ScreenShot-b7fbf4a7: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying Generic-b7fbf4a7: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying Meeting-b7fbf4a7: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying AvatarGroup-36c9eb44: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying SpeculationRules-e636aa0e: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying UserAvatar-79939b5b: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Verification progress: 0% (1/1130)
+Verification progress: 0% (2/1130)
+Verification progress: 0% (3/1130)
+Verification progress: 0% (4/1130)
+Verification progress: 0% (5/1130)
+Verification progress: 1% (6/1130)
+Verification progress: 1% (7/1130)
+Verification progress: 1% (8/1130)
+Verification progress: 1% (9/1130)
+Verification progress: 1% (10/1130)
+Error verifying UserAvatarGroupWithOrg-23275912: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying Icon-80df850e: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying UpgradeTeamsBadge-3683ef0e: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Verification progress: 1% (11/1130)
+Verification progress: 1% (12/1130)
+Verification progress: 1% (13/1130)
+Error verifying BreadcrumbItem-002bc113: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying Badge-db0b4515: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying InfoBadge-5843e765: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying Breadcrumb-002bc113: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying UpgradeOrgsBadge-d8ff1dbc: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying ArrowButton-1b812d4b: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying IconSprites-50e9e1f5: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Verification progress: 1% (14/1130)
+Verification progress: 1% (15/1130)
+Verification progress: 1% (16/1130)
+Verification progress: 2% (17/1130)
+Verification progress: 2% (18/1130)
+Verification progress: 2% (19/1130)
+Verification progress: 2% (20/1130)
+Error verifying LinkIconButton-05848fa2: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying CheckboxField-2b51e4b8: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying SplitButton-3d2be6b9: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying Button-3e82cba7: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying ButtonGroup-1f8aea50: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Verification progress: 2% (21/1130)
+Verification progress: 2% (22/1130)
+Verification progress: 2% (23/1130)
+Verification progress: 2% (24/1130)
+Error verifying EditableHeading-23f955e5: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying InputError-4746a382: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying Label-5a0149c9: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying FilterSelect-7e291970: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying Checkbox-2b51e4b8: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Verification progress: 2% (25/1130)
+Verification progress: 2% (26/1130)
+Verification progress: 2% (27/1130)
+Verification progress: 2% (28/1130)
+Verification progress: 3% (29/1130)
+Verification progress: 3% (30/1130)
+Error verifying HintsOrErrors-42bb8729: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying Input-85de7318: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying InputField-85de7318: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying TextField-85de7318: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Verification progress: 3% (31/1130)
+Verification progress: 3% (32/1130)
+Verification progress: 3% (33/1130)
+Verification progress: 3% (34/1130)
+Error verifying InputComponent-b921da27: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying IconLeading-b921da27: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying SelectField-51e1c4ea: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying ControlComponent-b921da27: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying Select-51e1c4ea: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying OptionComponent-b921da27: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Verification progress: 3% (35/1130)
+Verification progress: 3% (36/1130)
+Verification progress: 3% (37/1130)
+Verification progress: 3% (38/1130)
+Verification progress: 3% (39/1130)
+Verification progress: 4% (40/1130)
+Received SIGINT signal, shutting down...
+Error verifying MultiSelectCheckboxes-fd7157c7: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying FieldsetLegend-f4982884: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying EmailField-f4982884: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying Alert-5fde7b6d: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying EmailInput-f4982884: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying TextAreaField-f4982884: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying InputLeading-f4982884: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying PasswordField-f4982884: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying TextArea-f4982884: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Error verifying SelectWithValidation-51e1c4ea: Failed after 3 attempts: Executable doesn't exist at /Users/nimcheema/Library/Caches/ms-playwright/chromium_headless_shell-1155/chrome-mac/headless_shell
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+Verification progress: 4% (41/1130)
+Verification progress: 4% (42/1130)
+Verification progress: 4% (43/1130)
+Verification progress: 4% (44/1130)
+Verification progress: 4% (45/1130)
+Verification progress: 4% (46/1130)
+Verification progress: 4% (47/1130)
+Verification progress: 4% (48/1130)
+Verification progress: 4% (49/1130)
+Verification progress: 4% (50/1130)

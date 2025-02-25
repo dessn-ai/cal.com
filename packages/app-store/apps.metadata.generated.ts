@@ -4,6 +4,7 @@
 **/
 import alby_config_json from "./alby/config.json";
 import amie_config_json from "./amie/config.json";
+import analytics_config_json from "./analytics/config.json";
 import { metadata as applecalendar__metadata_ts } from "./applecalendar/_metadata";
 import around_config_json from "./around/config.json";
 import attio_config_json from "./attio/config.json";
@@ -49,7 +50,6 @@ import { metadata as jitsivideo__metadata_ts } from "./jitsivideo/_metadata";
 import { metadata as larkcalendar__metadata_ts } from "./larkcalendar/_metadata";
 import linear_config_json from "./linear/config.json";
 import make_config_json from "./make/config.json";
-import matomo_config_json from "./matomo/config.json";
 import metapixel_config_json from "./metapixel/config.json";
 import mirotalk_config_json from "./mirotalk/config.json";
 import mock_payment_app_config_json from "./mock-payment-app/config.json";
@@ -108,6 +108,7 @@ import { metadata as zoomvideo__metadata_ts } from "./zoomvideo/_metadata";
 export const appStoreMetadata = {
   alby: alby_config_json,
   amie: amie_config_json,
+  analytics: analytics_config_json,
   applecalendar: applecalendar__metadata_ts,
   around: around_config_json,
   attio: attio_config_json,
@@ -153,7 +154,6 @@ export const appStoreMetadata = {
   larkcalendar: larkcalendar__metadata_ts,
   linear: linear_config_json,
   make: make_config_json,
-  matomo: matomo_config_json,
   metapixel: metapixel_config_json,
   mirotalk: mirotalk_config_json,
   "mock-payment-app": mock_payment_app_config_json,

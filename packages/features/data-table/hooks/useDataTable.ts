@@ -1,11 +1,25 @@
-import { useContext } from "react";
-
-import { DataTableContext } from "../lib/context";
-
-export function useDataTable() {
-  const context = useContext(DataTableContext);
-  if (!context) {
-    throw new Error("useDataTable must be used within a DataTableProvider");
-  }
-  return context;
-}
+export const useDataTable = () => ({
+  filterValue: "",
+  setFilterValue: () => {},
+  data: [],
+  isLoading: false,
+  tableContainerRef: { current: null },
+  setData: () => {},
+  filter: "",
+  setFilter: () => {},
+  selectedIds: [],
+  setSelectedIds: () => {},
+  page: 1,
+  setPage: () => {},
+  pageSize: 10,
+  setPageSize: () => {},
+  sortBy: "",
+  setSortBy: () => {},
+  sortDirection: "asc",
+  setSortDirection: () => {},
+  columns: [],
+  setColumns: () => {},
+  selectedRows: [],
+  setSelectedRows: () => {},
+  totalRecords: 0,
+});

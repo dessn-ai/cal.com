@@ -1,0 +1,18 @@
+🎭 Starting component verification...
+🎭 Starting component verification...
+✅ 0 components verified without fixes
+Updating Convex task status to completed
+✅ Verification completed!
+
+=== Pipeline Summary ===
+Total Components: 830
+Completed: 0
+Successful: 0
+Failed: 0
+====================
+
+Screenshot saved to: /Users/nimcheema/src/cal.com/apps/web/.temp/dessn-component-routes/screenshots/AttendeeCancelledSeatEmail-6c27cd47.png
+Verification progress: 0% (1/830)
+Screenshot saved to: /Users/nimcheema/src/cal.com/apps/web/.temp/dessn-component-routes/screenshots/SlugReplacementEmail-89c5a52e.png
+Verification progress: 0% (2/830)
+Received SIGINT signal, shutting down...

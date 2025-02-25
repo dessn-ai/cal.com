@@ -4596,9 +4596,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@calcom/matomo@workspace:packages/app-store/matomo":
+"@calcom/matomo@workspace:packages/app-store/analytics":
   version: 0.0.0-use.local
-  resolution: "@calcom/matomo@workspace:packages/app-store/matomo"
+  resolution: "@calcom/matomo@workspace:packages/app-store/analytics"
   dependencies:
     "@calcom/lib": "*"
     "@calcom/types": "*"

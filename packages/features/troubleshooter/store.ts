@@ -89,7 +89,6 @@ export const useTroubleshooterStore = create<TroubleshooterStore>((set, get) => 
       set({ month });
       updateQueryParam("month", month);
     }
-    //removeQueryParam("layout");
   },
   calendarToColorMap: {},
   addToCalendarToColorMap: (calendarId: string | undefined, color: string) => {

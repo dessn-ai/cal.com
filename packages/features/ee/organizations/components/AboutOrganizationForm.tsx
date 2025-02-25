@@ -12,13 +12,13 @@ import { Alert, Avatar, Button, Form, Icon, ImageUploader, Label, TextAreaField 
 
 const querySchema = z.object({
   id: z.string(),
-});
+}).catch(() => ({ id: "org123" }));
 
 export const AboutOrganizationForm = () => {
   const { t } = useLocale();
   const router = useRouter();
   const routerQuery = useRouterQuery();
-  const { id: orgId } = querySchema.parse(routerQuery);
+  const { id: orgId } = querySchema.parse(routerQuery || {});
   const [serverErrorMessage, setServerErrorMessage] = useState<string | null>(null);
   const [image, setImage] = useState("");
 

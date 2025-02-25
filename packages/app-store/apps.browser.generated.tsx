@@ -21,6 +21,7 @@ export const AppSettingsComponentsMap = {
 };
 export const EventTypeAddonMap = {
   alby: dynamic(() => import("./alby/components/EventTypeAppCardInterface")),
+  analytics: dynamic(() => import("./analytics/components/EventTypeAppCardInterface")),
   basecamp3: dynamic(() => import("./basecamp3/components/EventTypeAppCardInterface")),
   closecom: dynamic(() => import("./closecom/components/EventTypeAppCardInterface")),
   fathom: dynamic(() => import("./fathom/components/EventTypeAppCardInterface")),
@@ -30,7 +31,6 @@ export const EventTypeAddonMap = {
   hitpay: dynamic(() => import("./hitpay/components/EventTypeAppCardInterface")),
   hubspot: dynamic(() => import("./hubspot/components/EventTypeAppCardInterface")),
   insihts: dynamic(() => import("./insihts/components/EventTypeAppCardInterface")),
-  matomo: dynamic(() => import("./matomo/components/EventTypeAppCardInterface")),
   metapixel: dynamic(() => import("./metapixel/components/EventTypeAppCardInterface")),
   "mock-payment-app": dynamic(() => import("./mock-payment-app/components/EventTypeAppCardInterface")),
   paypal: dynamic(() => import("./paypal/components/EventTypeAppCardInterface")),
